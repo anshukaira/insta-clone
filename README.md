@@ -2,7 +2,7 @@
 
 
 -----------------------------------------------------------------------------------------------
- - Clone this repo using ``` git clone https:// ``` 
+ - Clone this repo using ``` git clone https://github.com/anshukaira/insta-clone.git ``` 
  - ``` cd insta-clone ```
  - run ``` npm i ```
  - yay u can start coding now!! 
