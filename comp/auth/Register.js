@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { Button, Text, View } from 'react-native'
 
-import firebase from 'firebase';
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 import { TextInput } from 'react-native-gesture-handler';
 
 export default function Register() {

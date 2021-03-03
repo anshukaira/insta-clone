@@ -33,6 +33,7 @@ export default function Login() {
             />
 
             <Button
+                title="Login"
                 onPress={() => onSignin() }
             />
 

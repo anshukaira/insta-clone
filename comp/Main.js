@@ -12,8 +12,6 @@ import { createMaterialBottomTabNavigator } from '@react-navigation/material-bot
 import FeedScreen from './main/Feed'
 import ProfileScreen from './main/Profile'
 
-
-
 const Tab = createMaterialBottomTabNavigator();
 
 const emptyContainer =() => {

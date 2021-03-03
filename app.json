@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "insta",
-    "slug": "insta",
+    "name": "insta-c",
+    "slug": "insta-c",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -27,6 +27,8 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "description": "",
+    "githubUrl": "https://github.com/anshukaira/insta-clone"
   }
 }
