@@ -44,6 +44,7 @@ const firebaseConfig = {
 if(firebase.apps.length === 0){
   firebase.initializeApp(firebaseConfig);
 }
+
 const Stack = createStackNavigator();
 export default function App() {
 
@@ -52,11 +53,10 @@ export default function App() {
 
   useEffect(() => {
     firebase.auth().onAuthStateChanged((user) => {
-      if(!user){
-        setloggedIn(false);
-      }else{
+      if(user)
         setloggedIn(true);
-      }
+      else
+        setloggedIn(false);
       setloaded(true);
     })
   }, [loaded, loggedIn])

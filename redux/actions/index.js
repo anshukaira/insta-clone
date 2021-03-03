@@ -13,6 +13,7 @@ export function fetchUser(){
                         type: USER_STATE_CHANGE,
                         currentUser: s.data() 
                     })
+                    console.log("this works")
                 }else{
                     console.log('User doesnt exist')
                 }
