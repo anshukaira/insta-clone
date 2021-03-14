@@ -1,0 +1,36 @@
+.
+├── assets
+│   ├── adaptive-icon.png
+│   ├── favicon.png
+│   ├── icon.png
+│   └── splash.png
+├── comp
+│   ├── auth
+│   │   ├── Landing.js
+│   │   ├── Login.js
+│   │   └── Register.js
+│   ├── main
+│   │   ├── Add.js
+│   │   ├── Feed.js
+│   │   └── Profile.js
+│   └── Main.js
+├── redux
+│   ├── actions
+│   │   └── index.js
+│   ├── constants
+│   │   └── index.js
+│   ├── reducers
+│   │   ├── index.js
+│   │   └── user.js
+│   └── store
+│       └── index.js
+├── App.js
+├── app.json
+├── babel.config.js
+├── DOC_STRUCTURE
+├── package.json
+├── package-lock.json
+├── README.md
+└── WORKFLOW.md
+
+9 directories, 24 files
