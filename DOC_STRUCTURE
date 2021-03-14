@@ -14,6 +14,8 @@
 │   │   ├── Feed.js
 │   │   └── Profile.js
 │   └── Main.js
+├── firebase
+│   └── firebase.js
 ├── redux
 │   ├── actions
 │   │   └── index.js
@@ -27,10 +29,13 @@
 ├── App.js
 ├── app.json
 ├── babel.config.js
+├── _clang-format
+├── CONFLICTS.md
 ├── DOC_STRUCTURE
 ├── package.json
 ├── package-lock.json
 ├── README.md
+├── TODO.md
 └── WORKFLOW.md
 
-9 directories, 24 files
+10 directories, 28 files
