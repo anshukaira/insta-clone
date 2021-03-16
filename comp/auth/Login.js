@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
 import { Button, Text, View } from 'react-native'
-
-import { auth } from '../../firebase/firebase';
 import { TextInput } from 'react-native-gesture-handler';
+import { signIn } from '../../firebase/functions';
 
 export default function Login() {
     const [config, setConfig] = useState({
@@ -10,16 +9,6 @@ export default function Login() {
         password: '',
     });
 
-    const onSignin = () => {
-        const { email, password } = config;
-        auth.signInWithEmailAndPassword(email, password)
-            .then((result) => {
-                console.log(result)
-            })
-            .catch((error) => {
-                console.log('yo error', error)
-            })
-    }
     return (
         <View>
             <TextInput
@@ -34,7 +23,7 @@ export default function Login() {
 
             <Button
                 title="Login"
-                onPress={() => onSignin()}
+                onPress={() => signIn(config.email, config.password)}
             />
 
         </View>
