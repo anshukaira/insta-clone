@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
 import { Button, Text, View } from 'react-native'
-
-import { auth, firestore } from '../../firebase/firebase';
 import { TextInput } from 'react-native-gesture-handler';
+import { signUp } from '../../firebase/functions';
 
 export default function Register() {
     const [config, setConfig] = useState({
@@ -11,22 +10,6 @@ export default function Register() {
         name: ''
     });
 
-    const onSignup = () => {
-        const { email, password, name } = config;
-        auth.createUserWithEmailAndPassword(email, password)
-            .then((result) => {
-                firestore.collection("users")
-                    .doc(auth.currentUser.uid)
-                    .set({
-                        name,
-                        email
-                    })
-                console.log(result)
-            })
-            .catch((error) => {
-                console.log('yo error', error)
-            })
-    }
     return (
         <View>
             <TextInput
@@ -45,7 +28,7 @@ export default function Register() {
 
             <Button
                 title="Register"
-                onPress={() => onSignup()
+                onPress={() => signUp(config.name, config.email, config.password)
                 }
             />
 
