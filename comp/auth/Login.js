@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Button, Text, View } from 'react-native'
 import { TextInput } from 'react-native-gesture-handler';
-import { signIn } from '../../firebase/functions';
+import { signIn, signOut } from '../../firebase/functions';
 
 export default function Login() {
     const [config, setConfig] = useState({
@@ -25,6 +25,7 @@ export default function Login() {
                 title="Login"
                 onPress={() => signIn(config.email, config.password)}
             />
+            <Button onPress={signOut} title="Sign Out" />
 
         </View>
     )

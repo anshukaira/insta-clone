@@ -1,86 +1,109 @@
-import React from 'react'
-import { Component } from 'react'
-import { View } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { Text, View } from 'react-native'
 
-import { connect } from 'react-redux'
-import {bindActionCreators} from 'redux'
-import { fetchUser } from '../redux/actions/index'
+// Navigations
+import { NavigationContainer } from '@react-navigation/native'
+import { createStackNavigator } from '@react-navigation/stack'
+import Landing from './auth/Landing'
+import Login from './auth/Login'
+import Register from './auth/Register'
+import Add from './main/Add'
+import Feed from './main/Feed'
+import Profile from './main/Profile'
 
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 
-import FeedScreen from './main/Feed'
-import ProfileScreen from './main/Profile'
+// Datatbase related imports
+import { auth } from '../firebase/firebase'
+import { getUserInfo } from '../firebase/functions'
 
-const Tab = createMaterialBottomTabNavigator();
+// Store related imports
+import { useSelector, useDispatch } from 'react-redux'
+import { selectUser, set, unset, update } from '../redux/slices/userSlice'
 
-const emptyContainer =() => {
-    return null;
+
+const Stack = createStackNavigator();
+
+function Main() {
+
+    const user = useSelector(selectUser)
+    const dispatch = useDispatch()
+    const [loaded, setLoaded] = useState(false);
+
+    useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+            if (currentUser) {
+                dispatch(set({
+                    uid: currentUser.uid
+                }))
+                dispatch(update(getUserInfo(currentUser.uid)))
+                console.log("User Logged In")
+            } else {
+                dispatch(unset())
+                console.log("User Logged Out")
+            }
+            if (!loaded)
+                setLoaded(true);
+        })
+        console.log("Auth Subscribed")
+        return () => {
+            console.log("Auth Unsubscribed")
+            return unsubscribe
+        }
+    }, [])
+
+    const Loading = (
+        <View>
+            <Text>
+                Loading..
+            </Text>
+        </View>
+    )
+
+    const LoggedOut = (
+        <Stack.Navigator initialRouteName="Landing">
+            <Stack.Screen
+                name="Landing"
+                component={Landing}
+                options={{ headerShown: false }}
+            />
+            <Stack.Screen
+                name="Register"
+                component={Register}
+            />
+            <Stack.Screen
+                name="Login"
+                component={Login}
+            />
+        </Stack.Navigator>
+    )
+
+    const LoggedIn = (
+        <Stack.Navigator initialRouteName="Main">
+            <Stack.Screen
+                name="Main"
+                component={Landing}
+                options={{ headerShown: false }}
+            />
+            <Stack.Screen
+                name="Add"
+                component={Add}
+            />
+            <Stack.Screen
+                name="Register"
+                component={Register}
+            />
+            <Stack.Screen
+                name="Login"
+                component={Login}
+            />
+        </Stack.Navigator >
+    )
+
+    return (
+        <NavigationContainer>
+            {loaded ? user ? LoggedIn : LoggedOut : Loading}
+        </NavigationContainer>
+    )
 }
-export class Main extends Component{
-    componentDidMount() {
-        this.props.fetchUser();
-    }
-    render(){
-        const { currentUser } = this.props;
-        return (
-            <Tab.Navigator initialRouteName="Feed" labeled={false}>
-                <Tab.Screen 
-                    name="Feed" 
-                    component={FeedScreen} 
-                    options={{
-                        tabBarIcon:({ color, size}) => (
-                            <MaterialCommunityIcons 
-                                name="home"
-                                color={color}
-                                size={26} 
-                            />
-                        ),
-                    }}
-                />
-                <Tab.Screen 
-                    name="AddContainer" 
-                    component={emptyContainer}
-                    listeners={({ navigation }) => ({
-                        tabPress: event => {
-                            event.preventDefault();
-                            navigation.navigate("Add");
-                        }
-                    })}
-                    options={{
-                        tabBarIcon:({ color, size}) => (
-                            <MaterialCommunityIcons 
-                                name="plus-box"
-                                color={color}
-                                size={26} 
-                            />
-                        ),
-                    }}
-                />
-                <Tab.Screen 
-                    name="Profile" 
-                    component={ProfileScreen} 
-                    options={{
-                        tabBarIcon:({ color, size}) => (
-                            <MaterialCommunityIcons 
-                                name="account-circle"
-                                color={color}
-                                size={26} 
-                            />
-                        ),
-                    }}
-                />
 
-            </Tab.Navigator>
-        )
-    }
-
-}
-
-const mapStateToProps = (store) => ({
-    currentUser: store.userState.currentUser
-})
-const mapDispatchProps = (dispatch) => bindActionCreators(
-    { fetchUser }, dispatch);
-
-export default connect(mapStateToProps, mapDispatchProps)(Main);
+export default Main
