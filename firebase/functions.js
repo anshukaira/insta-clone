@@ -7,7 +7,7 @@ import { auth, firestore } from './firebase'
 export function signUp(name, email, pass) {
     auth.createUserWithEmailAndPassword(email, pass)
         .then(result => {
-            createUserInDatabase(result.user.name, name || result.users.name, result.user.email, pass);
+            createUserInDatabase(result.user.uid, name || result.users.name, result.user.email, pass);
             console.log(result);
         })
         .catch(error => console.error);
