@@ -26,15 +26,21 @@ function Main() {
                 let userData = { uid: "testing" }
                 dispatch(set(userData))
             } else {
-                dispatch(unset())
+                dispatch(unset({}))
                 console.log("Logged Out User");
             }
         })
-        return unsubscribe
+        return () => {
+            console.log("Unsubscribing auth listner")
+            unsubscribe()
+        }
     }, [])
 
     return (
         <NavigationContainer>
+            <div>
+                {JSON.stringify(user)}
+            </div>
             {user.uid ? LoggedIn : LoggedOut}
         </NavigationContainer>
     )
