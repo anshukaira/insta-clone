@@ -5,6 +5,8 @@ import LandingScreen from './auth/Landing'
 import LoginScreen from './auth/Login'
 import RegisterScreen from './auth/Register'
 
+import SaveScreen from './main/Save'
+
 import { auth } from '../firebase/firebase'
 
 import { useDispatch, useSelector } from 'react-redux'
@@ -38,9 +40,9 @@ function Main() {
 
     return (
         <NavigationContainer>
-            <div>
+            {/* <div>
                 {JSON.stringify(user)}
-            </div>
+            </div> */}
             {user.uid ? LoggedIn : LoggedOut}
         </NavigationContainer>
     )
@@ -51,8 +53,8 @@ export default Main
 const LoggedIn = (
     <Stack.Navigator initialRouteName="Main">
         <Stack.Screen name="Main" component={MainScreen} />
-        {/* <Stack.Screen name="Add" component={AddScreen} navigation={this.props.navigation} />
         <Stack.Screen name="Save" component={SaveScreen} navigation={this.props.navigation} />
+        {/* <Stack.Screen name="Add" component={AddScreen} navigation={this.props.navigation} />
         <Stack.Screen name="Comment" component={CommentScreen} navigation={this.props.navigation} /> */}
     </Stack.Navigator>
 )

@@ -1,16 +1,18 @@
 import React from 'react'
-import { Button } from 'react-native'
+import { View, Text, Button } from 'react-native'
 import { signOut } from '../../firebase/functions'
 
 function Profile() {
     return (
-        <div>
+        <View>
+            <Text>
             Profile
+            </Text>
             <Button
                 onPress={() => signOut()}
                 title="Sign Out"
             />
-        </div>
+        </View>
     )
 }
 

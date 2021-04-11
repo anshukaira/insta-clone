@@ -1,10 +1,10 @@
 import React from 'react'
-
+import {View, Text } from 'react-native'
 function Feed() {
     return (
-        <div>
-            Feed
-        </div>
+        <View>
+            <Text>Feed</Text>
+        </View>
     )
 }
 

@@ -1,10 +1,13 @@
 import React from 'react'
+import {View, Text} from 'react-native'
 
 function Search() {
     return (
-        <div>
-            Serch
-        </div>
+        <View>
+            <Text>
+                Searching..
+            </Text>
+        </View>
     )
 }
 

@@ -6,6 +6,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import FeedScreen from './main/Feed'
 import ProfileScreen from './main/Profile'
 import SearchScreen from './main/Search'
+import AddScreen from './main/Add'
 import { useSelector } from 'react-redux'
 import { selectUser } from '../redux/slices/userSlice'
 
@@ -27,7 +28,7 @@ function Main({ navigation }) {
                         <MaterialCommunityIcons name="magnify" color={color} size={26} />
                     ),
                 }} />
-            <Tab.Screen name="AddContainer" component={EmptyScreen}
+            <Tab.Screen name="Add" component={AddScreen}
                 listeners={({ navigation }) => ({
                     tabPress: event => {
                         event.preventDefault();
