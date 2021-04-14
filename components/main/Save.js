@@ -1,10 +1,6 @@
 import React, { useState } from 'react'
 import { View, TextInput, Image, Button } from 'react-native'
-
-import firebase from 'firebase'
 import { NavigationContainer } from '@react-navigation/native'
-require("firebase/firestore")
-require("firebase/firebase-storage")
 
 
 export default function Save(props) {

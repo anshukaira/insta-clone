@@ -1,11 +1,13 @@
 import React, { useEffect } from 'react'
 
-import MainScreen from './Main'
 import LandingScreen from './auth/Landing'
 import LoginScreen from './auth/Login'
 import RegisterScreen from './auth/Register'
 
+import MainScreen from './Main'
 import SaveScreen from './main/Save'
+import AddScreen from './main/Add'
+import CommentScreen from './main/Comment'
 
 import { auth } from '../firebase/firebase'
 
@@ -18,7 +20,7 @@ import { createStackNavigator } from '@react-navigation/stack'
 
 const Stack = createStackNavigator()
 
-function Main() {
+function Main({ navigation }) {
     const user = useSelector(selectUser)
     const dispatch = useDispatch();
     useEffect(() => {
@@ -38,6 +40,30 @@ function Main() {
         }
     }, [])
 
+    const LoggedIn = (
+        <Stack.Navigator initialRouteName="Main">
+            <Stack.Screen name="Main" component={MainScreen} />
+            <Stack.Screen name="Save" component={SaveScreen} />
+            <Stack.Screen name="Add" component={AddScreen} navigation={navigation} />
+            <Stack.Screen name="Comment" component={CommentScreen} navigation={navigation} />
+        </Stack.Navigator>
+    )
+
+    const LoggedOut = (
+        <Stack.Navigator initialRouteName="Landing">
+            <Stack.Screen name="Landing" component={LandingScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="Register" component={RegisterScreen} />
+            <Stack.Screen name="Login" component={LoginScreen} />
+        </Stack.Navigator>
+    )
+
+    // Currently I am not using this but we will add animation here
+    // const Loading = (
+    //     <View style={{ flex: 1, justifyContent: 'center' }}>
+    //         <Text>Loading</Text>
+    //     </View>
+    // )
+
     return (
         <NavigationContainer>
             {/* <div>
@@ -49,27 +75,3 @@ function Main() {
 }
 
 export default Main
-
-const LoggedIn = (
-    <Stack.Navigator initialRouteName="Main">
-        <Stack.Screen name="Main" component={MainScreen} />
-        <Stack.Screen name="Save" component={SaveScreen} />
-        {/* <Stack.Screen name="Add" component={AddScreen} navigation={this.props.navigation} />
-        <Stack.Screen name="Comment" component={CommentScreen} navigation={this.props.navigation} /> */}
-    </Stack.Navigator>
-)
-
-const LoggedOut = (
-    <Stack.Navigator initialRouteName="Landing">
-        <Stack.Screen name="Landing" component={LandingScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Register" component={RegisterScreen} />
-        <Stack.Screen name="Login" component={LoginScreen} />
-    </Stack.Navigator>
-)
-
-// Currently I am not using this but we will add animation here
-// const Loading = (
-//     <View style={{ flex: 1, justifyContent: 'center' }}>
-//         <Text>Loading</Text>
-//     </View>
-// )
