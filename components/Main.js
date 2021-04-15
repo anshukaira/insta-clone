@@ -22,7 +22,7 @@ function Main({ navigation }) {
                         <MaterialCommunityIcons name="home" color={color} size={26} />
                     ),
                 }} />
-            <Tab.Screen name="Search" component={SearchScreen} navigation={navigation}
+            <Tab.Screen name="Search" component={SearchScreen}
                 options={{
                     tabBarIcon: ({ color, size }) => (
                         <MaterialCommunityIcons name="magnify" color={color} size={26} />

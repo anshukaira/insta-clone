@@ -17,6 +17,8 @@ import { selectUser, set, unset } from '../redux/slices/userSlice';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack'
+import { enableScreens } from 'react-native-screens';
+enableScreens();
 
 const Stack = createStackNavigator()
 
@@ -44,8 +46,8 @@ function Main({ navigation }) {
         <Stack.Navigator initialRouteName="Main">
             <Stack.Screen name="Main" component={MainScreen} />
             <Stack.Screen name="Save" component={SaveScreen} />
-            <Stack.Screen name="Add" component={AddScreen} navigation={navigation} />
-            <Stack.Screen name="Comment" component={CommentScreen} navigation={navigation} />
+            <Stack.Screen name="Add" component={AddScreen} />
+            <Stack.Screen name="Comment" component={CommentScreen} />
         </Stack.Navigator>
     )
 

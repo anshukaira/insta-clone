@@ -2,9 +2,9 @@ import React from 'react'
 
 function Comment() {
     return (
-        <div>
+        <Text>
             Comment
-        </div>
+        </Text>
     )
 }
 
