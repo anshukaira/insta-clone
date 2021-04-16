@@ -1,7 +1,6 @@
 import React from 'react'
-import { View, Text, Dimensions, StyleSheet, ImageBackground } from 'react-native'
+import { View, Text, Dimensions, StyleSheet, TouchableOpacity } from 'react-native'
 
-import { TouchableOpacity } from 'react-native-gesture-handler'
 
 function Landing({ navigation }) {
     return (
@@ -9,13 +8,13 @@ function Landing({ navigation }) {
             <View style={styles.inputContainer}>
                 <TouchableOpacity
                     style={styles.button}
-                    onPress={navigation.navigate("Register")}
+                    onPress={() => navigation.navigate("Register")}
                 >
                     <Text style={styles.text}>Register</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={styles.button}
-                    onPress={navigation.navigate("Login")}
+                    onPress={() => navigation.navigate("Login")}
                 >
                     <Text style={styles.text}>Log In</Text>
                 </TouchableOpacity>

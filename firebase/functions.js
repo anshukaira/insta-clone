@@ -19,7 +19,7 @@ export function signIn(email, pass) {
         .then(result => {
             console.log(result);
         })
-        .catch(error => console.error);
+        .catch(error => console.log(error.message));
 }
 
 // Sign out function

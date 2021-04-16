@@ -1,9 +1,8 @@
 import React, { useState } from 'react'
-import { View, Text, TextInput, StyleSheet, ImageBackground, Dimensions } from 'react-native'
+import { View, Text, TextInput, StyleSheet, ImageBackground, Dimensions, TouchableOpacity } from 'react-native'
 import { signUp } from '../../firebase/functions'
 
 import Icon from 'react-native-vector-icons/Ionicons'
-import { TouchableOpacity } from 'react-native-gesture-handler'
 
 function Register() {
     const [name, setName] = useState("")

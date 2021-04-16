@@ -13,13 +13,13 @@ function Main() {
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((_user) => {
-            setLoading(false);
+            setLoading(true);
             if (_user) {
                 console.log(_user)
                 let userData = { uid: "testing" }
                 dispatch(set(userData))
             } else {
-                dispatch(unset({}))
+                dispatch(unset())
                 console.log("Logged Out User");
             }
             setLoading(false);
