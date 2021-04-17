@@ -1,15 +1,17 @@
 import React from 'react'
-import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FeedScreen from './Feed/FeedStack'
 import ProfileScreen from './Profile/ProfileStack'
+import DiscoverScreen from './Discover/DiscoverStack'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-const Tab = createMaterialBottomTabNavigator();
+const Tab = createBottomTabNavigator();
 
 export default function Home() {
     return (
-        <Tab.Navigator initialRouteName="Feed" labeled={false}>
+        <Tab.Navigator tabBarOptions={{ showLabel: false }}>
             {stackShortner("Feed", FeedScreen, "home")}
+            {stackShortner("Discover", DiscoverScreen, "image-search", { uid: "discover" })}
             {stackShortner("Profile", ProfileScreen, "account-circle", { uid: "me" })}
         </Tab.Navigator>
     )
@@ -21,9 +23,9 @@ const stackShortner = (name, component, icon, params = undefined) => {
             name={name}
             component={component}
             options={{
-                tabBarLabel: { name },
-                tabBarIcon: ({ color }) => (
-                    <MaterialCommunityIcons name={icon} color={color} size={26} />
+                // tabBarLabel: { name },
+                tabBarIcon: () => (
+                    <MaterialCommunityIcons name={icon} size={26} />
                 ),
             }}
             initialParams={params}

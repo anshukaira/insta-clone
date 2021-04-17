@@ -7,10 +7,9 @@ const Stack = createStackNavigator();
 
 export default function ProfileStack() {
     const route = useRoute();
-    console.log("pstack", route)
     return (
-        <Stack.Navigator initialRouteName="Profile">
-            <Stack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }} initialParams={route.params} />
+        <Stack.Navigator>
+            <Stack.Screen name="ProfileHome" component={ProfileScreen} options={{ headerShown: false }} initialParams={route.params} />
         </Stack.Navigator>
     )
 }
