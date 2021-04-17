@@ -4,15 +4,18 @@ import FeedScreen from './Feed/FeedStack'
 import ProfileScreen from './Profile/ProfileStack'
 import DiscoverScreen from './Discover/DiscoverStack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useSelector } from 'react-redux';
+import { selectUser } from '../../redux/slices/userSlice';
 
 const Tab = createBottomTabNavigator();
 
 export default function Home() {
+    const user = useSelector(selectUser);
     return (
         <Tab.Navigator tabBarOptions={{ showLabel: false }}>
             {stackShortner("Feed", FeedScreen, "home")}
             {stackShortner("Discover", DiscoverScreen, "image-search", { uid: "discover" })}
-            {stackShortner("Profile", ProfileScreen, "account-circle", { uid: "me" })}
+            {stackShortner("Profile", ProfileScreen, "account-circle", { uid: user.uid })}
         </Tab.Navigator>
     )
 }

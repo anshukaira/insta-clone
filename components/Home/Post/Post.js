@@ -6,7 +6,7 @@ const window = Dimensions.get("window");
 const divide = 2.5;
 const initialWidth = Platform.OS === 'web' ? window.width / divide : window.width;
 
-export default function Post({ p_id }) {
+export default function Post({ pid }) {
     const navigation = useNavigation();
     const [dimensions, setDimensions] = useState(initialWidth);
 
@@ -25,7 +25,7 @@ export default function Post({ p_id }) {
     });
 
     const openProfile = () => {
-        navigation.navigate("Profile", { p_id: p_id, u_id: "test" })
+        navigation.navigate("Profile", { pid: pid, uid: "slayeransh" })
     }
     return (
         <View style={styles.container}>

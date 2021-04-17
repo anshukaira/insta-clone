@@ -20,6 +20,7 @@
 │   │   └── Edit.js
 │   ├── Home
 │   │   ├── Add
+│   │   │   └── Add.js
 │   │   ├── Chat
 │   │   │   └── Chat.js
 │   │   ├── Discover
@@ -32,13 +33,25 @@
 │   │   │   └── Story.js
 │   │   ├── Post
 │   │   │   ├── Post.js
+│   │   │   ├── PostMini.js
 │   │   │   └── Posts.js
 │   │   ├── Profile
+│   │   │   ├── Header.js
+│   │   │   ├── OpBox.js
+│   │   │   ├── PostsView.js
+│   │   │   ├── ProfileBox.js
 │   │   │   ├── Profile.js
 │   │   │   └── ProfileStack.js
+│   │   ├── Saved
+│   │   │   ├── Saved.js
+│   │   │   └── SavedStack.js
 │   │   └── Home.js
+│   ├── Options
+│   │   └── Options.js
 │   ├── QRCode
 │   │   └── QRCode.js
+│   ├── Style
+│   │   └── Constants.js
 │   ├── LoggedIn.js
 │   ├── LoggedOut.js
 │   ├── Main.js
@@ -65,4 +78,4 @@
 ├── TODO.md
 └── WORKFLOW.md
 
-21 directories, 44 files
+24 directories, 54 files

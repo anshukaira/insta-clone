@@ -9,7 +9,7 @@ export default function FeedStack() {
     return (
         <Stack.Navigator >
             <Stack.Screen name="FeedHome" component={FeedScreen} options={{ headerShown: false }} />
-            <Stack.Screen name="Profile" component={ProfileScreen} />
+            <Stack.Screen name="Profile" component={ProfileScreen} options={({ route }) => ({ headerTitle: route.params.uid })} />
         </Stack.Navigator>
     )
 }

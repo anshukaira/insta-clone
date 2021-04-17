@@ -7,7 +7,7 @@ const divideBig = 5.5;
 const divideSmall = 3.5;
 const initialWidth = Platform.OS === 'web' ? window.width / divideBig : window.width / divideSmall;
 
-export default function PostMini({ p_id, style }) {
+export default function PostMini({ p_id, style, navigateTo }) {
     const navigation = useNavigation();
     const [dimensions, setDimensions] = useState(initialWidth);
 
@@ -26,7 +26,7 @@ export default function PostMini({ p_id, style }) {
     });
 
     const openRelatedPosts = () => {
-        navigation.navigate("Explore", { p_id: p_id, u_id: "test" })
+        navigation.navigate(navigateTo || "Explore", { p_id: p_id, u_id: "test" })
     }
     return (
         <TouchableOpacity onPress={openRelatedPosts} style={[styles.image, { height: dimensions, width: dimensions }, style]}></TouchableOpacity>

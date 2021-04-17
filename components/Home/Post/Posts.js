@@ -31,7 +31,7 @@ export default function Posts({ showStory }) {
             <FlatList
                 data={DATA}
                 renderItem={({ item }) => {
-                    return <Post p_id={item.id} />
+                    return <Post pid={item.id} />
                 }}
                 keyExtractor={item => item.id}
                 initialNumToRender={10}
