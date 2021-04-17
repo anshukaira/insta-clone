@@ -1,39 +1,19 @@
 import React from 'react'
-import { Button } from 'react-native'
+import { Button, View } from 'react-native'
 import { signOut } from '../firebase/functions'
-import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import FeedScreen from './main/Feed/Feed'
+import { createStackNavigator } from '@react-navigation/stack'
+import HomeScreen from './Home/Home';
+import CommentScreen from './Comments/Comments'
 
-const Tab = createMaterialBottomTabNavigator();
+const Stack = createStackNavigator();
+
 
 function LoggedIn() {
     return (
-        <>
-            <Tab.Navigator initialRouteName="Feed" labeled={false}>
-                <Tab.Screen
-                    name="Feed"
-                    component={FeedScreen}
-                    options={{
-                        tabBarLabel: 'Feed',
-                        tabBarIcon: ({ color }) => (
-                            <MaterialCommunityIcons name="home" color={color} size={26} />
-                        ),
-                    }}
-                />
-                <Tab.Screen
-                    name="Feed2"
-                    component={FeedScreen}
-                    options={{
-                        tabBarLabel: 'Feed',
-                        tabBarIcon: ({ color }) => (
-                            <MaterialCommunityIcons name="home" color={color} size={26} />
-                        ),
-                    }}
-                />
-            </Tab.Navigator>
-            <Button title="Sign Out" onPress={signOut} />
-        </>
+        <Stack.Navigator initialRouteName="Home">
+            <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="Comment" component={CommentScreen} />
+        </Stack.Navigator>
     )
 }
 

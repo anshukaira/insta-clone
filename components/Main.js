@@ -5,6 +5,7 @@ import { auth } from '../firebase/firebase'
 
 import LoggedIn from './LoggedIn'
 import LoggedOut from './LoggedOut'
+import { Text } from 'react-native'
 
 function Main() {
     const user = useSelector(selectUser);
@@ -33,7 +34,7 @@ function Main() {
 
     // loading animation goes here probably
     if (loading) {
-        return <> Loading </>;
+        return <Text> Loading </Text>;
     }
 
     if (user.uid) {
