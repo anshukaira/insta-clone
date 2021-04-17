@@ -10,7 +10,8 @@ const DATA = Array.from(Array(7), (x, index) => {
 })
 
 
-export default function Posts() {
+
+export default function Posts({ showStory }) {
     return (
         Platform.OS === 'web' ?
             <FlatList
@@ -22,9 +23,10 @@ export default function Posts() {
                 initialNumToRender={10}
                 refreshing={true}
                 style={styles.list}
-                ListHeaderComponent={Story}
+                ListHeaderComponent={showStory ? Story : null}
                 numColumns={2}
                 columnWrapperStyle={styles.col}
+                ListHeaderComponentStyle={styles.header}
             /> :
             <FlatList
                 data={DATA}
@@ -35,7 +37,8 @@ export default function Posts() {
                 initialNumToRender={10}
                 refreshing={true}
                 style={styles.list}
-                ListHeaderComponent={Story}
+                ListHeaderComponent={showStory ? Story : null}
+                ListHeaderComponentStyle={styles.header}
                 numColumns={1}
             />
     )
@@ -43,9 +46,12 @@ export default function Posts() {
 
 const styles = StyleSheet.create({
     list: {
-        marginTop: 50,
+        // marginTop: 50,
     },
     col: {
         justifyContent: 'space-around',
+    },
+    header: {
+        marginTop: 50
     }
 })

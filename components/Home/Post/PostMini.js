@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/core'
 import React, { useEffect, useState } from 'react'
-import { View, Text, StyleSheet, Dimensions, Platform } from 'react-native'
+import { StyleSheet, Dimensions, Platform, TouchableOpacity } from 'react-native'
 
 const window = Dimensions.get("window");
 const divideBig = 5.5;
@@ -29,7 +29,7 @@ export default function PostMini({ p_id, style }) {
         navigation.navigate("Explore", { p_id: p_id, u_id: "test" })
     }
     return (
-        <View onPress={openRelatedPosts} style={[styles.image, { height: dimensions, width: dimensions }, style]}></View>
+        <TouchableOpacity onPress={openRelatedPosts} style={[styles.image, { height: dimensions, width: dimensions }, style]}></TouchableOpacity>
     )
 }
 

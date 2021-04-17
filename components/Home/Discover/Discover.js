@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Platform, FlatList } from 'react-native'
+import { StyleSheet, Platform, FlatList, StatusBar } from 'react-native'
 import { Searchbar } from 'react-native-paper'
 import Post from '../Post/PostMini'
 
@@ -34,7 +34,7 @@ export default function Discover() {
                 initialNumToRender={10}
                 refreshing={true}
                 style={styles.list}
-                ListHeaderComponent={Story}
+                ListHeaderComponent={Searchbar}
                 numColumns={3}
                 columnWrapperStyle={styles.col}
             />
@@ -43,7 +43,7 @@ export default function Discover() {
 
 const styles = StyleSheet.create({
     list: {
-        marginTop: 0,
+        marginTop: StatusBar.currentHeight,
     },
     col: {
         justifyContent: 'flex-start',

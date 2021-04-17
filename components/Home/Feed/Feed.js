@@ -9,7 +9,7 @@ export default function Feed() {
     return (
         <View style={styles.container}>
             <Header />
-            <Posts />
+            <Posts showStory={true} />
         </View>
     )
 }
