@@ -4,32 +4,59 @@
 │   ├── favicon.png
 │   ├── icon.png
 │   └── splash.png
-├── comp
-│   ├── auth
+├── components
+│   ├── Archive
+│   ├── Auth
 │   │   ├── Landing.js
 │   │   ├── Login.js
 │   │   └── Register.js
-│   ├── main
-│   │   ├── Add.js
-│   │   ├── Feed.js
-│   │   └── Profile.js
-│   └── Main.js
+│   ├── CloseFriends
+│   │   └── CloseFriends.js
+│   ├── Comments
+│   │   └── Comments.js
+│   ├── DiscoverPeople
+│   │   └── DiscoverPeople.js
+│   ├── Edit
+│   │   └── Edit.js
+│   ├── Home
+│   │   ├── Add
+│   │   ├── Chat
+│   │   │   └── Chat.js
+│   │   ├── Discover
+│   │   │   ├── Discover.js
+│   │   │   └── DiscoverStack.js
+│   │   ├── Feed
+│   │   │   ├── Feed.js
+│   │   │   ├── FeedStack.js
+│   │   │   ├── Header.js
+│   │   │   └── Story.js
+│   │   ├── Post
+│   │   │   ├── Post.js
+│   │   │   └── Posts.js
+│   │   ├── Profile
+│   │   │   ├── Profile.js
+│   │   │   └── ProfileStack.js
+│   │   └── Home.js
+│   ├── QRCode
+│   │   └── QRCode.js
+│   ├── LoggedIn.js
+│   ├── LoggedOut.js
+│   ├── Main.js
+│   └── RootNavigator.js
+├── encryption
+│   ├── data.js
+│   └── pass.js
 ├── firebase
-│   └── firebase.js
+│   ├── firebase.js
+│   └── functions.js
 ├── redux
-│   ├── actions
-│   │   └── index.js
-│   ├── constants
-│   │   └── index.js
-│   ├── reducers
-│   │   ├── index.js
-│   │   └── user.js
+│   ├── slices
+│   │   └── userSlice.js
 │   └── store
-│       └── index.js
+│       └── app.js
 ├── App.js
 ├── app.json
 ├── babel.config.js
-├── _clang-format
 ├── CONFLICTS.md
 ├── DOC_STRUCTURE
 ├── package.json
@@ -38,4 +65,4 @@
 ├── TODO.md
 └── WORKFLOW.md
 
-10 directories, 28 files
+21 directories, 44 files
