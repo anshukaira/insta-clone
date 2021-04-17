@@ -1,15 +1,26 @@
 import React from 'react'
-import { SafeAreaView } from 'react-native'
+import { View, StyleSheet, StatusBar } from 'react-native'
 import Posts from '../Post/Posts'
 import Header from './Header'
-import Story from './Story'
+import { theme } from '../../Style/Constants'
+
 
 export default function Feed() {
     return (
-        <SafeAreaView>
+        <View style={styles.container}>
             <Header />
-            <Story />
             <Posts />
-        </SafeAreaView>
+        </View>
     )
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: theme.lightbg,
+        color: theme.lightfont,
+        justifyContent: 'flex-start',
+        flexDirection: 'column',
+        paddingTop: StatusBar.currentHeight,
+    }
+})
