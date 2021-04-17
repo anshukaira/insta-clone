@@ -5,9 +5,9 @@ import { theme } from '../../Style/Constants'
 export default function Header() {
     return (
         <View style={styles.container}>
-            <Text style={styles.text}>Icon 1</Text>
+            <Text style={styles.iconleft}>Icon</Text>
             <Text style={styles.text}>MIRAI</Text>
-            <Text style={styles.text}>Message Icon</Text>
+            <Text style={styles.iconright}>M Icon</Text>
         </View>
     )
 }
@@ -15,9 +15,9 @@ export default function Header() {
 const styles = StyleSheet.create({
     container: {
         position: 'absolute',
-        backgroundColor: theme.darkbg,
+        backgroundColor: theme.lightbg,
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         padding: 10,
         alignItems: 'center',
         height: 50,
@@ -27,7 +27,19 @@ const styles = StyleSheet.create({
         width: '100%'
     },
     text: {
-        color: theme.darkfont,
+        color: theme.lightfont,
+        fontSize: 24,
+    },
+    iconleft: {
+        position: 'absolute',
+        left: 20,
+        color: theme.lightfont,
+        fontSize: 24
+    },
+    iconright: {
+        position: 'absolute',
+        right: 20,
+        color: theme.lightfont,
         fontSize: 24
     }
 })
