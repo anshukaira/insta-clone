@@ -63,7 +63,7 @@ function Register() {
             <View style={styles.inputContainer}>
                 <TouchableOpacity
                     style={styles.button}
-                    onPress={signUp(name, email, password)}
+                    onPress={() => signUp(name, email, password)}
                 >
                     <Text style={styles.text}>Sign Up</Text>
                 </TouchableOpacity>

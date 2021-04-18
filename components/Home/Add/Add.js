@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { View, Text, Platform, Button, Image } from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
+import { addPost } from '../../../firebase/functions';
+import { useSelector } from 'react-redux';
+import { selectUser } from '../../../redux/slices/userSlice'
 
 export default function Add() {
+    const user = useSelector(selectUser);
     const [hasCameraPermission, setHasCameraPermission] = useState(null);
     const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
     const [image, setImage] = useState(null)
@@ -79,7 +83,7 @@ export default function Add() {
     };
 
     const upload = () => {
-        console.log("Dummy upload here")
+        addPost(image, "Testing Post Upload", 'PUBLIC', user.uid)
     }
 
     return (

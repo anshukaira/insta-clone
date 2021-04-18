@@ -17,7 +17,7 @@ function Main() {
             setLoading(true);
             if (_user) {
                 console.log(_user)
-                let userData = { uid: "testing" }
+                let userData = { uid: _user.uid }
                 dispatch(set(userData))
             } else {
                 dispatch(unset())
