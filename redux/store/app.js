@@ -1,4 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit'
+import allPostsReducer from '../slices/allPostsSlice'
 import allUserReducer from '../slices/allUserSlice'
 import cachedPostsReducer from '../slices/cachedPosts'
 import protPostsReducer from '../slices/protPostsSlice'
@@ -12,6 +13,7 @@ export default configureStore({
         allUser: allUserReducer,
         pubPosts: pubPostsReducer,
         protPosts: protPostsReducer,
-        cachedPosts: cachedPostsReducer
+        cachedPosts: cachedPostsReducer,
+        allPosts: allPostsReducer
     }
 })

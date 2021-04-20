@@ -6,7 +6,8 @@ import DiscoverScreen from './Discover/DiscoverStack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../../redux/slices/userSlice';
-import { selectAllUser } from '../../redux/slices/allUserSlice';
+import ChatScreen from './Chat/Chat'
+import ActivityScreen from './Activity/Activity'
 
 const Tab = createBottomTabNavigator();
 
@@ -15,7 +16,9 @@ export default function Home() {
     return (
         <Tab.Navigator tabBarOptions={{ showLabel: false }}>
             {stackShortner("Feed", FeedScreen, "home")}
-            {stackShortner("Discover", DiscoverScreen, "image-search", { uid: "discover" })}
+            {stackShortner("Discover", DiscoverScreen, "image-search", { uid: user.uid })}
+            {stackShortner("Activity", ActivityScreen, "account-circle", { uid: user.uid })}
+            {stackShortner("Chat", ChatScreen, "account-circle", { uid: user.uid })}
             {stackShortner("Profile", ProfileScreen, "account-circle", { uid: user.uid })}
         </Tab.Navigator>
     )

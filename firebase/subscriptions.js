@@ -4,6 +4,7 @@ import { set as setUser } from '../redux/slices/userSlice';
 import { set as setAllUser } from '../redux/slices/allUserSlice';
 import { set as setPubPosts } from '../redux/slices/pubPostsSlice';
 import { set as setProtPosts } from '../redux/slices/protPostsSlice';
+import { addProtected, addPublic } from '../redux/slices/allPostsSlice';
 
 /**
  * TODO: Make a global dict for storing all subscription and based on it check if need to subscribe or reuse existing one
@@ -51,6 +52,7 @@ export function subPublicPosts() {
                 console.log("Update in public posts database!! fetching new content!!");
                 let data = doc.data();
                 store.dispatch(setPubPosts(data));
+                store.dispatch(addPublic(data));
 
             } else {
                 console.log("pubPosts does not exists. Cant subscribe")
@@ -67,6 +69,7 @@ export function subProtPosts() {
                 console.log("Update in public prot posts database!! fetching new content!!");
                 let data = doc.data();
                 store.dispatch(setProtPosts(data));
+                store.dispatch(addProtected(data))
 
             } else {
                 console.log("protPosts does not exists. Cant subscribe")

@@ -1,50 +1,50 @@
-import React from 'react'
-import { View, Platform, StyleSheet, FlatList } from 'react-native'
+import React, { useEffect } from 'react'
+import { View, Platform, StyleSheet, FlatList, Button } from 'react-native'
 import Post from './Post'
 import Story from '../Feed/Story'
 import { useRoute } from '@react-navigation/core'
+import { ScrollView } from 'react-native-gesture-handler'
 
+const LIMIT = 10;
+
+function updateNextVisible(visible, data, LIMIT) {
+    let newVisible = [];
+    let count = 0;
+    for (item in data) {
+        if (!visible.includes(item)) {
+            count++;
+        }
+        newVisible.push(item);
+        if (count > LIMIT) {
+            break;
+        }
+    }
+    return newVisible;
+}
 
 export default function Posts({ showStory, margin, data }) {
-    const route = useRoute();
-    console.log("route", route.params)
-    if (Platform.OS === 'web') {
-        return (
-            <View style={[styles.container, { marginTop: margin }]}>
-                <FlatList
-                    data={data}
-                    renderItem={({ item }) => {
-                        return <Post pid={item.pid} key={item.pid} />
-                    }}
-                    keyExtractor={item => item.pid}
-                    // initialNumToRender={5}
-                    refreshing={true}
-                    style={styles.list}
-                    ListHeaderComponent={showStory ? Story : null}
-                    numColumns={2}
-                    windowSize={21}
-                    columnWrapperStyle={styles.col}
-                    ListHeaderComponentStyle={styles.header}
-                />
-            </View>
-        )
+    const [visible, setVisible] = useState([]);
+    useEffect(() => {
+        const newVisible = updateNextVisible(visible, data, end, LIMIT)
+        setVisible(newVisible);
+    }, [])
+
+    const loadMore = () => {
+        const newVisible = updateNextVisible(visible, data, end, LIMIT)
+        setVisible(newVisible);
     }
+
     return (
         <View style={[styles.container, { marginTop: margin }]}>
-            <FlatList
-                data={data}
-                renderItem={({ item }) => {
-                    return <Post pid={item.pid} />
-                }}
-                keyExtractor={item => item.pid}
-                // initialNumToRender={10}
-                refreshing={true}
-                style={styles.list}
-                windowSize={21}
-                ListHeaderComponent={showStory ? Story : null}
-                ListHeaderComponentStyle={styles.header}
-                numColumns={1}
-            />
+            <ScrollView>
+                {showStory ? <Story /> : null}
+                {visible.map((item) => {
+                    return (
+                        <Post pid={item.pid} key={item.pid} />
+                    )
+                })}
+                <Button title="Load More" onPress={loadMore} />
+            </ScrollView>
         </View>
     )
 }
