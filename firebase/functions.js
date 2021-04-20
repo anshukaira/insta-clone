@@ -1,7 +1,8 @@
 import firebase from 'firebase';
-import { encryptData } from '../encryption/data'
-import { encryptPassword } from '../encryption/pass';
 import { auth, firestore, storage } from './firebase'
+import store from '../redux/store/app'
+import { addPost as addCachedPost } from '../redux/slices/cachedPosts'
+import { set as setUser } from '../redux/slices/userSlice'
 
 /**
  * Authentication Functions
@@ -13,7 +14,7 @@ export function signUp(name, email, pass) {
     auth.createUserWithEmailAndPassword(email, pass)
         .then((result) => {
             createUserInDatabase(result.user.uid, name || result.user.displayName, result.user.email, pass);
-            console.log("signup", result);
+            console.log("signup", result.user);
         })
         .catch(error => console.log(error.message));
 }
@@ -22,7 +23,7 @@ export function signUp(name, email, pass) {
 export function signIn(email, pass) {
     auth.signInWithEmailAndPassword(email, pass)
         .then(result => {
-            firestore.collection("user").doc(result.user.uid).get().then((doc) => {
+            firestore.collection("users").doc(result.user.uid).get().then((doc) => {
                 if (doc.exists) {
                     console.log("Welcome Back!!");
                 } else {
@@ -50,45 +51,36 @@ export function signOut() {
 function createUserInDatabase(uid, name, email, pass) {
     let batch = firestore.batch();
     let userRef = firestore.collection("users").doc(uid);
-    let privateRef = userRef.collection("data").doc("private");
-    let pubicRef = userRef.collection("data").doc("public");
-    let protectedRef = userRef.collection("data").doc("protected");
-    let postPublicRef = firestore.collection('posts').doc('public');
-    let postProtectedRef = firestore.collection('posts').doc('protected');
+    let pubRef = firestore.collection("public").doc("users");
 
-    batch.set(privateRef, {
-        email: encryptData(email),
-        pass: encryptPassword(pass),
-        chats: {},
-        cposts: [],
-        sposts: []
-    }, { merge: true });
+    let visibility = 'PRIVATE'
 
-    batch.set(pubicRef, {
+    batch.set(userRef, {
         name: name,
-        npost: 0,
-        nfollower: 0,
-        nfollowing: 0,
+        email: email,
+        password: pass,
         dp: "",
         about: "",
-        del: false,
-        vis: ""
-    }, { merge: true });
-
-    batch.set(protectedRef, {
-        follower: [],
-        following: []
+        delete: false,
+        vis: visibility,
+        followers: [],
+        following: [],
+        followReq: [],
+        pendingReq: [],
+        activity: [{ time: Date.now(), content: "Account Created" }],
+        chats: {},
+        saved: []
     }, { merge: true })
 
-    batch.set(postPublicRef, {
-        [uid]: []
-    }, { merge: true });
+    batch.set(pubRef, {
+        [uid]: {
+            name: name,
+            vis: visibility,
+            delete: false
+        }
+    }, { merge: true })
 
-    batch.set(postProtectedRef, {
-        [uid]: []
-    }, { merge: true });
-
-    batch.commit().then(() => console.log("Created Account!!")).catch((err) => console.log(error.message))
+    batch.commit().then(() => console.log("Created Account!!")).catch((err) => console.log(err.message))
 }
 
 
@@ -97,36 +89,49 @@ function createUserInDatabase(uid, name, email, pass) {
  * Posts related Functions Here
  */
 
-export function addPost(img, caption, visibility, uid) {
-
-    if (visibility !== 'PRIVATE' && visibility !== 'PUBLIC' && visibility !== 'PROTECTED') {
-        visibility = 'PRIVATE'
-    }
+export async function addPost(img, caption, visibility, uid) {
 
     let newPostRef = firestore.collection('users').doc(uid).collection("posts").doc()
     let pid = newPostRef.id;
     let rootRef = storage.ref();
+    let currentTime = Date.now();
+
+    const response = await fetch(img);
+    const blob = await response.blob();
+
     // store post in user/{uid}/posts/{pid}
     let fileRef = rootRef.child('users/' + uid + '/posts/' + pid);
-    fileRef.putString(img, 'data_url').then((snapshot) => {
+    fileRef.put(blob).then((snapshot) => {
         console.log("image uploaded with p_id: " + pid)
         snapshot.ref.getDownloadURL().then((downloadURL) => {
             console.log(downloadURL)
             newPostRef.set({
                 caption: caption,
-                vis: visibility,
-                comments: {},
+                comments: [],
                 url: downloadURL,
                 likes: [],
-                time: firebase.firestore.FieldValue.serverTimestamp()
+                time: currentTime
             }, { merge: true }).then(() => {
+                let toBeAdded = {
+                    uid: uid,
+                    numLike: 0,
+                    numComments: 0,
+                    time: currentTime
+                }
                 console.log("Success uploading post data")
-                if (visibility !== 'PRIVATE')
-                    firestore.collection("posts").doc(visibility.toLowerCase()).update({
-                        [uid]: firebase.firestore.FieldValue.arrayUnion(pid)
+                if (visibility === 'PUBLIC') {
+                    firestore.collection("public").doc("pubPosts").update({
+                        [pid]: toBeAdded
                     }).then(() => {
                         console.log('Updated Collection')
                     })
+                } else if (visibility === 'PROTECTED') {
+                    firestore.collection("public").doc("protPosts").update({
+                        [pid]: toBeAdded
+                    }).then(() => {
+                        console.log('Updated Collection')
+                    })
+                }
             })
 
         })
@@ -139,5 +144,113 @@ export function addPost(img, caption, visibility, uid) {
         fileRef.delete().then(() => {
             console.log("Deleted image Scussfully");
         })
+        let toBeAdded = {
+            uid: uid,
+            numLike: 0,
+            numComments: 0,
+            time: currentTime
+        }
+        if (visibility == 'PUBLIC') {
+            firestore.collection("public").doc("pubPosts").update({
+                [pid]: toBeAdded
+            }).then(() => {
+                console.log('Deleted from Collection')
+            })
+        } else if (visibility == 'PROTECTED') {
+            firestore.collection("public").doc("protPosts").update({
+                [pid]: toBeAdded
+            }).then(() => {
+                console.log('Deleted Collection')
+            })
+        }
+    })
+}
+
+
+export function updateCachedPosts(pid) {
+    const { cachedPosts, pubPosts, protPosts } = store.getState();
+    console.log(pid, cachedPosts)
+    let shouldFetch = true;
+    let uid = null;
+    if (pubPosts[pid]) {
+        uid = pubPosts[pid].uid;
+    } else if (protPosts[pid]) {
+
+        uid = protPosts[pid].uid;
+    }
+    if (uid === null) {
+        console.log("Error updating cache no uid");
+        return;
+    }
+    if (cachedPosts[pid]) {
+        shouldFetch = false;
+    }
+
+    if (shouldFetch) {
+        store.dispatch(addCachedPost({ key: pid, content: {} }))
+        firestore.collection("users").doc(uid).collection("posts").doc(pid).get().then((doc) => {
+            if (doc.exists) {
+                console.log("updating cachedPost" + pid)
+                let docData = doc.data()
+                let data = {
+                    key: pid,
+                    content: { ...docData, uid: uid }
+                }
+                store.dispatch(addCachedPost(data));
+            } else {
+                console.log(pid + " does not exists");
+            }
+        }).catch(err => console.log(err.message))
+    } else {
+        console.log(pid + " aready present in cache");
+    }
+}
+
+
+
+/**
+ * Actions functions like [Like,Comment]
+*/
+
+export async function likePost(uid, pid, myuid) {
+    let batch = firestore.batch();
+    let postRef = firestore.collection("users").doc(uid).collection("posts").doc(pid);
+    let pubPostRef = firestore.collection("public").doc("pubPosts");
+    batch.update(postRef, {
+        likes: firebase.firestore.FieldValue.arrayUnion(myuid)
+    })
+    batch.update(pubPostRef, {
+        [pid + '.numlikes']: firebase.firestore.FieldValue.increment(1)
+    })
+    batch.commit().then(() => console.log("Liked" + pid)).catch(err => console.log(err.message))
+}
+
+export async function unlikePost(uid, pid, myuid) {
+    let batch = firestore.batch();
+    let postRef = firestore.collection("users").doc(uid).collection("posts").doc(pid);
+    let pubPostRef = firestore.collection("public").doc("pubPosts");
+    batch.update(postRef, {
+        likes: firebase.firestore.FieldValue.arrayRemove(myuid)
+    })
+    batch.update(pubPostRef, {
+        [pid + '.numlikes']: firebase.firestore.FieldValue.increment(-1)
+    })
+    batch.commit().then(() => console.log("Unliked" + pid)).catch(err => console.log(err.message))
+}
+
+
+
+export async function setUserStateFromFirebase(uid) {
+    await firestore.collection("users").doc(uid).get().then((doc) => {
+        if (doc.exists) {
+            const data = doc.data();
+            let state = {
+                uid: uid,
+                ...data
+            }
+            store.dispatch(setUser(state))
+        } else {
+            console.log("user data doen't exists")
+        }
     })
 }

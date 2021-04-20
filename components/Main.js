@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { selectUser, set, unset } from '../redux/slices/userSlice'
 import { auth } from '../firebase/firebase'
 
 import LoggedIn from './LoggedIn'
 import LoggedOut from './LoggedOut'
 import { Text } from 'react-native'
+import { useDispatch, useSelector } from 'react-redux'
+import { selectUser, set as setUser, unset as unsetUser } from '../redux/slices/userSlice'
 
 function Main() {
     const user = useSelector(selectUser);
@@ -13,15 +13,14 @@ function Main() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged((_user) => {
+        const unsubscribe = auth.onAuthStateChanged(async (_user) => {
             setLoading(true);
             if (_user) {
-                console.log(_user)
-                let userData = { uid: _user.uid }
-                dispatch(set(userData))
+                console.log("Logged in as: ", _user.uid)
+                dispatch(setUser({ uid: _user.uid }));
             } else {
-                dispatch(unset())
                 console.log("Logged Out User");
+                dispatch(unsetUser());
             }
             setLoading(false);
         })

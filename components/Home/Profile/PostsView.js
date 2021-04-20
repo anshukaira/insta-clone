@@ -4,6 +4,7 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import Post from '../Post/PostMini'
 import { useSelector } from 'react-redux'
 import { selectUser } from '../../../redux/slices/userSlice'
+import { useRoute } from '@react-navigation/core'
 
 const DATA = Array.from(Array(7), (x, index) => {
     return {
@@ -15,17 +16,18 @@ const Tab = createMaterialTopTabNavigator();
 export default function PostsView({ uid }) {
     return (
         <View>
-            <Tab.Navigator initialLayout={{ width: Dimensions.get('window').width }}>
-                <Tab.Screen name="Normal" component={Normal} />
-                <Tab.Screen name="Normal2" component={Normal} />
+            <Tab.Navigator initialLayout={{ width: Dimensions.get('window').width }} style={{ flex: 1 }}>
+                <Tab.Screen name="Normal" component={Normal} initialParams={{ uid: uid }} />
             </Tab.Navigator>
         </View>
     )
 }
 
 function Normal(params) {
-    return (
-        Platform.OS === 'web' ?
+    const route = useRoute();
+    console.log(route.params)
+    if (Platform.OS === 'web') {
+        return (
             <FlatList
                 data={DATA}
                 renderItem={({ item }) => {
@@ -37,19 +39,22 @@ function Normal(params) {
                 style={styles.list}
                 numColumns={5}
                 columnWrapperStyle={styles.col}
-            /> :
-            <FlatList
-                data={DATA}
-                renderItem={({ item }) => {
-                    return <Post style={styles.listItem} p_id={item.id} navigateTo="Posts" />
-                }}
-                keyExtractor={item => item.id}
-                initialNumToRender={10}
-                refreshing={true}
-                style={styles.list}
-                numColumns={3}
-                columnWrapperStyle={styles.col}
             />
+        )
+    }
+    return (
+        <FlatList
+            data={DATA}
+            renderItem={({ item }) => {
+                return <Post style={styles.listItem} p_id={item.id} navigateTo="Posts" />
+            }}
+            keyExtractor={item => item.id}
+            initialNumToRender={10}
+            refreshing={true}
+            style={styles.list}
+            numColumns={3}
+            columnWrapperStyle={styles.col}
+        />
     )
 }
 

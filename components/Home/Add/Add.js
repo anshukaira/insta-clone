@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { View, Text, Platform, Button, Image } from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
-import { addPost } from '../../../firebase/functions';
+import { addPost, addPostNative } from '../../../firebase/functions';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../../../redux/slices/userSlice'
 

@@ -1,11 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    uid: null
 }
 
-export const userSlice = createSlice({
-    name: 'user',
+export const pubPostsSlice = createSlice({
+    name: 'pubPosts',
     initialState,
     reducers: {
         set: (state, action) => {
@@ -15,7 +14,7 @@ export const userSlice = createSlice({
     }
 })
 
-export const selectUser = (state) => state.user
+export const selectPubPosts = (state) => state.pubPosts
 
-export const { set, unset } = userSlice.actions
-export default userSlice.reducer
+export const { set, unset } = pubPostsSlice.actions
+export default pubPostsSlice.reducer

@@ -1,46 +1,51 @@
 import React from 'react'
-import { Platform, StyleSheet, FlatList } from 'react-native'
+import { View, Platform, StyleSheet, FlatList } from 'react-native'
 import Post from './Post'
 import Story from '../Feed/Story'
+import { useRoute } from '@react-navigation/core'
 
-const DATA = Array.from(Array(7), (x, index) => {
-    return {
-        id: 'id-' + index
+
+export default function Posts({ showStory, margin, data }) {
+    const route = useRoute();
+    console.log("route", route.params)
+    if (Platform.OS === 'web') {
+        return (
+            <View style={[styles.container, { marginTop: margin }]}>
+                <FlatList
+                    data={data}
+                    renderItem={({ item }) => {
+                        return <Post pid={item.pid} key={item.pid} />
+                    }}
+                    keyExtractor={item => item.pid}
+                    // initialNumToRender={5}
+                    refreshing={true}
+                    style={styles.list}
+                    ListHeaderComponent={showStory ? Story : null}
+                    numColumns={2}
+                    windowSize={21}
+                    columnWrapperStyle={styles.col}
+                    ListHeaderComponentStyle={styles.header}
+                />
+            </View>
+        )
     }
-})
-
-
-
-export default function Posts({ showStory }) {
     return (
-        Platform.OS === 'web' ?
+        <View style={[styles.container, { marginTop: margin }]}>
             <FlatList
-                data={DATA}
+                data={data}
                 renderItem={({ item }) => {
-                    return <Post p_id={item.id} />
+                    return <Post pid={item.pid} />
                 }}
-                keyExtractor={item => item.id}
-                initialNumToRender={10}
+                keyExtractor={item => item.pid}
+                // initialNumToRender={10}
                 refreshing={true}
                 style={styles.list}
-                ListHeaderComponent={showStory ? Story : null}
-                numColumns={2}
-                columnWrapperStyle={styles.col}
-                ListHeaderComponentStyle={styles.header}
-            /> :
-            <FlatList
-                data={DATA}
-                renderItem={({ item }) => {
-                    return <Post pid={item.id} />
-                }}
-                keyExtractor={item => item.id}
-                initialNumToRender={10}
-                refreshing={true}
-                style={styles.list}
+                windowSize={21}
                 ListHeaderComponent={showStory ? Story : null}
                 ListHeaderComponentStyle={styles.header}
                 numColumns={1}
             />
+        </View>
     )
 }
 
@@ -52,6 +57,10 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
     },
     header: {
-        marginTop: 50
+        // marginTop: 50
+    },
+    container: {
+        // marginTop: 50,
+        flex: 1
     }
 })

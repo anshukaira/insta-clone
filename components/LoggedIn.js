@@ -1,15 +1,34 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
 import HomeScreen from './Home/Home';
 import CommentScreen from './Comments/Comments'
 import OptionsScreen from './Options/Options';
 import EditScreen from './Edit/Edit'
 import AddScreen from './Home/Add/Add'
+import { useSelector } from 'react-redux';
+import { subAlllUser, subProtPosts, subPublicPosts, subUser } from '../firebase/subscriptions';
+import { selectUser } from '../redux/slices/userSlice';
+
 
 const Stack = createStackNavigator();
 
 
 function LoggedIn() {
+    const user = useSelector(selectUser);
+    useEffect(() => {
+        const unsubUser = subUser(user.uid);
+        const unsubAllUser = subAlllUser();
+        const unsubPubPosts = subPublicPosts();
+        const unsubProtPosts = subProtPosts();
+        return () => {
+            console.log("unsubscribing from events")
+            unsubUser();
+            unsubAllUser();
+            unsubPubPosts();
+            unsubProtPosts();
+        };
+    }, [])
+
     return (
         <Stack.Navigator initialRouteName="Home">
             <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
