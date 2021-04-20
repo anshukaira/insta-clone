@@ -63,7 +63,7 @@ export default function Post({ pid }) {
                 <Text onPress={openProfile} >{allUsers[currentPost.uid].name}</Text>
             </View>
             <View style={[styles.image, { height: dimensions, width: dimensions }]}>
-                <Image source={{ uri: currentPost.url }} style={{ height: '100%', resizeMode: 'fill' }} />
+                <Image source={{ uri: currentPost.url }} style={{ height: '100%', resizeMode: 'cover' }} />
             </View>
             <View style={styles.footer}>
                 <Text>{pid}</Text>

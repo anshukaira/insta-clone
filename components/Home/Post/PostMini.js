@@ -60,7 +60,7 @@ export default function PostMini({ pid, style, navigateTo }) {
     }
     return (
         <TouchableOpacity onPress={openRelatedPosts} style={[styles.image, { height: dimensions, width: dimensions }, style]}>
-            <Image source={{ uri: currentPost.url }} style={{ height: '100%', resizeMode: 'fill' }} />
+            <Image source={{ uri: currentPost.url }} style={{ height: '100%', resizeMode: 'cover' }} />
         </TouchableOpacity>
     )
 }

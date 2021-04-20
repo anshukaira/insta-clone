@@ -31,7 +31,7 @@ function Normal(params) {
             <FlatList
                 data={DATA}
                 renderItem={({ item }) => {
-                    return <Post style={styles.listItem} p_id={item.id} navigateTo="Posts" />
+                    return <Post style={styles.listItem} pid={item.id} navigateTo="Posts" />
                 }}
                 keyExtractor={item => item.id}
                 initialNumToRender={10}
