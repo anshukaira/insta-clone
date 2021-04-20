@@ -41,17 +41,17 @@ export default function Edit() {
                 <Text >Vis : </Text>
                 <Text 
                     onPress={() => setVis("PROTECTED")}
-                    style={styles.box}>
+                    style={vis == "PROTECTED" ? styles.greenBox : styles.box}>
                         Private
                 </Text>
                 <Text 
                     onPress={() => setVis("PUBLIC")}
-                    style={styles.box}>
+                    style={vis == "PUBLIC" ? styles.greenBox : styles.box}>
                         Public
                 </Text>
                 <Text 
                     onPress={() => setVis("PRIVATE")}
-                    style={styles.box}>
+                    style={vis == "PRIVATE" ? styles.greenBox : styles.box}>
                         Deactivate
                 </Text>
             </View>
@@ -114,6 +114,16 @@ const styles = StyleSheet.create(
             marginRight: 10,
             padding: 5,
             alignItems: 'center'
+        },
+        greenBox:{
+            borderWidth: 1,
+            borderRadius: 5,
+            marginLeft: 10,
+            marginRight: 10,
+            padding: 5,
+            alignItems: 'center',
+            backgroundColor: 'green',
+            color: 'white',
         }
 
 });
