@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { View, Platform, FlatList, StyleSheet, StatusBar, Dimensions } from 'react-native'
+import { View, Platform, FlatList, StyleSheet, StatusBar, Dimensions, Text } from 'react-native'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import Post from '../Post/PostMini'
 import { useRoute } from '@react-navigation/core'
 import { ScrollView } from 'react-native-gesture-handler'
 import { useSelector } from 'react-redux'
 import { selectAllPosts } from '../../../redux/slices/allPostsSlice'
+import { selectUser } from '../../../redux/slices/userSlice'
 
 function extractPostsList(allPosts, uid) {
     let userPosts = [];
@@ -18,11 +19,22 @@ function extractPostsList(allPosts, uid) {
 }
 
 const Tab = createMaterialTopTabNavigator();
-export default function PostsView({ uid }) {
+
+export default function PostsView({ user }) {
+    const me = useSelector(selectUser);
+    if (me.uid !== user.uid && (user.vis == 'PROTECTED' || user.vis == 'PRIVATE') && !user.followers.includes(me.uid)) {
+        return (
+            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                <Text>
+                    This Account is Private. Send Follow req to View Posts
+                </Text>
+            </View>
+        )
+    }
     return (
         <View>
             <Tab.Navigator initialLayout={{ width: Dimensions.get('window').width }} style={{ flex: 1 }}>
-                <Tab.Screen name="Normal" component={Normal} initialParams={{ uid: uid }} />
+                <Tab.Screen name="Normal" component={Normal} initialParams={{ uid: user.uid }} />
             </Tab.Navigator>
         </View>
     )

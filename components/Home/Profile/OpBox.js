@@ -1,8 +1,11 @@
 import { useNavigation } from '@react-navigation/core'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { useSelector } from 'react-redux';
+import { followUser, sendFollowReq, unfollowUser, unsendFollowReq } from '../../../firebase/functions';
+import { selectUser } from '../../../redux/slices/userSlice';
 
-export function OwnBox({ uid }) {
+export function OwnBox({ user }) {
     const navigation = useNavigation();
 
     const gotoEdit = () => {
@@ -21,13 +24,51 @@ export function OwnBox({ uid }) {
     )
 }
 
-export function OtherBox({ uid }) {
+export function OtherBox({ user }) {
+    const me = useSelector(selectUser);
+    if (user.uid == me.uid) {
+        return null
+    }
+    const [following, setFollowing] = useState({ type: 'NOT', text: 'Follow' });
+    useEffect(() => {
+        if (user.followers.includes(me.uid)) {
+            setFollowing({ type: 'YES', text: 'Following' });
+        } else if (user.followReq.includes(me.uid)) {
+            setFollowing({ type: 'PENDING', text: 'Request Sent' });
+        } else {
+            setFollowing({ type: 'NOT', text: 'Follow' })
+        }
+    }, [user, me])
+
+    const followPress = () => {
+        if (following.type == 'NOT' && user.vis == 'PUBLIC') {
+            followUser(user.uid);
+            return;
+        }
+        if (following.type == 'NOT' && (user.vis == 'PROTECTED' || user.vis == 'PRIVATE')) {
+            sendFollowReq(user.uid);
+            return;
+        }
+        if (following.type == 'PENDING') {
+            unsendFollowReq(user.uid)
+            return;
+        }
+        if (following.type == 'YES') {
+            unfollowUser(user.uid)
+            return;
+        }
+    }
+
+    const messagePress = () => {
+
+    }
+
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={[styles.box, { flex: 6 }]}>
-                <Text>Following</Text>
+            <TouchableOpacity style={[styles.box, { flex: 6 }]} onPress={followPress}>
+                <Text>{following.text}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.box, { flex: 6 }]}>
+            <TouchableOpacity style={[styles.box, { flex: 6 }]} onPress={messagePress}>
                 <Text>Message</Text>
             </TouchableOpacity>
         </View>

@@ -9,6 +9,8 @@ import { set as setUser } from '../redux/slices/userSlice'
  * All Firebase Auth functions are included here.
  */
 
+// TODO: ADD ACTIVITY in ALL
+
 // Sign Up function
 export function signUp(name, email, pass) {
     auth.createUserWithEmailAndPassword(email, pass)
@@ -233,18 +235,105 @@ export async function unlikePost(uid, pid, myuid) {
 }
 
 
-
-export async function setUserStateFromFirebase(uid) {
-    await firestore.collection("users").doc(uid).get().then((doc) => {
-        if (doc.exists) {
-            const data = doc.data();
-            let state = {
-                uid: uid,
-                ...data
-            }
-            store.dispatch(setUser(state))
-        } else {
-            console.log("user data doen't exists")
-        }
+// Follow Methods
+export function followUser(uid) {
+    const { user } = store.getState();
+    let batch = firestore.batch();
+    let myDocRef = firestore.collection("users").doc(user.uid);
+    let userDocRef = firestore.collection("users").doc(uid);
+    batch.update(myDocRef, {
+        following: firebase.firestore.FieldValue.arrayUnion(uid)
     })
+    batch.update(userDocRef, {
+        followers: firebase.firestore.FieldValue.arrayUnion(user.uid)
+    })
+
+    batch.commit().then(() => console.log("Now Following user")).catch((err) => console.log(err.message))
+}
+
+export function unfollowUser(uid) {
+    const { user } = store.getState();
+    let batch = firestore.batch();
+    let myDocRef = firestore.collection("users").doc(user.uid);
+    let userDocRef = firestore.collection("users").doc(uid);
+    batch.update(myDocRef, {
+        following: firebase.firestore.FieldValue.arrayRemove(uid)
+    })
+    batch.update(userDocRef, {
+        followers: firebase.firestore.FieldValue.arrayRemove(user.uid)
+    })
+
+    batch.commit().then(() => console.log("Now Unfollowing user")).catch((err) => console.log(err.message))
+}
+
+export function unsendFollowReq(uid) {
+    const { user } = store.getState();
+    let batch = firestore.batch();
+    let myDocRef = firestore.collection("users").doc(user.uid);
+    let userDocRef = firestore.collection("users").doc(uid);
+    batch.update(myDocRef, {
+        pendingReq: firebase.firestore.FieldValue.arrayRemove(uid)
+    })
+    batch.update(userDocRef, {
+        followReq: firebase.firestore.FieldValue.arrayRemove(user.uid)
+    })
+
+    batch.commit().then(() => console.log("Unsend Follow Req")).catch((err) => console.log(err.message))
+}
+
+export function sendFollowReq(uid) {
+    const { user } = store.getState();
+    let batch = firestore.batch();
+    let myDocRef = firestore.collection("users").doc(user.uid);
+    let userDocRef = firestore.collection("users").doc(uid);
+    batch.update(myDocRef, {
+        pendingReq: firebase.firestore.FieldValue.arrayUnion(uid)
+    })
+    batch.update(userDocRef, {
+        followReq: firebase.firestore.FieldValue.arrayUnion(user.uid)
+    })
+
+    batch.commit().then(() => console.log("Send Follow Req")).catch((err) => console.log(err.message))
+}
+
+export function acceptFollowReq(uid) {
+    const { user } = store.getState();
+    let batch = firestore.batch();
+    let myDocRef = firestore.collection("users").doc(user.uid);
+    let userDocRef = firestore.collection("users").doc(uid);
+    let currentTime = Date.now();
+    let mycontent = "Accepted Follow Req of " + uid;
+    let usercontent = uid + " accepted your follow req";
+    batch.update(myDocRef, {
+        followReq: firebase.firestore.FieldValue.arrayRemove(uid),
+        followers: firebase.firestore.FieldValue.arrayUnion(uid),
+        activity: firebase.firestore.FieldValue.arrayUnion({ content: mycontent, time: currentTime })
+    })
+    batch.update(userDocRef, {
+        pendingReq: firebase.firestore.FieldValue.arrayRemove(user.uid),
+        following: firebase.firestore.FieldValue.arrayUnion(user.uid),
+        activity: firebase.firestore.FieldValue.arrayUnion({ content: usercontent, time: currentTime })
+    })
+
+    batch.commit().then(() => console.log("Aceepted Follow Req")).catch((err) => console.log(err.message))
+}
+
+export function rejectFollowReq(uid) {
+    const { user } = store.getState();
+    let currentTime = Date.now();
+    let mycontent = "Rejected Follow Req of " + uid;
+    let usercontent = uid + " rejected your follow req";
+    let batch = firestore.batch();
+    let myDocRef = firestore.collection("users").doc(user.uid);
+    let userDocRef = firestore.collection("users").doc(uid);
+    batch.update(myDocRef, {
+        followReq: firebase.firestore.FieldValue.arrayRemove(uid),
+        activity: firebase.firestore.FieldValue.arrayUnion({ content: mycontent, time: currentTime })
+    })
+    batch.update(userDocRef, {
+        pendingReq: firebase.firestore.FieldValue.arrayRemove(user.uid),
+        activity: firebase.firestore.FieldValue.arrayUnion({ content: usercontent, time: currentTime })
+    })
+
+    batch.commit().then(() => console.log("Aceepted Follow Req")).catch((err) => console.log(err.message))
 }

@@ -11,11 +11,11 @@ import { addProtected, addPublic } from '../redux/slices/allPostsSlice';
 */
 
 export function subUser(uid) {
-    console.log("subscribing user doc")
+    console.log("subscribing user " + uid)
     const unsubscribe = firestore.collection("users").doc(uid)
         .onSnapshot((doc) => {
             if (doc.exists) {
-                console.log("Update in user database!! fetching new content!!");
+                console.log("Update in user " + uid + " database!! fetching new content!!");
                 let data = {
                     uid: uid,
                     ...doc.data()
@@ -96,4 +96,23 @@ export function subPost(uid, pid, setter) {
             }
         })
     return unsubscribe
+}
+
+
+export function subAnotherUser(uid, setter) {
+    console.log("subscribing user " + uid)
+    const unsubscribe = firestore.collection("users").doc(uid)
+        .onSnapshot((doc) => {
+            if (doc.exists) {
+                console.log("Update in user " + uid + " database!! fetching new content!!");
+                let data = {
+                    uid: uid,
+                    ...doc.data()
+                }
+                setter(data);
+            } else {
+                console.log("Opps! User doc down't exist. cant subscribe")
+            }
+        })
+    return unsubscribe;
 }
