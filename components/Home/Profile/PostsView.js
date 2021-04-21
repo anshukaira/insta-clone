@@ -1,16 +1,21 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { View, Platform, FlatList, StyleSheet, StatusBar, Dimensions } from 'react-native'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import Post from '../Post/PostMini'
-import { useSelector } from 'react-redux'
-import { selectUser } from '../../../redux/slices/userSlice'
 import { useRoute } from '@react-navigation/core'
+import { ScrollView } from 'react-native-gesture-handler'
+import { useSelector } from 'react-redux'
+import { selectAllPosts } from '../../../redux/slices/allPostsSlice'
 
-const DATA = Array.from(Array(7), (x, index) => {
-    return {
-        id: 'id-' + index
+function extractPostsList(allPosts, uid) {
+    let userPosts = [];
+    for (const key in allPosts) {
+        if (allPosts[key].uid == uid) {
+            userPosts.push({ pid: key, ...allPosts[key] })
+        }
     }
-})
+    return userPosts;
+}
 
 const Tab = createMaterialTopTabNavigator();
 export default function PostsView({ uid }) {
@@ -23,49 +28,37 @@ export default function PostsView({ uid }) {
     )
 }
 
-function Normal(params) {
+function Normal() {
+    const allPosts = useSelector(selectAllPosts);
+    const [currentPostList, setCurrentPostList] = useState([]);
     const route = useRoute();
-    console.log(route.params)
-    if (Platform.OS === 'web') {
-        return (
-            <FlatList
-                data={DATA}
-                renderItem={({ item }) => {
-                    return <Post style={styles.listItem} pid={item.id} navigateTo="Posts" />
-                }}
-                keyExtractor={item => item.id}
-                initialNumToRender={10}
-                refreshing={true}
-                style={styles.list}
-                numColumns={5}
-                columnWrapperStyle={styles.col}
-            />
-        )
-    }
+    useEffect(() => {
+        const data = extractPostsList(allPosts, route.params.uid)
+        setCurrentPostList(data)
+    }, [allPosts])
+
     return (
-        <FlatList
-            data={DATA}
-            renderItem={({ item }) => {
-                return <Post style={styles.listItem} p_id={item.id} navigateTo="Posts" />
-            }}
-            keyExtractor={item => item.id}
-            initialNumToRender={10}
-            refreshing={true}
-            style={styles.list}
-            numColumns={3}
-            columnWrapperStyle={styles.col}
-        />
+        <View style={styles.container}>
+            <ScrollView contentContainerStyle={styles.scroll}>
+                {currentPostList.map((item) => {
+                    return (
+                        <Post key={item.pid} pid={item.pid} navigateTo="Posts" style={styles.item} />
+                    )
+                })}
+            </ScrollView>
+        </View>
     )
 }
 
 const styles = StyleSheet.create({
-    list: {
-        marginTop: StatusBar.currentHeight,
+    container: {
+        flex: 1
     },
-    col: {
-        justifyContent: 'flex-start',
+    scroll: {
+        flexDirection: 'row',
+        flexWrap: 'wrap'
     },
-    listItem: {
-        margin: 10
+    item: {
+        margin: 5
     }
 })

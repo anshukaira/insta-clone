@@ -13,15 +13,15 @@ import { selectAllUser } from '../../../redux/slices/allUserSlice'
 export default function Profile({ route }) {
     const user = useSelector(selectUser)
     const allUser = useSelector(selectAllUser)
-    const style = user.uid === route.params.uid ? { marginTop: 50 } : { marginTop: 0 };
-    const paddingTop = user.uid === route.params.uid ? { paddingTop: StatusBar.currentHeight } : { paddingTop: 0 };
+    const style = route.params.screen == 'Post' ? { marginTop: 0 } : { marginTop: 50 };
+    const paddingTop = route.params.screen == 'Post' ? { paddingTop: 0 } : { paddingTop: StatusBar.currentHeight };
     return (
         <View style={[styles.container, paddingTop]}>
-            {user.uid === route.params.uid ? <Header uid={allUser[user.uid].name} /> : <></>}
+            {route.params.screen == 'Home' ? <Header uid={allUser[user.uid].name} /> : <></>}
             <ScrollView>
                 <ProfileBox uid={route.params.uid} style={style} />
-                {user.uid === route.params.uid ? <OwnBox uid={user.uid} /> : <OtherBox uid={route.params.uid} />}
-                <PostsView uid={route.params.uid} />
+                {route.params.screen == 'Home' ? <OwnBox uid={user.uid} /> : <OtherBox uid={route.params.uid} />}
+                <PostsView uid={route.params.uid} navigateTo="Posts" />
             </ScrollView>
         </View>
     )

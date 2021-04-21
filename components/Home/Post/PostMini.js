@@ -4,9 +4,8 @@ import { Text, View, StyleSheet, Dimensions, Platform, TouchableOpacity, Image }
 import { useSelector } from 'react-redux';
 import { selectAllUser } from '../../../redux/slices/allUserSlice';
 import { selectCachedPosts } from '../../../redux/slices/cachedPosts';
-import { selectProtPosts } from '../../../redux/slices/protPostsSlice';
-import { selectPubPosts } from '../../../redux/slices/pubPostsSlice';
 import { updateCachedPosts } from '../../../firebase/functions'
+import { selectAllPosts } from '../../../redux/slices/allPostsSlice';
 
 
 const window = Dimensions.get("window");
@@ -14,12 +13,22 @@ const divideBig = 5.5;
 const divideSmall = 3.5;
 const initialWidth = Platform.OS === 'web' ? window.width / divideBig : window.width / divideSmall;
 
+
+const createSimilarPostList = (pid, uid, allPosts) => {
+    let list = [];
+    for (const key in allPosts) {
+        if (allPosts[key].uid == uid) {
+            list.push({ pid: key, ...allPosts[key] })
+        }
+    }
+    return list
+}
+
 export default function PostMini({ pid, style, navigateTo }) {
     const navigation = useNavigation();
     const [dimensions, setDimensions] = useState(initialWidth);
 
-    const pubPosts = useSelector(selectPubPosts);
-    const protPosts = useSelector(selectProtPosts);
+    const allPosts = useSelector(selectAllPosts);
     const allUsers = useSelector(selectAllUser);
     const cachedPosts = useSelector(selectCachedPosts);
 
@@ -27,7 +36,7 @@ export default function PostMini({ pid, style, navigateTo }) {
 
     useEffect(() => {
         updateCachedPosts(pid);
-    }, [pubPosts, protPosts, allUsers])
+    }, [allPosts, allUsers])
 
     useEffect(() => {
         setCurrentPost(cachedPosts[pid]);
@@ -48,7 +57,8 @@ export default function PostMini({ pid, style, navigateTo }) {
     });
 
     const openRelatedPosts = () => {
-        navigation.navigate(navigateTo || "Explore", { pid: pid, uid: currentPost.uid })
+        const data = createSimilarPostList(pid, currentPost.uid, allPosts);
+        navigation.navigate(navigateTo || "Explore", { pid: pid, uid: currentPost.uid, screen: 'PostMini', data: data })
     }
 
     if (!currentPost || !currentPost.uid) {

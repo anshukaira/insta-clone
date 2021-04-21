@@ -4,9 +4,8 @@ import { View, Text, StyleSheet, Dimensions, Platform, Image } from 'react-nativ
 import { useSelector } from 'react-redux';
 import { selectAllUser } from '../../../redux/slices/allUserSlice';
 import { selectCachedPosts } from '../../../redux/slices/cachedPosts';
-import { selectProtPosts } from '../../../redux/slices/protPostsSlice';
-import { selectPubPosts } from '../../../redux/slices/pubPostsSlice';
 import { updateCachedPosts } from '../../../firebase/functions'
+import { selectAllPosts } from '../../../redux/slices/allPostsSlice';
 
 const window = Dimensions.get("window");
 const divide = 2.5;
@@ -15,8 +14,7 @@ const initialWidth = Platform.OS === 'web' ? window.width / divide : window.widt
 export default function Post({ pid }) {
     const navigation = useNavigation();
     const [dimensions, setDimensions] = useState(initialWidth);
-    const pubPosts = useSelector(selectPubPosts);
-    const protPosts = useSelector(selectProtPosts);
+    const allPosts = useSelector(selectAllPosts);
     const allUsers = useSelector(selectAllUser);
     const cachedPosts = useSelector(selectCachedPosts);
 
@@ -24,7 +22,7 @@ export default function Post({ pid }) {
 
     useEffect(() => {
         updateCachedPosts(pid);
-    }, [pubPosts, protPosts, allUsers])
+    }, [allPosts, allUsers])
 
     useEffect(() => {
         setCurrentPost(cachedPosts[pid]);
@@ -47,7 +45,7 @@ export default function Post({ pid }) {
     }, []);
 
     const openProfile = () => {
-        navigation.navigate("Profile", { pid: pid, uid: currentPost.uid })
+        navigation.navigate("Profile", { pid: pid, uid: currentPost.uid, screen: 'Post' })
     }
 
     if (!currentPost || !currentPost.uid) {
@@ -68,8 +66,8 @@ export default function Post({ pid }) {
             <View style={styles.footer}>
                 <Text>{pid}</Text>
                 <Text>{currentPost.caption}</Text>
-                <Text>Likes: {currentPost.likes.length}</Text>
-                <Text>Comments: {currentPost.comments.length}</Text>
+                <Text>Likes: {allPosts[pid].numLike}</Text>
+                <Text>Comments: {allPosts[pid].numComments}</Text>
             </View>
         </View>
     )

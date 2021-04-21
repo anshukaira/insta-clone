@@ -1,18 +1,22 @@
-import React, { useEffect } from 'react'
-import { View, Platform, StyleSheet, FlatList, Button } from 'react-native'
+import React, { useEffect, useLayoutEffect, useState } from 'react'
+import { View, StyleSheet, Button } from 'react-native'
 import Post from './Post'
 import Story from '../Feed/Story'
-import { useRoute } from '@react-navigation/core'
 import { ScrollView } from 'react-native-gesture-handler'
+import { useNavigation, useRoute } from '@react-navigation/core'
 
-const LIMIT = 10;
+const LIMIT = 2;
 
 function updateNextVisible(visible, data, LIMIT) {
     let newVisible = [];
     let count = 0;
-    for (item in data) {
-        if (!visible.includes(item)) {
+    for (const item of data) {
+        let diff = visible.filter((it) => it.pid == item.pid)
+        if (diff.length == 0) {
             count++;
+        }
+        else {
+            console.log("exists")
         }
         newVisible.push(item);
         if (count > LIMIT) {
@@ -24,27 +28,44 @@ function updateNextVisible(visible, data, LIMIT) {
 
 export default function Posts({ showStory, margin, data }) {
     const [visible, setVisible] = useState([]);
-    useEffect(() => {
-        const newVisible = updateNextVisible(visible, data, end, LIMIT)
-        setVisible(newVisible);
-    }, [])
+    const [showLoad, setShowLoad] = useState(true);
+    const route = useRoute();
 
+    useEffect(() => {
+        let newVisible = []
+        if (route.params?.screen == 'PostMini') {
+            newVisible = updateNextVisible(visible, route.params.data, LIMIT);
+            setShowLoad(newVisible.length < route.params.data.length)
+        } else {
+            newVisible = updateNextVisible(visible, data, LIMIT)
+            setShowLoad(newVisible.length < data.length)
+        }
+        setVisible(newVisible);
+    }, [data])
     const loadMore = () => {
-        const newVisible = updateNextVisible(visible, data, end, LIMIT)
+        let newVisible = []
+        if (route.params?.screen == 'PostMini') {
+            newVisible = updateNextVisible(visible, route.params.data, LIMIT);
+            setShowLoad(newVisible.length < route.params.data.length)
+        } else {
+            newVisible = updateNextVisible(visible, data, LIMIT)
+            setShowLoad(newVisible.length < data.length)
+        }
         setVisible(newVisible);
     }
 
     return (
         <View style={[styles.container, { marginTop: margin }]}>
-            <ScrollView>
+            <ScrollView contentContainerStyle={styles.scroll}>
                 {showStory ? <Story /> : null}
                 {visible.map((item) => {
                     return (
                         <Post pid={item.pid} key={item.pid} />
                     )
                 })}
-                <Button title="Load More" onPress={loadMore} />
+
             </ScrollView>
+            {showLoad ? <Button title="Load More" onPress={loadMore} /> : null}
         </View>
     )
 }
@@ -62,5 +83,10 @@ const styles = StyleSheet.create({
     container: {
         // marginTop: 50,
         flex: 1
+    },
+    scroll: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-evenly'
     }
 })

@@ -167,26 +167,20 @@ export async function addPost(img, caption, visibility, uid) {
 }
 
 
-export function updateCachedPosts(pid) {
-    const { cachedPosts, pubPosts, protPosts } = store.getState();
-    console.log(pid, cachedPosts)
+export function updateCachedPosts(pid, forceUpdate = false) {
+    const { cachedPosts, allPosts } = store.getState();
     let shouldFetch = true;
-    let uid = null;
-    if (pubPosts[pid]) {
-        uid = pubPosts[pid].uid;
-    } else if (protPosts[pid]) {
-
-        uid = protPosts[pid].uid;
-    }
-    if (uid === null) {
-        console.log("Error updating cache no uid");
+    if (!allPosts[pid]) {
+        console.log("No Post related to pid: " + pid);
         return;
     }
+    let uid = allPosts[pid].uid;
+
     if (cachedPosts[pid]) {
         shouldFetch = false;
     }
 
-    if (shouldFetch) {
+    if (forceUpdate || shouldFetch) {
         store.dispatch(addCachedPost({ key: pid, content: {} }))
         firestore.collection("users").doc(uid).collection("posts").doc(pid).get().then((doc) => {
             if (doc.exists) {
@@ -202,7 +196,7 @@ export function updateCachedPosts(pid) {
             }
         }).catch(err => console.log(err.message))
     } else {
-        console.log(pid + " aready present in cache");
+        console.log(pid + " already present in cache");
     }
 }
 

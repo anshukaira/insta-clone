@@ -19,7 +19,7 @@ export default function Home() {
             {stackShortner("Discover", DiscoverScreen, "image-search", { uid: user.uid })}
             {stackShortner("Activity", ActivityScreen, "account-circle", { uid: user.uid })}
             {stackShortner("Chat", ChatScreen, "account-circle", { uid: user.uid })}
-            {stackShortner("Profile", ProfileScreen, "account-circle", { uid: user.uid })}
+            {stackShortner("Profile", ProfileScreen, "account-circle", { uid: user.uid, screen: 'Home' })}
         </Tab.Navigator>
     )
 }
