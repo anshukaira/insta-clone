@@ -26,8 +26,9 @@ export default function Post({ pid }) {
 
     useEffect(() => {
         setCurrentPost(cachedPosts[pid]);
-    }, [cachedPosts[pid]])
-
+        console.log("cached post update")
+    }, [cachedPosts])
+    console.log("Current Post", currentPost)
     const onChange = ({ window }) => {
         if (Platform.OS == 'web')
             setDimensions(window.width / divide);

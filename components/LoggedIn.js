@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
 import HomeScreen from './Home/Home';
 import CommentScreen from './Comments/Comments'
-import OptionsScreen from './Options/Options';
+import OptionsScreen from './Options/OptionStack';
 import EditScreen from './Edit/Edit'
 import AddScreen from './Home/Add/Add'
 import { useSelector } from 'react-redux';

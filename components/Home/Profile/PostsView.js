@@ -51,24 +51,24 @@ function Normal() {
 
     return (
         <View style={styles.container}>
-            <ScrollView contentContainerStyle={styles.scroll}>
-                {currentPostList.map((item) => {
-                    return (
-                        <Post key={item.pid} pid={item.pid} navigateTo="Posts" style={styles.item} />
-                    )
-                })}
-            </ScrollView>
+            {currentPostList.map((item) => {
+                return (
+                    <Post key={item.pid} pid={item.pid} navigateTo="Posts" style={styles.item} />
+                )
+            })}
         </View>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1
-    },
-    scroll: {
+        flex: 1,
         flexDirection: 'row',
         flexWrap: 'wrap'
+    },
+    scroll: {
+        // flexDirection: 'row',
+        // flexWrap: 'wrap'
     },
     item: {
         margin: 5

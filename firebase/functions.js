@@ -168,6 +168,26 @@ export async function addPost(img, caption, visibility, uid) {
     })
 }
 
+// Edit post. CUrrent it allows only caption to edit
+
+export function editPost(pid, data) {
+    const { user, cachedPosts } = store.getState();
+    const uid = user.uid;
+    let newData = {
+        ...cachedPosts[pid]
+    }
+    delete newData.uid;
+    if (data && data.caption) {
+        newData.caption = data.caption
+    }
+
+    firestore.collection('users').doc(uid).collection('posts').doc(pid).update(newData).then(() => {
+        updateCachedPosts(pid, true)
+        console.log("Updated post " + pid);
+    }).catch((err) => console.log(err.message))
+}
+
+// To help minimise calls to firebase we will store post data in our own cache
 
 export function updateCachedPosts(pid, forceUpdate = false) {
     const { cachedPosts, allPosts } = store.getState();
@@ -205,7 +225,7 @@ export function updateCachedPosts(pid, forceUpdate = false) {
 
 
 /**
- * Actions functions like [Like,Comment]
+ * Functions for Like
 */
 
 export async function likePost(uid, pid, myuid) {
@@ -235,7 +255,10 @@ export async function unlikePost(uid, pid, myuid) {
 }
 
 
-// Follow Methods
+
+/**
+ * Methods Related to Follow Requests
+ */
 export function followUser(uid) {
     const { user } = store.getState();
     let batch = firestore.batch();
