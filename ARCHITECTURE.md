@@ -1,0 +1,12 @@
+<details>
+    <summary>App.js</summary>
+    <details>
+        <summary>Main.js</summary>
+        <details>
+            <summary>LoggedOut.js</summary>
+        </details>
+        <details>
+            <summary>LoggedIn.js</summary>
+        </details>
+    </details>
+</details>
