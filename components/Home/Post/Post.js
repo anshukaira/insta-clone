@@ -7,6 +7,8 @@ import { selectCachedPosts } from '../../../redux/slices/cachedPosts';
 import { updateCachedPosts } from '../../../firebase/functions'
 import { selectAllPosts } from '../../../redux/slices/allPostsSlice';
 
+import Card from './Card'
+
 const window = Dimensions.get("window");
 const divide = 2.5;
 const initialWidth = Platform.OS === 'web' ? window.width / divide : window.width;
@@ -58,7 +60,7 @@ export default function Post({ pid }) {
     }
     return (
         <View style={styles.container}>
-            <View style={styles.header}>
+            {/* <View style={styles.header}>
                 <Text onPress={openProfile} >{allUsers[currentPost.uid].name}</Text>
             </View>
             <View style={[styles.image, { height: dimensions, width: dimensions }]}>
@@ -69,7 +71,16 @@ export default function Post({ pid }) {
                 <Text>{currentPost.caption}</Text>
                 <Text>Likes: {allPosts[pid].numLike}</Text>
                 <Text>Comments: {allPosts[pid].numComments}</Text>
-            </View>
+            </View> */}
+            <Card 
+                props = {{
+                    name : allUsers[currentPost.uid].name,
+                    imageUrl : currentPost.url,
+                    caption : currentPost.caption,
+                    likes : allPosts[pid].numLike,
+                    comments : allPosts[pid].numComments
+                }}
+            />
         </View>
     )
 }
@@ -77,18 +88,18 @@ export default function Post({ pid }) {
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'column',
-        paddingTop: 10,
-        paddingBottom: 10
+        // paddingTop: 10,
+        // paddingBottom: 10
     },
-    header: {
-        flexDirection: 'row',
-        padding: 5,
-    },
-    image: {
-        flexDirection: 'column',
-    },
-    footer: {
-        flexDirection: 'column',
-        padding: 5,
-    }
+    // header: {
+    //     flexDirection: 'row',
+    //     padding: 5,
+    // },
+    // image: {
+    //     flexDirection: 'column',
+    // },
+    // footer: {
+    //     flexDirection: 'column',
+    //     padding: 5,
+    // }
 })

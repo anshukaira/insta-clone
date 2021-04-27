@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import { View, StyleSheet, StatusBar, Button, Text } from 'react-native'
+import { View, StyleSheet, StatusBar, Text } from 'react-native'
 import Posts from '../Post/Posts'
 import Header from './Header'
 import { theme } from '../../Style/Constants'
 import { useSelector } from 'react-redux'
 import { selectUser } from '../../../redux/slices/userSlice'
 import { selectAllPosts } from '../../../redux/slices/allPostsSlice'
+
+import {Button, Icon} from 'native-base'
 
 
 function extractPostsList(allPosts, user) {
@@ -67,8 +69,16 @@ export default function Feed() {
     return (
         <View style={styles.container}>
             <Header />
+            {update ? <Button 
+                        transparent
+                        onPress={updateData} 
+                        >
+                            <Icon 
+                                name="add-circle-outline"
+                                style={{color: 'black'}}/>
+                        </Button> 
+                    : null}
             <Posts showStory={false} margin={50} data={currentPostList} />
-            {update ? <Button title="uppdate" onPress={updateData} /> : null}
         </View>
     )
 }

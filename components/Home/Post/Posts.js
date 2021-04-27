@@ -1,9 +1,10 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react'
-import { View, StyleSheet, Button } from 'react-native'
+import { View, StyleSheet } from 'react-native'
 import Post from './Post'
 import Story from '../Feed/Story'
 import { ScrollView } from 'react-native-gesture-handler'
 import { useNavigation, useRoute } from '@react-navigation/core'
+import { Button, Icon } from 'native-base'
 
 const LIMIT = 2;
 
@@ -64,8 +65,17 @@ export default function Posts({ showStory, margin, data }) {
                     )
                 })}
 
+            
+            {showLoad ? 
+                    <Button transparent
+                            onPress={loadMore} >
+                            <Icon 
+                                name="add-circle-outline"
+                                style={{color: 'black'}}/>
+                    </Button> 
+                    
+                  : null}
             </ScrollView>
-            {showLoad ? <Button title="Load More" onPress={loadMore} /> : null}
         </View>
     )
 }
@@ -82,7 +92,8 @@ const styles = StyleSheet.create({
     },
     container: {
         // marginTop: 50,
-        flex: 1
+        flex: 1,
+        backgroundColor : 'white',
     },
     scroll: {
         flexDirection: 'row',
