@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { View, Text, StyleSheet, Dimensions, Platform, Image } from 'react-native'
 import { Card, CardItem, Thumbnail, Body, Left, Right, Button, Icon } from 'native-base'
+import Feather from 'react-native-vector-icons/Feather'
+import { findNonSerializableValue } from '@reduxjs/toolkit';
 
 const window = Dimensions.get("window");
 const divide = 2.5;
@@ -21,9 +23,9 @@ export default function CardComponent({props}) {
         <Card style={styles.container} transparent>
             <CardItem>
                 <Left>
-                    <Thumbnail source={profileImage}/>
+                    <Thumbnail small source={{uri : imageUrl}}/>
                         <Body>
-                            <Text onPress={openProfile}>{name}</Text>
+                            <Text style={styles.boldText}>{name}</Text>
                         </Body>
                  </Left>
             </CardItem>
@@ -32,28 +34,29 @@ export default function CardComponent({props}) {
                     <Image source={{uri: imageUrl}} style={{ height: '100%', resizeMode: 'cover' }} />
                 </View>
             </CardItem>
-            <CardItem style={{height: 45}}>
+            <CardItem style={{height: 40}}>
                 <Left>
                     <Button transparent 
                         onPress={likePost}>
                         <Icon name={liked ? "ios-heart" : "ios-heart-outline"}
-                        style={{color: 'black'}}
+                        style={liked ? {color :'red', fontSize: 28 } : [styles.black, {fontSize: 28}]}
                         />
                     </Button>
                     <Button transparent>
-                        <Icon name="ios-chatbubbles-outline"
-                        style={{color: 'black'}}
+                        <Icon name="chatbubble-outline"
+                        style={styles.black}
                         />
                     </Button>
                     <Button transparent>
-                        <Icon name="send-sharp"
-                        style={{color: 'black'}}
+                        <Icon 
+                            name="send-sharp"
+                            style={styles.black}
                         />
                     </Button>
                 </Left>
             </CardItem>
-            <CardItem style={{height : 10}}>
-                <Text>{likesCount} Likes</Text>
+            <CardItem style={styles.likeContainer}>
+                <Text style={styles.boldText}>{likesCount} likes</Text>
             </CardItem>
             <CardItem style={{height : 10}}>
                 <Text>{caption}</Text>
@@ -70,8 +73,19 @@ export default function CardComponent({props}) {
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'column',
+
     },
     image: {
         flexDirection: 'column',
+    },
+    boldText: {
+        fontWeight: 'bold',
+    },
+    black: {
+      color : 'black',
+      fontSize : 24,  
+    },
+    likeContainer: {
+        height: 0,
     }
 });
