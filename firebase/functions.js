@@ -360,3 +360,32 @@ export function rejectFollowReq(uid) {
 
     batch.commit().then(() => console.log("Aceepted Follow Req")).catch((err) => console.log(err.message))
 }
+
+
+// Methods for Chats
+
+export async function initiateChat(uid) {
+    const { user } = store.getState()
+    let newChatRef = firestore.collection("chats").doc();
+    let myRef = firestore.collection("users").doc(user.uid);
+    let userRef = firestore.collection("users").doc(uid);
+    let chatId = newChatRef.id;
+    let batch = firestore.batch();
+    batch.set(newChatRef, {
+        subscribed: [uid, user.uid]
+    }, { merge: true })
+    batch.update(myRef, {
+        ['chats.' + uid]: chatId
+    })
+    batch.update(userRef, {
+        ['chats.' + user.uid]: chatId
+    })
+    batch.commit().then(() => console.log("Chat initiated with id: " + chatId)).catch((error) => {
+        console.log(error.message);
+        newChatRef.delete().then(() => {
+            console.log("cleared chat doc");
+        })
+        chatId = null;
+    })
+    return chatId;
+}

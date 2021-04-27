@@ -6,7 +6,7 @@ import DiscoverScreen from './Discover/DiscoverStack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../../redux/slices/userSlice';
-import ChatScreen from './Chat/Chat'
+import ChatScreen from './Chat/ChatStack'
 import ActivityScreen from './Activity/ActivityStack'
 
 const Tab = createBottomTabNavigator();
