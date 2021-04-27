@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react'
-import { Text, View, StyleSheet, Platform, FlatList, StatusBar } from 'react-native'
+import { Text, View, StyleSheet, Platform, FlatList, StatusBar, Dimensions } from 'react-native'
 import { Searchbar } from 'react-native-paper'
 import Post from '../Post/PostMini'
 import { useSelector } from 'react-redux'
 import { selectPubPosts } from '../../../redux/slices/pubPostsSlice'
 import { selectProtPosts } from '../../../redux/slices/protPostsSlice'
 import { selectUser } from '../../../redux/slices/userSlice'
+import { theme } from '../../Style/Constants'
 
-
+const { width: WIDTH } = Dimensions.get('window');
 
 function extractPostsList(pubPost, protPost, mydata) {
     const following = mydata.following;
@@ -93,11 +94,13 @@ export default function Discover() {
 const styles = StyleSheet.create({
     list: {
         marginTop: StatusBar.currentHeight,
+        backgroundColor: theme.lightbg,
     },
     col: {
         justifyContent: 'flex-start',
     },
     listItem: {
-        margin: 10
+        margin: 2,
+        width: WIDTH/3,
     }
 })

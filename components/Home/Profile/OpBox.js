@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import { useSelector } from 'react-redux';
 import { followUser, sendFollowReq, unfollowUser, unsendFollowReq } from '../../../firebase/functions';
 import { selectUser } from '../../../redux/slices/userSlice';
+import { theme } from '../../Style/Constants';
 
 export function OwnBox({ user }) {
     const navigation = useNavigation();
@@ -80,13 +81,15 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         padding: 10,
-        alignItems: 'center'
+        alignItems: 'center',
+        paddingBottom: 2,
     },
     box: {
         borderWidth: 1,
         borderRadius: 5,
-        marginLeft: 10,
-        marginRight: 10,
+        borderColor: '#DCDCDC',
+        marginLeft: 4,
+        marginRight: 4,
         padding: 5,
         alignItems: 'center'
     }

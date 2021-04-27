@@ -1,6 +1,7 @@
 import { useNavigation } from '@react-navigation/core';
 import React, { useEffect, useState } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native'
+import { Avatar } from 'react-native-paper';
 import { useSelector } from 'react-redux'
 import { selectAllPosts } from '../../../redux/slices/allPostsSlice'
 import { selectUser } from '../../../redux/slices/userSlice';
@@ -61,8 +62,8 @@ export default function ProfileBox({ style, user }) {
                 <CountBox count={user.following.length} text="Following" onPress={followingPress} />
             </View>
             <View style={styles.content}>
-                <Text style={{ fontSize: 24 }}>Its Me {user.about}</Text>
-                <Text style={{ fontSize: 20 }}>About me</Text>
+                <Text style={{ fontSize: 16 }}>Its Me {user.about}</Text>
+                <Text style={{ fontSize: 16 }}>About me</Text>
             </View>
         </View>
     )
@@ -71,7 +72,7 @@ export default function ProfileBox({ style, user }) {
 function DPContainer({ url }) {
     return (
         <View style={styles.dpshape}>
-            <Image source={{ uri: url }} style={{ resizeMode: 'cover', height: '100%' }} />
+            <Avatar.Image source={{uri : url}} size={82}/>
         </View>
     )
 }
@@ -99,11 +100,9 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     dpshape: {
-        height: 80,
-        width: 80,
-        borderRadius: 40,
-        backgroundColor: 'green',
-        marginRight: 30
+        marginRight: 30,
+        marginLeft: 14,
+        marginBottom: 10,
     },
     countbox: {
         flexDirection: 'column',
@@ -114,6 +113,6 @@ const styles = StyleSheet.create({
     content: {
         paddingLeft: 20,
         paddingRight: 20,
-        paddingTop: 5,
+        paddingTop: 2,
     }
 })

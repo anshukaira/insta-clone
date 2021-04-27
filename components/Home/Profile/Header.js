@@ -2,15 +2,21 @@ import { useNavigation } from '@react-navigation/core'
 import React from 'react'
 import { View, Text, StyleSheet, StatusBar } from 'react-native'
 import { theme } from '../../Style/Constants'
+import Icon from 'react-native-vector-icons/Ionicons'
 
 export default function Header({ uid }) {
     const navigation = useNavigation();
     return (
         <View style={styles.container}>
-            <Text style={styles.text}>User: {uid}</Text>
-            <View style={styles.right}>
-                <Text onPress={() => navigation.navigate("Add")} style={styles.iconright}>ADD</Text>
-                <Text onPress={() => navigation.navigate("Options")} style={styles.iconright}>X</Text>
+            <View style={styles.row}>
+                <Icon name="md-lock-closed-outline" style={styles.icon} />
+                <Text style={styles.text}> {uid}</Text>
+            </View>
+            
+            <View style={styles.row}>
+
+                <Icon name="add-circle-outline" onPress={() => navigation.navigate("Add")} style={styles.iconright}/>
+                <Icon name="md-options" onPress={() => navigation.navigate("Options")} style={styles.iconright}/>
             </View>
         </View>
     )
@@ -29,20 +35,23 @@ const styles = StyleSheet.create({
         left: 0,
         zIndex: 999,
         width: '100%',
-        borderBottomWidth: 1
     },
     text: {
         color: theme.lightfont,
         fontSize: 18,
+        fontWeight: 'bold',
     },
-    right: {
+    row: {
         flexDirection: 'row'
     },
     iconright: {
         color: theme.lightfont,
-        fontSize: 18,
+        fontSize: 24,
         marginLeft: 5,
         padding: 5,
-        borderWidth: 1
+    },
+    icon: {
+        fontSize: 20,
+        marginRight: 8,
     }
 })

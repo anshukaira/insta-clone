@@ -33,7 +33,7 @@ const stackShortner = (name, component, icon, params = undefined) => {
             component={component}
             options={{
                 // tabBarLabel: { name },
-                tabBarIcon: ({focused, name}) => (
+                tabBarIcon: ({focused}) => (
                             <Icon name={focused ?icon.active : icon.unactive} size={26} />)
             }}
             initialParams={params}

@@ -49,7 +49,7 @@ export default function Profile({ route }) {
         <View style={[styles.container, paddingTop]}>
             {route.params.screen == 'Home' ? <Header uid={currentUser.name} /> : <></>}
             <ScrollView>
-                <ProfileBox user={currentUser} style={style} />
+                <ProfileBox user={currentUser} />
                 {route.params.screen == 'Home' ? <OwnBox user={currentUser} /> : <OtherBox user={currentUser} />}
                 <PostsView user={currentUser} navigateTo="Posts" />
             </ScrollView>

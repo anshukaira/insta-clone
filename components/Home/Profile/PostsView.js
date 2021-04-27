@@ -7,6 +7,8 @@ import { ScrollView } from 'react-native-gesture-handler'
 import { useSelector } from 'react-redux'
 import { selectAllPosts } from '../../../redux/slices/allPostsSlice'
 import { selectUser } from '../../../redux/slices/userSlice'
+import { theme } from '../../Style/Constants'
+import Icon from 'react-native-vector-icons/Ionicons'
 
 function extractPostsList(allPosts, uid) {
     let userPosts = [];
@@ -20,21 +22,39 @@ function extractPostsList(allPosts, uid) {
 
 const Tab = createMaterialTopTabNavigator();
 
+
+const { width: WIDTH } = Dimensions.get('window');
+const SPACE = Platform.OS === 'web' ? 20 : 0;
 export default function PostsView({ user }) {
     const me = useSelector(selectUser);
     if (me.uid !== user.uid && (user.vis == 'PROTECTED' || user.vis == 'PRIVATE') && !user.followers.includes(me.uid)) {
         return (
-            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+            <View style={styles.privateAccContainer}>
+                <Icon name='lock-closed-outline' style={{fontSize: 96, marginTop : 80}} />
+                <Text style={{ fontSize: 26}}>
+                This Account is Private. 
+                </Text>
                 <Text>
-                    This Account is Private. Send Follow req to View Posts
+                    Follow the account to see their photos and videos.
                 </Text>
             </View>
         )
     }
     return (
         <View>
-            <Tab.Navigator initialLayout={{ width: Dimensions.get('window').width }} style={{ flex: 1 }}>
-                <Tab.Screen name="Normal" component={Normal} initialParams={{ uid: user.uid }} />
+            <Tab.Navigator 
+                initialLayout={{ width: Dimensions.get('window').width }} 
+                style={{ flex: 1 }} 
+                tabBarOptions={{ showLabel: false, showIcon: true}}
+                >
+                <Tab.Screen 
+                    name="Normal" 
+                    component={Normal} 
+                    options={{
+                        tabBarIcon: () => (
+                                    <Icon name="grid-outline" size={26} />)
+                    }}
+                    initialParams={{ uid: user.uid }} />
             </Tab.Navigator>
         </View>
     )
@@ -64,13 +84,23 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'row',
-        flexWrap: 'wrap'
+        flexWrap: 'wrap',
+        backgroundColor: theme.lightbg,
     },
     scroll: {
         // flexDirection: 'row',
         // flexWrap: 'wrap'
     },
     item: {
-        margin: 5
+        backgroundColor: theme.lightbg,
+        padding: 2,
+        width: WIDTH/3 - SPACE,
+    },
+    privateAccContainer: {
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        borderTopWidth: 1, 
+        borderTopColor: '#DCDCDC',
+        marginTop: 10
     }
 })

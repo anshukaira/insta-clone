@@ -5,6 +5,7 @@ import Story from '../Feed/Story'
 import { ScrollView } from 'react-native-gesture-handler'
 import { useNavigation, useRoute } from '@react-navigation/core'
 import Icon from 'react-native-vector-icons/Ionicons'
+import { theme } from '../../Style/Constants'
 
 const LIMIT = 2;
 
@@ -82,15 +83,19 @@ const styles = StyleSheet.create({
     },
     container: {
         // marginTop: 50,
-        flex: 1
+        flex: 1,
+        backgroundColor: theme.lightbg,
     },
     scroll: {
-        flexDirection: 'row',
+        flexDirection: 'column',
         flexWrap: 'wrap',
-        justifyContent: 'space-evenly'
+        justifyContent: 'center',
+        alignContent: 'center',
     },
     icon: {
         fontSize: 32,
         fontWeight: 'bold',
+        justifyContent: 'center',
+        alignContent: 'center'
     }
 })
