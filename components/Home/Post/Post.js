@@ -1,11 +1,14 @@
 import { useNavigation } from '@react-navigation/core'
 import React, { useEffect, useState } from 'react'
-import { View, Text, StyleSheet, Dimensions, Platform, Image } from 'react-native'
+import { View, Text, StyleSheet, Dimensions, Platform, Image, TouchableOpacity} from 'react-native'
 import { useSelector } from 'react-redux';
 import { selectAllUser } from '../../../redux/slices/allUserSlice';
 import { selectCachedPosts } from '../../../redux/slices/cachedPosts';
-import { updateCachedPosts } from '../../../firebase/functions'
+import { likePost, updateCachedPosts } from '../../../firebase/functions'
 import { selectAllPosts } from '../../../redux/slices/allPostsSlice';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import IonIcons from 'react-native-vector-icons/Ionicons'
+import { Avatar } from 'react-native-paper';
 
 const window = Dimensions.get("window");
 const divide = 2.5;
@@ -19,6 +22,7 @@ export default function Post({ pid }) {
     const cachedPosts = useSelector(selectCachedPosts);
 
     const [currentPost, setCurrentPost] = useState(null);
+    const [liked, setliked] = useState(false);
 
     useEffect(() => {
         updateCachedPosts(pid);
@@ -49,6 +53,12 @@ export default function Post({ pid }) {
         navigation.navigate("Profile", { pid: pid, uid: currentPost.uid, screen: 'Post' })
     }
 
+    const likeToggle = () => {
+        
+        //liked ? likePost({pid, uid: currentPost.uid, } : unlikePost({pid, uid: currentPost.uid, }))
+        setliked(!liked)
+    }
+
     if (!currentPost || !currentPost.uid) {
         return (
             <View>
@@ -58,17 +68,63 @@ export default function Post({ pid }) {
     }
     return (
         <View style={styles.container}>
+            
             <View style={styles.header}>
-                <Text onPress={openProfile} >{allUsers[currentPost.uid].name}</Text>
+                <TouchableOpacity
+                    onPress={openProfile}
+                    style={styles.flexRow}>
+                    <Avatar.Image
+                        source={{uri : currentPost.url}}
+                        size={32}                        
+                    />
+                    <Text style={[styles.bold, {padding: 4}]} > {allUsers[currentPost.uid].name}</Text>
+                </TouchableOpacity>
             </View>
+
             <View style={[styles.image, { height: dimensions, width: dimensions }]}>
                 <Image source={{ uri: currentPost.url }} style={{ height: '100%', resizeMode: 'cover' }} />
             </View>
+
+            <View style={styles.flexRow}>
+                <TouchableOpacity
+                    title="like"
+                    onPress={() => likeToggle()}>
+                    <IonIcons
+                        name={liked ? "heart" : "heart-outline"}
+                        style={[styles.icon, {fontSize: 28}, {color: liked ? 'crimson' : 'black'}]}
+                    />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    title="comment">
+                    <IonIcons
+                        name="chatbubble-outline"
+                        style={styles.icon}
+                    />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    title="send">
+                    <Icon
+                        name="send-o"
+                        style={styles.icon}
+                    />
+                </TouchableOpacity>                
+            </View>
+
             <View style={styles.footer}>
-                <Text>{pid}</Text>
-                <Text>{currentPost.caption}</Text>
-                <Text>Likes: {allPosts[pid].numLike}</Text>
-                <Text>Comments: {allPosts[pid].numComments}</Text>
+                <Text style={styles.bold}>{allPosts[pid].numLike} likes</Text>
+
+                <View style={styles.flexRow}>
+                    <Text style={styles.bold}>{allUsers[currentPost.uid].name} </Text> 
+                    <Text>{currentPost.caption}</Text>
+                </View>
+                
+                <TouchableOpacity
+                    // onPress={comments}
+                    >
+                    <Text style={styles.lightgrey}>View all comments</Text>
+                </TouchableOpacity>
             </View>
         </View>
     )
@@ -77,18 +133,32 @@ export default function Post({ pid }) {
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'column',
-        paddingTop: 10,
-        paddingBottom: 10
+        paddingTop: 5,
+        paddingBottom: 8
     },
     header: {
         flexDirection: 'row',
-        padding: 5,
+        padding: 10,
+    },
+    bold:{
+        fontWeight: 'bold',
     },
     image: {
         flexDirection: 'column',
     },
+    flexRow: {
+        flexDirection: 'row',
+    },
+    icon: {
+        fontSize: 24,
+        margin: 6,
+    },
     footer: {
         flexDirection: 'column',
         padding: 5,
+        paddingTop: 0,
+    },
+    lightgrey: {
+        color: 'darkgrey',
     }
 })

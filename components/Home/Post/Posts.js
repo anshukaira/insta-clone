@@ -4,6 +4,7 @@ import Post from './Post'
 import Story from '../Feed/Story'
 import { ScrollView } from 'react-native-gesture-handler'
 import { useNavigation, useRoute } from '@react-navigation/core'
+import Icon from 'react-native-vector-icons/Ionicons'
 
 const LIMIT = 2;
 
@@ -63,9 +64,8 @@ export default function Posts({ showStory, margin, data }) {
                         <Post pid={item.pid} key={item.pid} />
                     )
                 })}
-
+                {showLoad ? <Icon name="md-add-circle-outline" onPress={loadMore} style={styles.icon}/> : null}
             </ScrollView>
-            {showLoad ? <Button title="Load More" onPress={loadMore} /> : null}
         </View>
     )
 }
@@ -88,5 +88,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-evenly'
+    },
+    icon: {
+        fontSize: 32,
+        fontWeight: 'bold',
     }
 })

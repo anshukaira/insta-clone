@@ -1,13 +1,18 @@
 import React from 'react'
 import { View, Text, StyleSheet, StatusBar } from 'react-native'
 import { theme } from '../../Style/Constants'
+import Icon from 'react-native-vector-icons/Ionicons'
 
 export default function Header() {
     return (
         <View style={styles.container}>
-            <Text style={styles.iconleft}>Icon</Text>
+            <Icon 
+                name="add-circle-sharp" 
+                style={styles.iconleft} />
             <Text style={styles.text}>MIRAI</Text>
-            <Text style={styles.iconright}>M Icon</Text>
+            <Icon 
+                name="md-chatbubble-ellipses-sharp" 
+                style={styles.iconright} />
         </View>
     )
 }
@@ -15,7 +20,7 @@ export default function Header() {
 const styles = StyleSheet.create({
     container: {
         position: 'absolute',
-        backgroundColor: theme.lightbg,
+        backgroundColor: theme.lightHeader,
         flexDirection: 'row',
         justifyContent: 'center',
         padding: 10,
@@ -29,17 +34,19 @@ const styles = StyleSheet.create({
     text: {
         color: theme.lightfont,
         fontSize: 24,
+        fontFamily: 'monospace',
+        fontWeight: 'bold',
     },
     iconleft: {
         position: 'absolute',
         left: 20,
         color: theme.lightfont,
-        fontSize: 24
+        fontSize: 28,
     },
     iconright: {
         position: 'absolute',
         right: 20,
         color: theme.lightfont,
-        fontSize: 24
+        fontSize: 24,
     }
 })
