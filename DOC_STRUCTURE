@@ -4,32 +4,84 @@
 │   ├── favicon.png
 │   ├── icon.png
 │   └── splash.png
-├── comp
-│   ├── auth
+├── components
+│   ├── Archive
+│   ├── Auth
 │   │   ├── Landing.js
 │   │   ├── Login.js
 │   │   └── Register.js
-│   ├── main
-│   │   ├── Add.js
-│   │   ├── Feed.js
-│   │   └── Profile.js
-│   └── Main.js
+│   ├── CloseFriends
+│   │   └── CloseFriends.js
+│   ├── Comments
+│   │   └── Comments.js
+│   ├── DiscoverPeople
+│   │   └── DiscoverPeople.js
+│   ├── Edit
+│   │   └── Edit.js
+│   ├── Home
+│   │   ├── Activity
+│   │   │   ├── Activity.js
+│   │   │   ├── ActivityStack.js
+│   │   │   ├── FollowReq.js
+│   │   │   ├── Log.js
+│   │   │   └── PendingReq.js
+│   │   ├── Add
+│   │   │   └── Add.js
+│   │   ├── Chat
+│   │   │   └── Chat.js
+│   │   ├── Discover
+│   │   │   ├── Discover.js
+│   │   │   └── DiscoverStack.js
+│   │   ├── Feed
+│   │   │   ├── Feed.js
+│   │   │   ├── FeedStack.js
+│   │   │   ├── Header.js
+│   │   │   └── Story.js
+│   │   ├── Post
+│   │   │   ├── Post.js
+│   │   │   ├── PostMini.js
+│   │   │   └── Posts.js
+│   │   ├── Profile
+│   │   │   ├── Header.js
+│   │   │   ├── OpBox.js
+│   │   │   ├── PostsView.js
+│   │   │   ├── ProfileBox.js
+│   │   │   ├── Profile.js
+│   │   │   └── ProfileStack.js
+│   │   ├── Saved
+│   │   │   ├── Saved.js
+│   │   │   └── SavedStack.js
+│   │   └── Home.js
+│   ├── Options
+│   │   └── Options.js
+│   ├── QRCode
+│   │   └── QRCode.js
+│   ├── Style
+│   │   └── Constants.js
+│   ├── LoggedIn.js
+│   ├── LoggedOut.js
+│   ├── Main.js
+│   └── RootNavigator.js
+├── encryption
+│   ├── data.js
+│   └── pass.js
 ├── firebase
-│   └── firebase.js
+│   ├── firebase.js
+│   ├── functions.js
+│   └── subscriptions.js
 ├── redux
-│   ├── actions
-│   │   └── index.js
-│   ├── constants
-│   │   └── index.js
-│   ├── reducers
-│   │   ├── index.js
-│   │   └── user.js
+│   ├── slices
+│   │   ├── allPostsSlice.js
+│   │   ├── allUserSlice.js
+│   │   ├── cachedPosts.js
+│   │   ├── protPostsSlice.js
+│   │   ├── pubPostsSlice.js
+│   │   └── userSlice.js
 │   └── store
-│       └── index.js
+│       └── app.js
 ├── App.js
 ├── app.json
 ├── babel.config.js
-├── _clang-format
 ├── CONFLICTS.md
 ├── DOC_STRUCTURE
 ├── package.json
@@ -38,4 +90,4 @@
 ├── TODO.md
 └── WORKFLOW.md
 
-10 directories, 28 files
+25 directories, 65 files
