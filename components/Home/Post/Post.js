@@ -73,6 +73,11 @@ export default function Post({ pid }) {
             </View>
         )
     }
+
+    const gotoComments = () => {
+        navigation.navigate('Comment', { uid: currentPost.uid, screen: 'Post', pid: pid })
+    }
+
     return (
         <View style={styles.container}>
 
@@ -128,7 +133,7 @@ export default function Post({ pid }) {
                 </View>
 
                 <TouchableOpacity
-                // onPress={comments}
+                    onPress={gotoComments}
                 >
                     <Text style={styles.lightgrey}>View all comments</Text>
                 </TouchableOpacity>

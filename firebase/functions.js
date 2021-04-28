@@ -407,7 +407,7 @@ export async function initiateChat(uid) {
 export async function addMessage(chatId, data, state) {
     let { user } = store.getState()
     let time = Date.now();
-    let ccid = time + "_" + data.uid
+    let ccid = time + "_" + user.uid
     await firestore.collection('chats').doc(chatId).update({
         [ccid]: {
             ...data,
@@ -418,4 +418,20 @@ export async function addMessage(chatId, data, state) {
         console.log("Chat Added");
     }).catch((error) => console.log(error.message))
     state(false)
+}
+
+//methods for comments
+export async function addComment(uid, pid, comment, state) {
+    let { user } = store.getState();
+    let data = {
+        time: Date.now(),
+        uid: user.uid,
+        content: comment
+    }
+    await firestore.collection('users').doc(uid).collection('posts').doc(pid).update({
+        comments: firebase.firestore.FieldValue.arrayUnion(data)
+    }).then(() => {
+        console.log("Comment uploaded");
+    }).catch((err) => console.log(err.message))
+    state(false);
 }
