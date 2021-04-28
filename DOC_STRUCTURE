@@ -28,7 +28,9 @@
 │   │   ├── Add
 │   │   │   └── Add.js
 │   │   ├── Chat
-│   │   │   └── Chat.js
+│   │   │   ├── ChatHome.js
+│   │   │   ├── Chat.js
+│   │   │   └── ChatStack.js
 │   │   ├── Discover
 │   │   │   ├── Discover.js
 │   │   │   └── DiscoverStack.js
@@ -53,7 +55,9 @@
 │   │   │   └── SavedStack.js
 │   │   └── Home.js
 │   ├── Options
-│   │   └── Options.js
+│   │   ├── Manage.js
+│   │   ├── Options.js
+│   │   └── OptionStack.js
 │   ├── QRCode
 │   │   └── QRCode.js
 │   ├── Style
@@ -81,6 +85,7 @@
 │       └── app.js
 ├── App.js
 ├── app.json
+├── ARCHITECTURE.md
 ├── babel.config.js
 ├── CONFLICTS.md
 ├── DOC_STRUCTURE
@@ -90,4 +95,4 @@
 ├── TODO.md
 └── WORKFLOW.md
 
-25 directories, 65 files
+25 directories, 70 files
