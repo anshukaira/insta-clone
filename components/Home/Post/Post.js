@@ -1,14 +1,15 @@
 import { useNavigation } from '@react-navigation/core'
 import React, { useEffect, useState } from 'react'
-import { View, Text, StyleSheet, Dimensions, Platform, Image, TouchableOpacity} from 'react-native'
+import { View, Text, StyleSheet, Dimensions, Platform, Image, TouchableOpacity } from 'react-native'
 import { useSelector } from 'react-redux';
 import { selectAllUser } from '../../../redux/slices/allUserSlice';
 import { selectCachedPosts } from '../../../redux/slices/cachedPosts';
-import { likePost, updateCachedPosts } from '../../../firebase/functions'
+import { likePost, unlikePost, updateCachedPosts } from '../../../firebase/functions'
 import { selectAllPosts } from '../../../redux/slices/allPostsSlice';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import IonIcons from 'react-native-vector-icons/Ionicons'
 import { Avatar } from 'react-native-paper';
+import { selectUser } from '../../../redux/slices/userSlice';
 
 const window = Dimensions.get("window");
 const divide = 2.5;
@@ -16,21 +17,26 @@ const initialWidth = Platform.OS === 'web' ? window.width / divide : window.widt
 
 export default function Post({ pid }) {
     const navigation = useNavigation();
-    const [dimensions, setDimensions] = useState(initialWidth);
     const allPosts = useSelector(selectAllPosts);
     const allUsers = useSelector(selectAllUser);
     const cachedPosts = useSelector(selectCachedPosts);
+    const user = useSelector(selectUser);
 
+    const [dimensions, setDimensions] = useState(initialWidth);
     const [currentPost, setCurrentPost] = useState(null);
     const [liked, setliked] = useState(false);
+    const [likeClicked, setLikeClicked] = useState(false)
 
     useEffect(() => {
         updateCachedPosts(pid);
     }, [allPosts, allUsers])
 
     useEffect(() => {
-        setCurrentPost(cachedPosts[pid]);
-        console.log("cached post update")
+        if (cachedPosts && cachedPosts[pid] && cachedPosts[pid].likes) {
+            setCurrentPost(cachedPosts[pid]);
+            setliked(cachedPosts[pid].likes.includes(user.uid))
+            console.log("cached post update", cachedPosts[pid])
+        }
     }, [cachedPosts])
     console.log("Current Post", currentPost)
     const onChange = ({ window }) => {
@@ -54,9 +60,10 @@ export default function Post({ pid }) {
     }
 
     const likeToggle = () => {
-        
-        //liked ? likePost({pid, uid: currentPost.uid, } : unlikePost({pid, uid: currentPost.uid, }))
-        setliked(!liked)
+        if (!likeClicked) {
+            setLikeClicked(true)
+            liked ? unlikePost(currentPost.uid, pid, user.uid, setLikeClicked) : likePost(currentPost.uid, pid, user.uid, setLikeClicked)
+        }
     }
 
     if (!currentPost || !currentPost.uid) {
@@ -68,16 +75,16 @@ export default function Post({ pid }) {
     }
     return (
         <View style={styles.container}>
-            
+
             <View style={styles.header}>
                 <TouchableOpacity
                     onPress={openProfile}
                     style={styles.flexRow}>
                     <Avatar.Image
-                        source={{uri : currentPost.url}}
-                        size={32}                        
+                        source={{ uri: currentPost.url }}
+                        size={32}
                     />
-                    <Text style={[styles.bold, {padding: 4}]} > {allUsers[currentPost.uid].name}</Text>
+                    <Text style={[styles.bold, { padding: 4 }]} > {allUsers[currentPost.uid].name}</Text>
                 </TouchableOpacity>
             </View>
 
@@ -91,7 +98,7 @@ export default function Post({ pid }) {
                     onPress={() => likeToggle()}>
                     <IonIcons
                         name={liked ? "heart" : "heart-outline"}
-                        style={[styles.icon, {fontSize: 28}, {color: liked ? 'crimson' : 'black'}]}
+                        style={[styles.icon, { fontSize: 28 }, { color: liked ? 'crimson' : 'black' }]}
                     />
                 </TouchableOpacity>
 
@@ -109,20 +116,20 @@ export default function Post({ pid }) {
                         name="send-o"
                         style={styles.icon}
                     />
-                </TouchableOpacity>                
+                </TouchableOpacity>
             </View>
 
             <View style={styles.footer}>
                 <Text style={styles.bold}>{allPosts[pid].numLike} likes</Text>
 
                 <View style={styles.flexRow}>
-                    <Text style={styles.bold}>{allUsers[currentPost.uid].name} </Text> 
+                    <Text style={styles.bold}>{allUsers[currentPost.uid].name} </Text>
                     <Text>{currentPost.caption}</Text>
                 </View>
-                
+
                 <TouchableOpacity
-                    // onPress={comments}
-                    >
+                // onPress={comments}
+                >
                     <Text style={styles.lightgrey}>View all comments</Text>
                 </TouchableOpacity>
             </View>
@@ -140,7 +147,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         padding: 10,
     },
-    bold:{
+    bold: {
         fontWeight: 'bold',
     },
     image: {

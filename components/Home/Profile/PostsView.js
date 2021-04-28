@@ -30,9 +30,9 @@ export default function PostsView({ user }) {
     if (me.uid !== user.uid && (user.vis == 'PROTECTED' || user.vis == 'PRIVATE') && !user.followers.includes(me.uid)) {
         return (
             <View style={styles.privateAccContainer}>
-                <Icon name='lock-closed-outline' style={{fontSize: 96, marginTop : 80}} />
-                <Text style={{ fontSize: 26}}>
-                This Account is Private. 
+                <Icon name='lock-closed-outline' style={{ fontSize: 96, marginTop: 80 }} />
+                <Text style={{ fontSize: 26 }}>
+                    This Account is Private.
                 </Text>
                 <Text>
                     Follow the account to see their photos and videos.
@@ -42,17 +42,17 @@ export default function PostsView({ user }) {
     }
     return (
         <View>
-            <Tab.Navigator 
-                initialLayout={{ width: Dimensions.get('window').width }} 
-                style={{ flex: 1 }} 
-                tabBarOptions={{ showLabel: false, showIcon: true}}
-                >
-                <Tab.Screen 
-                    name="Normal" 
-                    component={Normal} 
+            <Tab.Navigator
+                initialLayout={{ width: Dimensions.get('window').width }}
+                style={{ flex: 1 }}
+                tabBarOptions={{ showLabel: false, showIcon: true }}
+            >
+                <Tab.Screen
+                    name="Normal"
+                    component={Normal}
                     options={{
                         tabBarIcon: () => (
-                                    <Icon name="grid-outline" size={26} />)
+                            <Icon name="grid-outline" size={26} />)
                     }}
                     initialParams={{ uid: user.uid }} />
             </Tab.Navigator>
@@ -94,12 +94,11 @@ const styles = StyleSheet.create({
     item: {
         backgroundColor: theme.lightbg,
         padding: 2,
-        width: WIDTH/3 - SPACE,
     },
     privateAccContainer: {
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        borderTopWidth: 1, 
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderTopWidth: 1,
         borderTopColor: '#DCDCDC',
         marginTop: 10
     }

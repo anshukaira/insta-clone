@@ -59,13 +59,17 @@ export default function Posts({ showStory, margin, data }) {
     return (
         <View style={[styles.container, { marginTop: margin }]}>
             <ScrollView contentContainerStyle={styles.scroll}>
-                {showStory ? <Story /> : null}
-                {visible.map((item) => {
-                    return (
-                        <Post pid={item.pid} key={item.pid} />
-                    )
-                })}
-                {showLoad ? <Icon name="md-add-circle-outline" onPress={loadMore} style={styles.icon}/> : null}
+                <View style={{ alignItems: 'center' }}>
+                    {showStory ? <Story /> : null}
+                    {visible.map((item) => {
+                        return (
+                            <Post pid={item.pid} key={item.pid} />
+                        )
+                    })}
+                </View>
+                <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                    {showLoad ? <Icon name="md-add-circle-outline" onPress={loadMore} style={styles.icon} /> : null}
+                </View>
             </ScrollView>
         </View>
     )

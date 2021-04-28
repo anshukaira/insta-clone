@@ -116,3 +116,18 @@ export function subAnotherUser(uid, setter) {
         })
     return unsubscribe;
 }
+
+export function subChat(chatId, setter) {
+    console.log("subscribing chat: " + chatId);
+    const unsubscribe = firestore.collection("chats").doc(chatId)
+        .onSnapshot((doc) => {
+            if (doc.exists) {
+                console.log("Update in Chat: " + chatId);
+                setter(doc.data())
+            }
+            else {
+                console.log("Chat: " + chatId + " does not exists")
+            }
+        })
+    return unsubscribe
+}

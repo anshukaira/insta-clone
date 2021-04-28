@@ -228,7 +228,7 @@ export function updateCachedPosts(pid, forceUpdate = false) {
  * Functions for Like
 */
 
-export async function likePost(uid, pid, myuid) {
+export function likePost(uid, pid, myuid, state) {
     let batch = firestore.batch();
     let postRef = firestore.collection("users").doc(uid).collection("posts").doc(pid);
     let pubPostRef = firestore.collection("public").doc("pubPosts");
@@ -236,12 +236,16 @@ export async function likePost(uid, pid, myuid) {
         likes: firebase.firestore.FieldValue.arrayUnion(myuid)
     })
     batch.update(pubPostRef, {
-        [pid + '.numlikes']: firebase.firestore.FieldValue.increment(1)
+        [pid + '.numLike']: firebase.firestore.FieldValue.increment(1)
     })
-    batch.commit().then(() => console.log("Liked" + pid)).catch(err => console.log(err.message))
+    batch.commit().then(() => {
+        console.log("Liked" + pid)
+        updateCachedPosts(pid, true)
+    }).catch(err => console.log(err.message))
+    state(false)
 }
 
-export async function unlikePost(uid, pid, myuid) {
+export function unlikePost(uid, pid, myuid, state) {
     let batch = firestore.batch();
     let postRef = firestore.collection("users").doc(uid).collection("posts").doc(pid);
     let pubPostRef = firestore.collection("public").doc("pubPosts");
@@ -249,9 +253,13 @@ export async function unlikePost(uid, pid, myuid) {
         likes: firebase.firestore.FieldValue.arrayRemove(myuid)
     })
     batch.update(pubPostRef, {
-        [pid + '.numlikes']: firebase.firestore.FieldValue.increment(-1)
+        [pid + '.numLike']: firebase.firestore.FieldValue.increment(-1)
     })
-    batch.commit().then(() => console.log("Unliked" + pid)).catch(err => console.log(err.message))
+    batch.commit().then(() => {
+        console.log("Unliked" + pid)
+        updateCachedPosts(pid, true)
+    }).catch(err => console.log(err.message))
+    state(false)
 }
 
 
@@ -388,4 +396,20 @@ export async function initiateChat(uid) {
         chatId = null;
     })
     return chatId;
+}
+
+export function addMessage(chatId, data, state) {
+    let { user } = store.getState()
+    let time = Date.now();
+    let ccid = time + "_" + data.uid
+    firestore.collection('chats').doc(chatId).update({
+        [ccid]: {
+            ...data,
+            time: time,
+            uid: user.uid
+        }
+    }).then(() => {
+        console.log("Chat Added");
+    }).catch((error) => console.log(error.message))
+    state(false)
 }
