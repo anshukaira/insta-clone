@@ -28,10 +28,14 @@ export default function Chat() {
     }, [data])
 
 
-    const sendMessage = () => {
+    const sendMessage = async () => {
         if (sending) {
             console.log("Already sending please wait");
             return
+        }
+        if (message.length == 0) {
+            console.log("Write some message to send");
+            return;
         }
         setSending(true);
         let data = {
@@ -39,7 +43,7 @@ export default function Chat() {
             toccid: '',
             type: 'normal'
         }
-        addMessage(route.params.chatId, data, setSending)
+        await addMessage(route.params.chatId, data, setSending)
         setMessage("")
     }
 
@@ -55,7 +59,7 @@ export default function Chat() {
                 value={message}
                 onChangeText={(mess) => setMessage(mess)}
             />
-            <Button onPress={sendMessage} title="Send Message" />
+            {message.length > 0 ? <Button onPress={sendMessage} title="Send Message" /> : null}
         </View>
     )
 }

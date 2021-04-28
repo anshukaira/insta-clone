@@ -388,7 +388,7 @@ export async function initiateChat(uid) {
     batch.update(userRef, {
         ['chats.' + user.uid]: chatId
     })
-    batch.commit().then(() => console.log("Chat initiated with id: " + chatId)).catch((error) => {
+    await batch.commit().then(() => console.log("Chat initiated with id: " + chatId)).catch((error) => {
         console.log(error.message);
         newChatRef.delete().then(() => {
             console.log("cleared chat doc");
@@ -398,11 +398,11 @@ export async function initiateChat(uid) {
     return chatId;
 }
 
-export function addMessage(chatId, data, state) {
+export async function addMessage(chatId, data, state) {
     let { user } = store.getState()
     let time = Date.now();
     let ccid = time + "_" + data.uid
-    firestore.collection('chats').doc(chatId).update({
+    await firestore.collection('chats').doc(chatId).update({
         [ccid]: {
             ...data,
             time: time,
