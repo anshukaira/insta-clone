@@ -228,7 +228,7 @@ export function updateCachedPosts(pid, forceUpdate = false) {
  * Functions for Like
 */
 
-export function likePost(uid, pid, myuid, state) {
+export async function likePost(uid, pid, myuid, state) {
     let batch = firestore.batch();
     let postRef = firestore.collection("users").doc(uid).collection("posts").doc(pid);
     let pubPostRef = firestore.collection("public").doc("pubPosts");
@@ -238,14 +238,14 @@ export function likePost(uid, pid, myuid, state) {
     batch.update(pubPostRef, {
         [pid + '.numLike']: firebase.firestore.FieldValue.increment(1)
     })
-    batch.commit().then(() => {
+    await batch.commit().then(() => {
         console.log("Liked" + pid)
         updateCachedPosts(pid, true)
     }).catch(err => console.log(err.message))
     state(false)
 }
 
-export function unlikePost(uid, pid, myuid, state) {
+export async function unlikePost(uid, pid, myuid, state) {
     let batch = firestore.batch();
     let postRef = firestore.collection("users").doc(uid).collection("posts").doc(pid);
     let pubPostRef = firestore.collection("public").doc("pubPosts");
@@ -255,7 +255,7 @@ export function unlikePost(uid, pid, myuid, state) {
     batch.update(pubPostRef, {
         [pid + '.numLike']: firebase.firestore.FieldValue.increment(-1)
     })
-    batch.commit().then(() => {
+    await batch.commit().then(() => {
         console.log("Unliked" + pid)
         updateCachedPosts(pid, true)
     }).catch(err => console.log(err.message))

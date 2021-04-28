@@ -59,10 +59,10 @@ export default function Post({ pid }) {
         navigation.navigate("Profile", { pid: pid, uid: currentPost.uid, screen: 'Post' })
     }
 
-    const likeToggle = () => {
+    const likeToggle = async () => {
         if (!likeClicked) {
             setLikeClicked(true)
-            liked ? unlikePost(currentPost.uid, pid, user.uid, setLikeClicked) : likePost(currentPost.uid, pid, user.uid, setLikeClicked)
+            liked ? await unlikePost(currentPost.uid, pid, user.uid, setLikeClicked) : await likePost(currentPost.uid, pid, user.uid, setLikeClicked)
         }
     }
 
