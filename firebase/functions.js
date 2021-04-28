@@ -189,7 +189,7 @@ export function editPost(pid, data) {
 
 // To help minimise calls to firebase we will store post data in our own cache
 
-export function updateCachedPosts(pid, forceUpdate = false) {
+export async function updateCachedPosts(pid, forceUpdate = false) {
     const { cachedPosts, allPosts } = store.getState();
     let shouldFetch = true;
     if (!allPosts[pid]) {
@@ -204,7 +204,7 @@ export function updateCachedPosts(pid, forceUpdate = false) {
 
     if (forceUpdate || shouldFetch) {
         store.dispatch(addCachedPost({ key: pid, content: {} }))
-        firestore.collection("users").doc(uid).collection("posts").doc(pid).get().then((doc) => {
+        await firestore.collection("users").doc(uid).collection("posts").doc(pid).get().then((doc) => {
             if (doc.exists) {
                 console.log("updating cachedPost" + pid)
                 let docData = doc.data()
@@ -238,11 +238,14 @@ export async function likePost(uid, pid, myuid, state) {
     batch.update(pubPostRef, {
         [pid + '.numLike']: firebase.firestore.FieldValue.increment(1)
     })
-    await batch.commit().then(() => {
-        console.log("Liked" + pid)
-        updateCachedPosts(pid, true)
-    }).catch(err => console.log(err.message))
-    state(false)
+    await batch.commit().then(async () => {
+        console.log("liked" + pid)
+        await updateCachedPosts(pid, true)
+        state(false)
+    }).catch(err => {
+        console.log(err.message)
+        state(false)
+    })
 }
 
 export async function unlikePost(uid, pid, myuid, state) {
@@ -255,11 +258,14 @@ export async function unlikePost(uid, pid, myuid, state) {
     batch.update(pubPostRef, {
         [pid + '.numLike']: firebase.firestore.FieldValue.increment(-1)
     })
-    await batch.commit().then(() => {
+    await batch.commit().then(async () => {
         console.log("Unliked" + pid)
-        updateCachedPosts(pid, true)
-    }).catch(err => console.log(err.message))
-    state(false)
+        await updateCachedPosts(pid, true)
+        state(false)
+    }).catch(err => {
+        console.log(err.message)
+        state(false)
+    })
 }
 
 

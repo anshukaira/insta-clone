@@ -1,5 +1,5 @@
 import { useRoute } from '@react-navigation/core'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { View, Text, TextInput, Button, StyleSheet, Dimensions, ScrollView } from 'react-native'
 import { useSelector } from 'react-redux'
 import { addMessage } from '../../../firebase/functions'
@@ -13,6 +13,8 @@ export default function Chat() {
     const [chatList, setChatList] = useState([]);
     const [message, setMessage] = useState("");
     const [sending, setSending] = useState(false);
+    const scrollViewRef = useRef();
+
 
     useEffect(() => {
         const unsubscribe = subChat(route.params.chatId, setData)
@@ -26,6 +28,10 @@ export default function Chat() {
         let list = getChatList(data);
         setChatList(list);
     }, [data])
+
+    useEffect(() => {
+
+    }, [chatList])
 
 
     const sendMessage = async () => {
@@ -49,7 +55,10 @@ export default function Chat() {
 
     return (
         <View style={{ flex: 1 }}>
-            <ScrollView>
+            <ScrollView
+                ref={scrollViewRef}
+                onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}
+            >
                 <Text style={{ alignSelf: 'center' }}>{route.params.uid}</Text>
                 {chatList.map((item) => {
                     return (
