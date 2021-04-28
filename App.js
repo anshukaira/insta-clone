@@ -1,19 +1,21 @@
-import 'react-native-gesture-handler'; // It should be at top before any other imports
+import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import store from './redux/store/app'
-import { Provider } from 'react-redux';
-import { NavigationContainer } from '@react-navigation/native';
-import { enableScreens } from 'react-native-screens';
-import Main from './components/Main'
-
-enableScreens();
+import { StyleSheet, Text, View } from 'react-native';
 
 export default function App() {
   return (
-    <Provider store={store}>
-      <NavigationContainer>
-        <Main />
-      </NavigationContainer>
-    </Provider>
+    <View style={styles.container}>
+      <Text>Open up App.js to start working on your app!</Text>
+      <StatusBar style="auto" />
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
