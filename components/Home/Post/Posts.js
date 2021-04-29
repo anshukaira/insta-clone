@@ -7,26 +7,8 @@ import { useNavigation, useRoute } from '@react-navigation/core'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { theme } from '../../Style/Constants'
 
-const LIMIT = 2;
+const LIMIT = 2; // 0 indexed
 
-function updateNextVisible(visible, data, LIMIT) {
-    let newVisible = [];
-    let count = 0;
-    for (const item of data) {
-        let diff = visible.filter((it) => it.pid == item.pid)
-        if (diff.length == 0) {
-            count++;
-        }
-        else {
-            console.log("exists")
-        }
-        newVisible.push(item);
-        if (count > LIMIT) {
-            break;
-        }
-    }
-    return newVisible;
-}
 
 export default function Posts({ showStory, margin, data }) {
     const [visible, setVisible] = useState([]);
@@ -35,7 +17,7 @@ export default function Posts({ showStory, margin, data }) {
 
     useEffect(() => {
         let newVisible = []
-        if (route.params?.screen == 'PostMini') {
+        if (route.params.screen == 'PostMini') {
             newVisible = updateNextVisible(visible, route.params.data, LIMIT);
             setShowLoad(newVisible.length < route.params.data.length)
         } else {
@@ -44,6 +26,7 @@ export default function Posts({ showStory, margin, data }) {
         }
         setVisible(newVisible);
     }, [data])
+
     const loadMore = () => {
         let newVisible = []
         if (route.params?.screen == 'PostMini') {
@@ -73,6 +56,25 @@ export default function Posts({ showStory, margin, data }) {
             </ScrollView>
         </View>
     )
+}
+
+function updateNextVisible(visible, data, LIMIT) {
+    let newVisible = [];
+    let count = 0;
+    for (const item of data) {
+        let diff = visible.filter((it) => it.pid == item.pid)
+        if (diff.length == 0) {
+            count++;
+        }
+        else {
+            console.log("exists")
+        }
+        newVisible.push(item);
+        if (count > LIMIT) {
+            break;
+        }
+    }
+    return newVisible;
 }
 
 const styles = StyleSheet.create({

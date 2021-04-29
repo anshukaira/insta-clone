@@ -16,11 +16,13 @@ const divide = 2.5;
 const initialWidth = Platform.OS === 'web' ? window.width / divide : window.width;
 
 export default function Post({ pid }) {
-    const navigation = useNavigation();
+
     const allPosts = useSelector(selectAllPosts);
     const allUsers = useSelector(selectAllUser);
     const cachedPosts = useSelector(selectCachedPosts);
     const user = useSelector(selectUser);
+
+    const navigation = useNavigation();
 
     const [dimensions, setDimensions] = useState(initialWidth);
     const [currentPost, setCurrentPost] = useState(null);
@@ -29,16 +31,15 @@ export default function Post({ pid }) {
 
     useEffect(() => {
         updateCachedPosts(pid);
-    }, [allPosts, allUsers])
+    }, [allPosts])
 
     useEffect(() => {
         if (cachedPosts && cachedPosts[pid] && cachedPosts[pid].likes) {
             setCurrentPost(cachedPosts[pid]);
             setliked(cachedPosts[pid].likes.includes(user.uid))
-            console.log("cached post update", cachedPosts[pid])
         }
     }, [cachedPosts])
-    console.log("Current Post", currentPost)
+
     const onChange = ({ window }) => {
         if (Platform.OS == 'web')
             setDimensions(window.width / divide);
@@ -48,15 +49,13 @@ export default function Post({ pid }) {
 
     useEffect(() => {
         Dimensions.addEventListener("change", onChange);
-        // console.log("Post mounted: " + pid)
         return () => {
-            // console.log("Post unmounted: " + pid)
             Dimensions.removeEventListener("change", onChange);
         };
     }, []);
 
     const openProfile = () => {
-        navigation.navigate("Profile", { pid: pid, uid: currentPost.uid, screen: 'Post' })
+        navigation.navigate("Profile", { pid: pid, uid: currentPost.uid, screen: 'Post', name: allUsers[currentPost.uid].name })
     }
 
     const likeToggle = async () => {
@@ -141,6 +140,7 @@ export default function Post({ pid }) {
         </View>
     )
 }
+
 
 const styles = StyleSheet.create({
     container: {

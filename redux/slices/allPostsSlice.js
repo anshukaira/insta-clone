@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { POST_VISIBILITY } from "../../components/CONSTANTS";
 
 const initialState = {
 }
@@ -10,14 +11,14 @@ export const allPostsSlice = createSlice({
         addProtected: (state, action) => {
             let allPublic = {};
             for (const key in state) {
-                if (state[key].visibility == 'PUBLIC') {
+                if (state[key].visibility == POST_VISIBILITY.PUBLIC) {
                     allPublic[key] = { ...state[key] };
                 }
             }
             let allProtected = {}
             for (const key in action.payload) {
                 allProtected[key] = { ...action.payload[key] }
-                allProtected[key].visibility = 'PROTECTED'
+                allProtected[key].visibility = POST_VISIBILITY.PROTECTED
             }
             let all = {
                 ...allPublic,
@@ -28,14 +29,14 @@ export const allPostsSlice = createSlice({
         addPublic: (state, action) => {
             let allProtected = {};
             for (const key in state) {
-                if (state[key].visibility == 'PROTECTED') {
+                if (state[key].visibility == POST_VISIBILITY.PROTECTED) {
                     allProtected[key] = { ...state[key] };
                 }
             }
             let allPublic = {}
             for (const key in action.payload) {
                 allPublic[key] = { ...action.payload[key] }
-                allPublic[key].visibility = 'PUBLIC'
+                allPublic[key].visibility = POST_VISIBILITY.PUBLIC
             }
             let all = {
                 ...allProtected,

@@ -7,28 +7,19 @@ import { useSelector } from 'react-redux'
 import { selectUser } from '../../../redux/slices/userSlice'
 import { selectAllPosts } from '../../../redux/slices/allPostsSlice'
 import Icon from 'react-native-vector-icons/Ionicons'
-
-function extractPostsList(allPosts, user) {
-    const following = user.following;
-    let combine = [];
-    for (const key in allPosts) {
-        // if (following.includes(allPost[key].uid)) {
-        combine.push({ pid: key, ...allPosts[key] })
-        // }
-    }
-    combine.sort((a, b) => a.time < b.time)
-    return combine;
-}
+import { POST_VISIBILITY } from '../../CONSTANTS'
 
 
 export default function Feed() {
-    const [currentPostList, setCurrentPostList] = useState([]);
-    const allPosts = useSelector(selectAllPosts);
+
     const user = useSelector(selectUser);
+    const allPosts = useSelector(selectAllPosts);
+
     const [update, setUpdate] = useState(false)
+    const [currentPostList, setCurrentPostList] = useState([]);
+
     useEffect(() => {
         let data = extractPostsList(allPosts, user);
-        console.log("data", allPosts)
         let toBeUpdated = false;
         if (currentPostList.length == 0) {
             setCurrentPostList(data)
@@ -37,8 +28,6 @@ export default function Feed() {
                 let diff = currentPostList.filter((val) => val.pid == item.pid)
                 if (diff.length == 0) {
                     toBeUpdated = true;
-                    console.log(item);
-                    console.log(currentPostList)
                     break;
                 }
             }
@@ -46,8 +35,6 @@ export default function Feed() {
         }
     }, [allPosts, user])
 
-    console.log("allPost", allPosts)
-    console.log("currentist", currentPostList);
     const updateData = () => {
         let data = extractPostsList(allPosts, user);
         setCurrentPostList(data);
@@ -57,7 +44,7 @@ export default function Feed() {
 
     if (currentPostList.length == 0) {
         return (
-            <View>
+            <View style={styles.container}>
                 <Text>
                     Opps! No Post Yet.
                 </Text>
@@ -73,6 +60,23 @@ export default function Feed() {
     )
 }
 
+
+function extractPostsList(allPosts, user) {
+    let list = [];
+    let avgLikes = 0;
+    const following = user.following;
+
+    for (const key in allPosts) {
+        if (following.includes(allPost[key].uid) || (allPosts[key].visibility == POST_VISIBILITY.PUBLIC && allPosts[key].numLikes >= avgLikes)) {
+            avgLikes = (avgLikes * list.length + allPosts[key].numLikes) / (list.length + 1)
+            list.push({ pid: key, ...allPosts[key] })
+        }
+    }
+
+    list.sort((a, b) => a.time < b.time)
+    return list;
+}
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -83,9 +87,9 @@ const styles = StyleSheet.create({
         paddingTop: StatusBar.currentHeight,
     },
     icon: {
-            fontSize: 32,
-            fontWeight: 'bold',
-            justifyContent: 'center',
-            alignContent: 'center'
+        fontSize: 32,
+        fontWeight: 'bold',
+        justifyContent: 'center',
+        alignContent: 'center'
     }
 })

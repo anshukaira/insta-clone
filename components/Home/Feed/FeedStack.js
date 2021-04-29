@@ -8,11 +8,10 @@ import { selectAllUser } from '../../../redux/slices/allUserSlice';
 const Stack = createStackNavigator();
 
 export default function FeedStack() {
-    const allUser = useSelector(selectAllUser);
     return (
         <Stack.Navigator >
-            <Stack.Screen name="FeedHome" component={FeedScreen} options={{ headerShown: false }} />
-            <Stack.Screen name="Profile" component={ProfileScreen} options={({ route }) => ({ headerTitle: allUser[route.params.uid].name })} />
+            <Stack.Screen name="FeedHome" component={FeedScreen} options={{ headerShown: false }} initialParams={{ screen: 'Feed' }} />
+            <Stack.Screen name="Profile" component={ProfileScreen} options={({ route }) => ({ headerTitle: route.params.name })} initialParams={{ screen: 'Feed' }} />
         </Stack.Navigator>
     )
 }

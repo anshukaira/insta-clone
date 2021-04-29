@@ -10,7 +10,7 @@ import { addProtected, addPublic } from '../redux/slices/allPostsSlice';
  * TODO: Make a global dict for storing all subscription and based on it check if need to subscribe or reuse existing one
 */
 
-export function subUser(uid) {
+export function subUser(uid,) {
     console.log("subscribing user " + uid)
     const unsubscribe = firestore.collection("users").doc(uid)
         .onSnapshot((doc) => {
@@ -28,8 +28,8 @@ export function subUser(uid) {
     return unsubscribe;
 }
 
-export function subAlllUser() {
-    console.log("subscribing public users")
+export function subAllUser() {
+    console.log("subscribing all users")
     const unsubscribe = firestore.collection("public").doc("users")
         .onSnapshot((doc) => {
             if (doc.exists) {
@@ -62,7 +62,7 @@ export function subPublicPosts() {
 }
 
 export function subProtPosts() {
-    console.log("subscribing public protected posts")
+    console.log("subscribing protected posts")
     const unsubscribe = firestore.collection("public").doc("protPosts")
         .onSnapshot((doc) => {
             if (doc.exists) {

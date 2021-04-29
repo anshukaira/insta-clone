@@ -5,7 +5,7 @@ import LoggedIn from './LoggedIn'
 import LoggedOut from './LoggedOut'
 import { Text } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux'
-import { selectUser, set as setUser, unset as unsetUser } from '../redux/slices/userSlice'
+import { set as setUser, unset as unsetUser } from '../redux/slices/userSlice'
 
 function Main() {
     const dispatch = useDispatch();
