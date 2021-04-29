@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { View, Text, Platform, Button, Image, TouchableOpacity, StyleSheet, ToastAndroid } from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
-import { addPost, addPostNative } from '../../../firebase/functions';
+import { addPost, addPostNative } from '../../firebase/functions';
 import { useSelector } from 'react-redux';
-import { selectUser } from '../../../redux/slices/userSlice'
-import { theme } from '../../Style/Constants';
+import { selectUser } from '../../redux/slices/userSlice'
+import { theme } from '../Style/Constants';
 
 export default function Add() {
     const user = useSelector(selectUser);
@@ -88,12 +88,19 @@ export default function Add() {
 
     const upload = () => {
         addPost(image, "Testing Post Upload", 'PUBLIC', user.uid)
+<<<<<<< HEAD
         if (Platform.OS = 'android') {
             ToastAndroid.showWithGravity(
                 "Picture Uploaded!!",
                 ToastAndroid.LONG,
                 ToastAndroid.CENTER)
         }
+=======
+        ToastAndroid.showWithGravity(
+            "Picture Uploaded!!",
+            ToastAndroid.LONG,
+            ToastAndroid.CENTER)
+>>>>>>> 1cba7da... Continue refactor
 
         setUploaded(true)
     }

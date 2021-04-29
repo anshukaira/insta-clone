@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
 import ChatScreen from './ChatHome'
 import Chat from './Chat'
@@ -6,7 +6,7 @@ import Chat from './Chat'
 
 const Stack = createStackNavigator();
 
-export default function ActivityStack() {
+export default function ChatStack() {
     return (
         <Stack.Navigator>
             <Stack.Screen name="ChatHome" component={ChatScreen} options={{ headerShown: false }} />

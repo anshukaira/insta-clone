@@ -1,5 +1,5 @@
 import React from 'react'
-import { createStackNavigator } from '@react-navigation/stack'
+import { createStackNavigator, HeaderTitle } from '@react-navigation/stack'
 import ProfileScreen from './Profile'
 import SavedScreen from '../Saved/SavedStack'
 import { useRoute } from '@react-navigation/core';

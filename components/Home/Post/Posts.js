@@ -7,7 +7,7 @@ import { useNavigation, useRoute } from '@react-navigation/core'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { theme } from '../../Style/Constants'
 
-const LIMIT = 2; // 0 indexed
+const LIMIT = 2;
 
 
 export default function Posts({ showStory, margin, data }) {
@@ -17,12 +17,12 @@ export default function Posts({ showStory, margin, data }) {
 
     useEffect(() => {
         let newVisible = []
-        if (route.params.screen == 'PostMini') {
-            newVisible = updateNextVisible(visible, route.params.data, LIMIT);
-            setShowLoad(newVisible.length < route.params.data.length)
-        } else {
+        if (route.params.screen == 'Feed') {
             newVisible = updateNextVisible(visible, data, LIMIT)
             setShowLoad(newVisible.length < data.length)
+        } else {
+            newVisible = updateNextVisible(visible, route.params.data, LIMIT);
+            setShowLoad(newVisible.length < route.params.data.length)
         }
         setVisible(newVisible);
     }, [data])
@@ -61,6 +61,7 @@ export default function Posts({ showStory, margin, data }) {
 function updateNextVisible(visible, data, LIMIT) {
     let newVisible = [];
     let count = 0;
+    console.log(data);
     for (const item of data) {
         let diff = visible.filter((it) => it.pid == item.pid)
         if (diff.length == 0) {

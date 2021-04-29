@@ -11,7 +11,7 @@ export default function FeedStack() {
     return (
         <Stack.Navigator >
             <Stack.Screen name="FeedHome" component={FeedScreen} options={{ headerShown: false }} initialParams={{ screen: 'Feed' }} />
-            <Stack.Screen name="Profile" component={ProfileScreen} options={({ route }) => ({ headerTitle: route.params.name })} initialParams={{ screen: 'Feed' }} />
+            <Stack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }} initialParams={{ screen: 'Feed' }} />
         </Stack.Navigator>
     )
 }

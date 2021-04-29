@@ -67,7 +67,7 @@ function extractPostsList(allPosts, user) {
     const following = user.following;
 
     for (const key in allPosts) {
-        if (following.includes(allPost[key].uid) || (allPosts[key].visibility == POST_VISIBILITY.PUBLIC && allPosts[key].numLikes >= avgLikes)) {
+        if (following.includes(allPosts[key].uid) || allPosts[key].uid == user.uid || (allPosts[key].visibility == POST_VISIBILITY.PUBLIC && allPosts[key].numLikes >= avgLikes)) {
             avgLikes = (avgLikes * list.length + allPosts[key].numLikes) / (list.length + 1)
             list.push({ pid: key, ...allPosts[key] })
         }

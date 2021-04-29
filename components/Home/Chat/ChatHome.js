@@ -25,10 +25,10 @@ export default function ChatHome() {
 }
 
 const Message = () => {
-    return(
+    return (
         <View style={styles.messageContainer}>
-                <Text style={styles.messages}> Messages</Text>
-            </View>
+            <Text style={styles.messages}> Messages</Text>
+        </View>
     )
 }
 
@@ -76,7 +76,7 @@ const PossibleList = () => {
         return (
             <View style={styles.descriptive}>
                 <View style={styles.textContainer}>
-                    <Text style={[styles.smallText, {fontSize: 12} ]}>Follow users to start chating</Text>
+                    <Text style={[styles.smallText, { fontSize: 12 }]}>Follow users to start chating</Text>
                 </View>
             </View>
         )
@@ -105,7 +105,7 @@ const ExistingListItem = ({ uid, chatId }) => {
 
     const navigateProfile = () => {
         //ToDo: Navigate to the particular user profile
-        navigation.navigate('Profile', {uid: uid, screen: 'Chat'})
+        navigation.navigate('Profile', { uid: uid, screen: 'Chat' })
     }
     if (loading) {
         return (
@@ -117,17 +117,17 @@ const ExistingListItem = ({ uid, chatId }) => {
         )
     }
     return (
-        
-            <View style={styles.chatContainer}>  
-                <Avatar.Image source={require("../../../assets/dummy.jpeg")} size={54} onPress={navigateProfile}/>
-                <TouchableOpacity onPress={handlePress}>
-                    <View style={styles.textContainer}>
-                        <Text style={styles.name} >{allUser[uid].name}</Text>
-                        <Text style={styles.smallText}>{chatId}</Text>
-                    </View>
-                </TouchableOpacity>
-                
-            </View>
+
+        <View style={styles.chatContainer}>
+            <Avatar.Image source={require("../../../assets/dummy.jpeg")} size={54} onPress={navigateProfile} />
+            <TouchableOpacity onPress={handlePress}>
+                <View style={styles.textContainer}>
+                    <Text style={styles.name} >{allUser[uid].name}</Text>
+                    <Text style={styles.smallText}>{chatId}</Text>
+                </View>
+            </TouchableOpacity>
+
+        </View>
     )
 }
 
@@ -154,8 +154,8 @@ const PossibleListItem = ({ uid }) => {
     }
     return (
         <TouchableOpacity onPress={handlePress}>
-            <View style={styles.chatContainer}>  
-                <Avatar.Image source={require("../../../assets/dummy.jpeg")} size={54}/>
+            <View style={styles.chatContainer}>
+                <Avatar.Image source={require("../../../assets/dummy.jpeg")} size={54} />
                 <View style={styles.textContainer}>
                     <Text style={styles.name} >{allUser[uid].name}</Text>
                 </View>
@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
         marginTop: 75,
         padding: 8,
     },
-    messages : {
+    messages: {
         fontWeight: "bold",
         fontSize: 18
     },

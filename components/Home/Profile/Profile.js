@@ -8,17 +8,17 @@ import ProfileBox from './ProfileBox'
 import { OwnBox, OtherBox } from './OpBox'
 import PostsView from './PostsView'
 import { subAnotherUser } from '../../../firebase/subscriptions'
+import { useNavigation, useRoute } from '@react-navigation/core'
 
-export default function Profile({ route }) {
+export default function Profile() {
     const user = useSelector(selectUser)
-
-    const style = (route.params.screen == 'Post' ||
-        route.params.screen == 'Activity') ? { marginTop: 0 } : { marginTop: 50 };
-
-    const paddingTop = (route.params.screen == 'Post' ||
-        route.params.screen == 'Activity') ? { paddingTop: 0 } : { paddingTop: StatusBar.currentHeight };
-
+    const route = useRoute()
+    const navigation = useNavigation();
     const [currentUser, setCurrentUser] = useState(null);
+
+    const style = route.params.screen == 'Home' ? { marginTop: 50 } : { marginTop: 0 };
+    const paddingTop = route.params.screen == 'Home' ? StatusBar.currentHeight : 0;
+
     useEffect(() => {
         if (route.params.uid !== user.uid) {
             const unSubCurrentUser = subAnotherUser(route.params.uid, setCurrentUser);
@@ -28,9 +28,19 @@ export default function Profile({ route }) {
             }
         }
     }, [])
+
+    useEffect(() => {
+        if (route.params.screen != 'Home') {
+            navigation.setOptions({
+                headerShown: true,
+                headerTitle: route.params.name
+            })
+        }
+    }, [])
+
     useEffect(() => {
         if (route.params.uid == user.uid) {
-            console.log("Hey its my profile so already sunscribed")
+            console.log("Hey its my profile so already subscribed")
             setCurrentUser(user);
         }
     }, [user])
@@ -47,9 +57,9 @@ export default function Profile({ route }) {
 
     return (
         <View style={[styles.container, paddingTop]}>
-            {route.params.screen == 'Home' ? <Header uid={currentUser.name} /> : <></>}
+            {route.params.screen == 'Home' ? <Header name={currentUser.name} /> : null}
             <ScrollView>
-                <ProfileBox user={currentUser} />
+                <ProfileBox user={currentUser} style={style} />
                 {route.params.screen == 'Home' ? <OwnBox user={currentUser} /> : <OtherBox user={currentUser} />}
                 <PostsView user={currentUser} navigateTo="Posts" />
             </ScrollView>

@@ -31,11 +31,7 @@ function LoggedIn({ uid }) {
     return (
         <Stack.Navigator initialRouteName="Home">
             <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
-<<<<<<< HEAD
-            <Stack.Screen name="Comments" component={CommentScreen} />
-=======
             <Stack.Screen name="Comments" component={CommentsScreen} />
->>>>>>> b5ec515... partial update till Post
             <Stack.Screen name="Options" component={OptionsScreen} />
             <Stack.Screen name="Edit" component={EditScreen} />
             <Stack.Screen name="Add" component={AddScreen} />
