@@ -13,10 +13,9 @@ import { selectUser } from '../redux/slices/userSlice';
 const Stack = createStackNavigator();
 
 
-function LoggedIn() {
-    const user = useSelector(selectUser);
+function LoggedIn({ uid }) {
     useEffect(() => {
-        const unsubUser = subUser(user.uid);
+        const unsubUser = subUser(uid);
         const unsubAllUser = subAlllUser();
         const unsubPubPosts = subPublicPosts();
         const unsubProtPosts = subProtPosts();

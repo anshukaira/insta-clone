@@ -8,8 +8,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { selectUser, set as setUser, unset as unsetUser } from '../redux/slices/userSlice'
 
 function Main() {
-    const user = useSelector(selectUser);
     const dispatch = useDispatch();
+    const [uid, setUid] = useState("");
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -18,9 +18,11 @@ function Main() {
             if (_user) {
                 console.log("Logged in as: ", _user.uid)
                 dispatch(setUser({ uid: _user.uid }));
+                setUid(_user.uid)
             } else {
                 console.log("Logged Out User");
                 dispatch(unsetUser());
+                setUid("")
             }
             setLoading(false);
         })
@@ -36,8 +38,8 @@ function Main() {
         return <Text> Loading </Text>;
     }
 
-    if (user.uid) {
-        return <LoggedIn />;
+    if (uid.length > 0) {
+        return <LoggedIn uid={uid} />;
     }
     return <LoggedOut />;
 }

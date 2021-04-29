@@ -23,7 +23,7 @@ function extractPostsList(pubPost, protPost, mydata) {
             combine.push({ pid: post, time: pubPost[post].time })
         }
     }
-    combine.sort((a, b) => a.time > b.time)
+    combine.sort((a, b) => a.time < b.time)
     return combine;
 }
 
@@ -101,6 +101,6 @@ const styles = StyleSheet.create({
     },
     listItem: {
         margin: 2,
-        width: WIDTH/3,
+        width: WIDTH / 3,
     }
 })
