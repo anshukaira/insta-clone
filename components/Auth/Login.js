@@ -21,13 +21,10 @@ function Login({ navigation }) {
 
 
   return (
-    <View style={styles.main}>
-      <View style={styles.mainContainer}>
+    <View style={styles.mainContainer}>
         <View style={styles.container}>
           <StatusBar style="auto" />
-          <View style={styles.h1}>
-            <Text>MIRAI C</Text>
-          </View>
+          <Text style={styles.h1}>MIRAI C</Text>
           <View>
             <TextInput
               style={styles.input}
@@ -82,8 +79,7 @@ function Login({ navigation }) {
             <Text style={styles.SignIn}>Sign up</Text>
           </TouchableOpacity>
         </View>
-      </View>
-    </View>
+   </View>
   )
 }
 
@@ -93,7 +89,7 @@ const { width: WIDTH } = Dimensions.get('window');
 
 const styles = StyleSheet.create(
   {
-    main: {
+    mainContainer: {
       height: '100%',
       width: '100%',
       flex: 1,
@@ -102,19 +98,9 @@ const styles = StyleSheet.create(
       justifyContent: "center",
     },
 
-    mainContainer: {
-      flex: 1,
-      height: '606px',
-      width: '350px',
-      alignItems: "center",
-      position: 'relative',
-      backgroundColor: "#fafafa",
-      justifyContent: "center",
-    },
-
     container: {
-      height: '300px',
-      width: '348px',
+      height: 300,
+      width: 348,
       marginBottom: 10,
       borderWidth: 1,
       borderColor: '#dbdbdb',
@@ -124,8 +110,8 @@ const styles = StyleSheet.create(
     },
 
     container1: {
-      height: '63px',
-      width: '348px',
+      height: 63,
+      width: 348,
       paddingBottom: 10,
       paddingTop: 10,
       borderWidth: 1,
@@ -139,14 +125,17 @@ const styles = StyleSheet.create(
     },
 
     h1: {
-      fontFamily: 'sans-serif',
-    },
+        margin: 10,
+        fontFamily: 'montserrat',
+        fontWeight: 'bold',
+        fontSize: 35,
+      },
 
     input: {
       color: '#8e8e8e',
       borderColor: '#dbdbdb',
       borderRadius: 5,
-      width: '258px',
+      width: 258,
       fontSize: 12,
       marginTop: 10,
       padding: 15,
@@ -168,7 +157,7 @@ const styles = StyleSheet.create(
       alignItems: "center",
       justifyContent: "center",
       marginTop: 30,
-      width: '258px',
+      width: 258,
     },
   }
 );

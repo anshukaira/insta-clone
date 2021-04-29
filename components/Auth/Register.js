@@ -19,24 +19,21 @@ function Register({ navigation }) {
   const [confirm_secureTextEntry, setConfirmEntry] = useState(true);
 
   return (
-    <View style={styles.main}>
-      <View style={styles.mainContainer}>
+    <View style={styles.mainContainer}>
         <View style={styles.container}>
           <StatusBar style="auto" />
-          <View style={styles.h1}>
-            <Text>MIRAI C</Text>
-          </View>
-          <View style={styles.input}>
+            <Text style={styles.h1}>MIRAI C</Text>
+          <View >
             <TextInput
-              style={{ textDecorationStyle: 'none' }}
+              style={styles.input}
               placeholder="Username"
               onChangeText={(name) => setName(name)}
               underlineColorAndroid="transparent"
             />
           </View>
-          <View style={styles.input}>
+          <View >
             <TextInput
-              style={{ textDecorationStyle: 'none' }}
+              style={styles.input}
               placeholder="Email."
               onChangeText={(email) => setEmail(email)}
               underlineColorAndroid="transparent"
@@ -82,10 +79,12 @@ function Register({ navigation }) {
 
           <View style={styles.container2}>
             <Text style={{ color: '#8e8e8e', marginRight: 5 }}>By signing up, you agree to our</Text>
-            <TouchableOpacity style={{ marginRight: 5 }}>Terms</TouchableOpacity>
-            <TouchableOpacity style={{ marginRight: 5 }}> Data Policy </TouchableOpacity>
+            <TouchableOpacity >Terms</TouchableOpacity>
+            <Text style={{ color: '#8e8e8e', marginRight: 5 }} >,</Text>
+            <TouchableOpacity > Data Policy </TouchableOpacity>
+            <Text style={{ color: '#8e8e8e', marginRight: 5 }}>,</Text>
             <Text style={{ color: '#8e8e8e', marginRight: 5 }}>and</Text>
-            <TouchableOpacity> Cookies Policy</TouchableOpacity>
+            <TouchableOpacity> Cookies Policy.</TouchableOpacity>
           </View>
         </View>
         <View style={styles.container1}>
@@ -95,8 +94,6 @@ function Register({ navigation }) {
           </TouchableOpacity>
         </View>
       </View>
-    </View>
-
   )
 }
 
@@ -107,23 +104,16 @@ const { width: WIDTH } = Dimensions.get('window');
 const styles = StyleSheet.create(
   {
 
-    main: {
+    mainContainer: {
       flex: 1,
       backgroundColor: "#fafafa",
       alignItems: "center",
       justifyContent: "center",
     },
 
-    mainContainer: {
-      flex: 2,
-      alignItems: "center",
-      backgroundColor: "#fafafa",
-      justifyContent: "center",
-    },
-
     container: {
-      height: '370px',
-      width: '348px',
+      height: 370,
+      width: 348,
       marginBottom: 10,
       borderWidth: 1,
       borderColor: '#dbdbdb',
@@ -133,8 +123,8 @@ const styles = StyleSheet.create(
     },
 
     container1: {
-      height: '63px',
-      width: '348px',
+      height: 63,
+      width: 348,
       paddingBottom: 10,
       paddingTop: 10,
       borderWidth: 1,
@@ -161,14 +151,17 @@ const styles = StyleSheet.create(
     },
 
     h1: {
-      fontFamily: 'sans-serif',
+      margin: 10,
+      fontFamily: 'montserrat',
+      fontWeight: 'bold',
+      fontSize: 35,
     },
 
     input: {
       color: '#8e8e8e',
       borderColor: '#dbdbdb',
       borderRadius: 5,
-      width: '258px',
+      width: 258,
       fontSize: 12,
       marginTop: 10,
       padding: 10,
@@ -189,7 +182,7 @@ const styles = StyleSheet.create(
       alignItems: "center",
       justifyContent: "center",
       marginTop: 20,
-      width: '258px',
+      width: 258,
     },
   }
 );
