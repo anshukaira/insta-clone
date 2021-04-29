@@ -1,6 +1,6 @@
 import { useRoute } from '@react-navigation/core'
 import React, { useEffect, useRef, useState } from 'react'
-import { View, Text, TextInput, Button, StyleSheet, Dimensions, ScrollView, TouchableOpacity } from 'react-native'
+import { View, Text, TextInput, StyleSheet, Dimensions, ScrollView, TouchableOpacity } from 'react-native'
 import { Avatar } from 'react-native-paper'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { useSelector } from 'react-redux'

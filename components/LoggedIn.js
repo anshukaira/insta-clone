@@ -32,7 +32,7 @@ function LoggedIn() {
     return (
         <Stack.Navigator initialRouteName="Home">
             <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
-            <Stack.Screen name="Comment" component={CommentScreen} />
+            <Stack.Screen name="Comments" component={CommentScreen} />
             <Stack.Screen name="Options" component={OptionsScreen} />
             <Stack.Screen name="Edit" component={EditScreen} />
             <Stack.Screen name="Add" component={AddScreen} />

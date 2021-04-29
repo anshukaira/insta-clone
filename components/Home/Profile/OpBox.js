@@ -30,14 +30,14 @@ export function OtherBox({ user }) {
     if (user.uid == me.uid) {
         return null
     }
-    const [following, setFollowing] = useState({ type: 'NOT', text: 'Follow' });
+    const [following, setFollowing] = useState({ type: 'NOT', text: 'Follow', bgColor: theme.lightButton, color: theme.darkfont});
     useEffect(() => {
         if (user.followers.includes(me.uid)) {
-            setFollowing({ type: 'YES', text: 'Following' });
+            setFollowing({ type: 'YES', text: 'Following', bgColor: 'white', color: theme.lightfont });
         } else if (user.followReq.includes(me.uid)) {
-            setFollowing({ type: 'PENDING', text: 'Request Sent' });
+            setFollowing({ type: 'PENDING', text: 'Request Sent', bgColor: 'white', color: theme.lightfont });
         } else {
-            setFollowing({ type: 'NOT', text: 'Follow' })
+            setFollowing({ type: 'NOT', text: 'Follow', bgColor: theme.lightButton, color: theme.darkfont })
         }
     }, [user, me])
 
@@ -66,8 +66,8 @@ export function OtherBox({ user }) {
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={[styles.box, { flex: 6 }]} onPress={followPress}>
-                <Text>{following.text}</Text>
+            <TouchableOpacity style={[styles.box, { flex: 6, backgroundColor: following.bgColor }, ]} onPress={followPress}>
+                <Text style={{ color: following.color}}>{following.text}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.box, { flex: 6 }]} onPress={messagePress}>
                 <Text>Message</Text>

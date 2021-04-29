@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
     },
     message: {
         textAlign: 'center',
-        fontSize: 18
+        fontSize: 14
     },
     timeContainer: {
         flexDirection: 'column',
@@ -59,6 +59,7 @@ const styles = StyleSheet.create({
     },
     time: {
         textAlign: 'right',
-        fontSize: 12
+        fontSize: 12,
+        color: 'silver'
     }
 })

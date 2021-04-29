@@ -75,7 +75,7 @@ export default function Post({ pid }) {
     }
 
     const gotoComments = () => {
-        navigation.navigate('Comment', { uid: currentPost.uid, screen: 'Post', pid: pid })
+        navigation.navigate('Comments', { uid: currentPost.uid, screen: 'Post', pid: pid })
     }
 
     return (
