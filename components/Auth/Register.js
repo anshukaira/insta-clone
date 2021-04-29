@@ -1,74 +1,101 @@
-import React, { useState } from 'react'
-import { View, Text, TextInput, StyleSheet, ImageBackground, Dimensions, TouchableOpacity } from 'react-native'
+import { StatusBar } from "expo-status-bar";
+import React, { useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  Dimensions,
+  TouchableOpacity,
+} from "react-native";
+import { Feather } from '@expo/vector-icons';
 import { signUp } from '../../firebase/functions'
 
-import Icon from 'react-native-vector-icons/Ionicons'
 
-function Register() {
+function Register( {navigation }) {
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
-    return (
-        <View>
-            <View style={styles.inputContainer}>
-                <Icon
-                    name={'ios-person-outline'}
-                    size={26}
-                    color={'rgba(255, 255, 255, 0.7)'}
-                    style={styles.inputIcon}
-                />
+    const [confirm_secureTextEntry, setConfirmEntry]= useState(true);
 
-                <TextInput
-                    placeholder='Username'
-                    placeholderTextColor={'rgba(255, 255, 255, 0.7)'}
-                    underlineColorAndroid='transparent'
-                    value={name}
-                    onChangeText={(name) => setName(name)}
-                    style={styles.textbox}
-                />
-            </View>
-            <View style={styles.inputContainer}>
-                <Icon
-                    name='ios-mail-outline'
-                    size={26}
-                    color={'rgba(255, 255, 255, 0.7)'}
-                    style={styles.inputIcon}
-                />
-                <TextInput
-                    placeholder="email"
-                    placeholderTextColor={'rgba(255, 255, 255, 0.7)'}
-                    underlineColorAndroid='transparent'
-                    value={email}
-                    onChangeText={(email) => setEmail(email)}
-                    style={styles.textbox}
-                />
-            </View>
-            <View style={styles.inputContainer}>
-                <Icon
-                    name={'ios-key-outline'}
-                    size={26}
-                    color={'rgba(255, 255, 255, 0.7)'}
-                    style={styles.inputIcon}
-                />
-                <TextInput
-                    placeholder="password"
-                    placeholderTextColor={'rgba(255, 255, 255, 0.7)'}
-                    underlineColorAndroid='transparent'
-                    secureTextEntry={true}
-                    value={password}
-                    onChangeText={(password) => setPassword(password)}
-                    style={styles.textbox}
-                />
-            </View>
-            <View style={styles.inputContainer}>
-                <TouchableOpacity
-                    style={styles.button}
-                    onPress={() => signUp(name, email, password)}
-                >
-                    <Text style={styles.text}>Sign Up</Text>
-                </TouchableOpacity>
-            </View>
-        </View>
+    return (
+        <View style={styles.main}>
+        <View style={styles.mainContainer}>
+           <View style={styles.container}> 
+              <StatusBar style="auto" />
+              <View style={styles.h1}> 
+                  <h1 >MIRAI C</h1>
+              </View>
+              <View  style={styles.input}>
+                  <TextInput
+                  style={{textDecorationStyle:'none'}}
+                  placeholder="Username"
+                  onChangeText={(name) => setName(name)}
+                  underlineColorAndroid="transparent"
+                  />
+              </View>
+              <View  style={styles.input}>
+                  <TextInput
+                  style={{textDecorationStyle:'none'}}
+                  placeholder="Email."
+                  onChangeText={(email) => setEmail(email)}
+                  underlineColorAndroid="transparent"
+                  />
+              </View>
+          
+              <View style={styles.input}>
+                 <TextInput
+                  placeholder="Password."
+                  secureTextEntry={confirm_secureTextEntry ? true : false}            
+                  onChangeText={(password) => setPassword(password)}
+                  underlineColorAndroid="transparent"
+                  />
+                    <TouchableOpacity
+                      onPress={ () => setConfirmEntry(!confirm_secureTextEntry)}
+                  >
+                    { password ?
+                       <View> 
+                      {confirm_secureTextEntry ? 
+                      <Feather 
+                          name="eye-off"
+                          color= '#8e8e8e'
+                          size={15}
+                      />
+                      :
+                      <Feather 
+                          name="eye"
+                          color='#8e8e8e'
+                          size={15}
+                      />
+                      }
+                      </View>
+                      :<View></View>
+                    }
+                  </TouchableOpacity>
+              </View>
+  
+              <TouchableOpacity style={styles.loginBtn}
+                 onPress={() => signUp(name, email, password)}
+                 >
+                  <Text>Sign up</Text>
+              </TouchableOpacity>
+          
+               <View style={styles.container2}>
+                  <Text style={{ color: '#8e8e8e',marginRight:5}}>By signing up, you agree to our</Text>
+                  <TouchableOpacity style={{ marginRight:5}}>Terms</TouchableOpacity>, 
+                  <TouchableOpacity style={{ marginRight:5}}> Data Policy </TouchableOpacity> 
+                  <Text style={{ color: '#8e8e8e',marginRight:5}}>and</Text> 
+                  <TouchableOpacity> Cookies Policy</TouchableOpacity>.
+               </View>
+           </View>
+           <View style={styles.container1}>
+               <Text>Have an account?  </Text>
+                   <TouchableOpacity onPress={()=>navigation.navigate('Login')}>
+                      <Text style={styles.signup}>Log in</Text>
+                   </TouchableOpacity>
+           </View>
+           </View>   
+    </View>
 
     )
 }
@@ -79,46 +106,91 @@ const { width: WIDTH } = Dimensions.get('window');
 
 const styles = StyleSheet.create(
     {
-        container: {
-            flex: 1,
-            width: null,
-            height: null,
-            alignItems: 'center',
-            justifyContent: 'center',
-        },
-        inputContainer: {
-            marginTop: 10,
+       
+  main: {
+    flex:1,
+    backgroundColor: "#fafafa",
+    alignItems: "center",
+    justifyContent: "center",
+  },
 
-        },
-        textbox: {
-            width: WIDTH - 55,
-            height: 48,
-            borderRadius: 25,
-            fontSize: 16,
-            paddingLeft: 45,
-            backgroundColor: 'rgba(0, 0, 0, 0.35)',
-            color: 'rgba(255, 255, 255, 0.7)',
-            marginHorizontal: 25
-        },
-        inputIcon: {
-            position: "absolute",
-            top: 8,
-            left: 37,
-        },
-        button: {
-            width: WIDTH - 55,
-            height: 48,
-            borderRadius: 25,
-            backgroundColor: '#8e96bb',
-            justifyContent: 'center',
-            marginTop: 20
-        },
-        text: {
-            color: 'rgba(255, 255, 255, 0.7)',
-            fontSize: 16,
-            textAlign: 'center'
-        }
-    }
+  mainContainer: {
+    flex:2,
+    alignItems: "center",
+    backgroundColor: "#fafafa",
+    justifyContent: "center",
+  },
+
+  container: {
+    height: '370px',
+    width: '348px',
+    marginBottom:10,
+    borderWidth: 1,
+    borderColor: '#dbdbdb',
+    backgroundColor:'#fff',
+    alignItems:'center',
+    borderRadius: 1,
+  }, 
+
+  container1: {
+    height: '63px',
+    width: '348px',
+    paddingBottom:10,
+    paddingTop:10,
+    borderWidth: 1,
+    borderColor: '#dbdbdb',
+    backgroundColor:'#fff',
+    alignItems:'center',
+    borderRadius: 1,
+    fontSize: 14 ,
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+
+  container2: {
+     flexDirection:'row',
+     padding:10,
+     margin:10,
+     color: '#8e8e8e',
+     fontSize: 12,
+     textAlign: 'center',
+     alignContent:'flex-start',
+     justifyContent:'center',
+     flexWrap:'wrap',
+     fontWeight: 'bold',
+  },
+
+  h1: {
+    fontFamily:'sans-serif',
+  },
+
+  input: {
+    color: '#8e8e8e',
+    borderColor: '#dbdbdb',
+    borderRadius: 5,
+    width: '258px',
+    fontSize: 12,
+    marginTop: 10,
+    padding:10,
+    borderWidth:0.5,
+    backgroundColor: "#fafafa",
+    flexDirection:'row',
+    alignItems:'center',
+  },
+ 
+  signup: {
+      color: '#0095f6',
+  },
+
+  loginBtn: {
+    borderWidth: 1,
+    borderRadius:5,
+    height: 36,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 20,
+    width: '258px',
+   },
+ }
 );
 
-//color palatte for our app - #e3c3ca #8e9bbb #fbf6e4 #9a747b #c3949d #b1abc1 #fae0d7 #d3a4a3 #e9e1ed #ad8484             //'#ad8491',
