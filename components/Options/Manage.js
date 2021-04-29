@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { View, Text, ScrollView, Image, StyleSheet, Dimensions, TouchableOpacity, Modal, TextInput, Platform } from 'react-native'
 import { useSelector } from 'react-redux'
-import { editPost, updateCachedPosts } from '../../firebase/functions';
+import { deletePost, editPost, updateCachedPosts } from '../../firebase/functions';
 import { selectAllPosts } from '../../redux/slices/allPostsSlice';
 import { selectCachedPosts } from '../../redux/slices/cachedPosts';
 import { selectUser } from '../../redux/slices/userSlice'
@@ -62,6 +62,11 @@ function Item({ post }) {
             </View>
         )
     }
+
+    const handleDelete = () => {
+        deletePost(currentPost.pid);
+    }
+
     return (
         <View style={styles.item}>
             <View style={styles.imageContainer}>
@@ -71,7 +76,7 @@ function Item({ post }) {
                 <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
                     <Text>EDIT</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button}>
+                <TouchableOpacity style={styles.button} onPress={handleDelete}>
                     <Text>DELETE</Text>
                 </TouchableOpacity>
             </View>

@@ -187,6 +187,31 @@ export function editPost(pid, data) {
     }).catch((err) => console.log(err.message))
 }
 
+export function deletePost(pid) {
+    const { user, allPosts } = store.getState();
+    const uid = user.uid;
+    let batch = firestore.batch();
+    let postRef = firestore.collection('users').doc(uid).collection('posts').doc(pid)
+    let fileRef = storage.ref().child('users/' + uid + '/posts/' + pid)
+    let postPublicRef
+    if (allPosts[pid] && allPosts[pid].visibility == 'PUBLIC') {
+        postPublicRef = firestore.collection('public').doc('pubPosts')
+    } else {
+        postPublicRef = firestore.collection('public').doc('protPosts')
+    }
+    batch.update(postPublicRef, {
+        [pid]: firebase.firestore.FieldValue.delete()
+    })
+    batch.delete(postRef)
+    batch.commit().then(() => {
+        fileRef.delete().then(() => {
+            console.log("File and post deleted successfully")
+        })
+    }).catch((error) => {
+        console.log(error.message)
+    })
+}
+
 // To help minimise calls to firebase we will store post data in our own cache
 
 export async function updateCachedPosts(pid, forceUpdate = false) {
