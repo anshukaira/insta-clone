@@ -1,19 +1,34 @@
 import { useNavigation } from '@react-navigation/core'
 import React, { useEffect, useState } from 'react'
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native'
+import { Avatar } from 'react-native-paper'
 import { useSelector } from 'react-redux'
 import { initiateChat } from '../../../firebase/functions'
 import { selectAllUser } from '../../../redux/slices/allUserSlice'
 import { selectUser } from '../../../redux/slices/userSlice'
+import { theme } from '../../Style/Constants'
+import Header from './Header'
 
 export default function ChatHome() {
+    const user = useSelector(selectUser)
+
     return (
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, flexDirection: 'column' }}>
+            <Header uid={user.name} />
+            <Message />
             <ScrollView>
                 <ExistingList />
                 <PossibleList />
             </ScrollView>
         </View>
+    )
+}
+
+const Message = () => {
+    return(
+        <View style={styles.messageContainer}>
+                <Text style={styles.messages}> Messages</Text>
+            </View>
     )
 }
 
@@ -28,8 +43,10 @@ const ExistingList = () => {
 
     if (existing.length == 0) {
         return (
-            <View>
-                <Text>No Existing Chats Found</Text>
+            <View style={styles.descriptive}>
+                <View style={styles.textContainer}>
+                    <Text style={styles.smallText}>No Existing Chats Found</Text>
+                </View>
             </View>
         )
     }
@@ -57,8 +74,10 @@ const PossibleList = () => {
 
     if (possible.length == 0) {
         return (
-            <View>
-                <Text>No Possible Chats Found. Follow users to start chating</Text>
+            <View style={styles.descriptive}>
+                <View style={styles.textContainer}>
+                    <Text style={[styles.smallText, {fontSize: 12} ]}>Follow users to start chating</Text>
+                </View>
             </View>
         )
     }
@@ -83,16 +102,32 @@ const ExistingListItem = ({ uid, chatId }) => {
         navigation.navigate('Chat', { uid: uid, chatId: chatId, header: allUser[uid].name })
         setLoading(false);
     }
+
+    const navigateProfile = () => {
+        //ToDo: Navigate to the particular user profile
+        navigation.navigate('Profile', {uid: uid, screen: 'Chat'})
+    }
     if (loading) {
         return (
-            <Text>Loading please wait</Text>
+            <View style={styles.descriptive}>
+                <View style={styles.textContainer}>
+                    <Text style={styles.smallText}>Loading Please Wait</Text>
+                </View>
+            </View>
         )
     }
     return (
-        <TouchableOpacity onPress={handlePress}>
-            <Text>{allUser[uid].name}</Text>
-            <Text>{chatId}</Text>
-        </TouchableOpacity>
+        
+            <View style={styles.chatContainer}>  
+                <Avatar.Image source={require("../../../assets/dummy.jpeg")} size={54} onPress={navigateProfile}/>
+                <TouchableOpacity onPress={handlePress}>
+                    <View style={styles.textContainer}>
+                        <Text style={styles.name} >{allUser[uid].name}</Text>
+                        <Text style={styles.smallText}>{chatId}</Text>
+                    </View>
+                </TouchableOpacity>
+                
+            </View>
     )
 }
 
@@ -110,12 +145,21 @@ const PossibleListItem = ({ uid }) => {
     }
     if (loading) {
         return (
-            <Text>Loading please wait</Text>
+            <View style={styles.descriptive}>
+                <View style={styles.textContainer}>
+                    <Text style={styles.smallText}>Loading Please Wait</Text>
+                </View>
+            </View>
         )
     }
     return (
         <TouchableOpacity onPress={handlePress}>
-            <Text>{allUser[uid].name}</Text>
+            <View style={styles.chatContainer}>  
+                <Avatar.Image source={require("../../../assets/dummy.jpeg")} size={54}/>
+                <View style={styles.textContainer}>
+                    <Text style={styles.name} >{allUser[uid].name}</Text>
+                </View>
+            </View>
         </TouchableOpacity>
     )
 }
@@ -143,3 +187,40 @@ function getPossibleList(user) {
     }
     return list
 }
+
+const styles = StyleSheet.create({
+    messageContainer: {
+        backgroundColor: theme.lightbg,
+        marginTop: 75,
+        padding: 8,
+    },
+    messages : {
+        fontWeight: "bold",
+        fontSize: 18
+    },
+    chatContainer: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        backgroundColor: theme.lightbg,
+        padding: 12,
+        borderBottomWidth: 0.5,
+        borderBottomColor: theme.lightGrayBorder
+    },
+    textContainer: {
+        marginLeft: 10
+    },
+    name: {
+        fontSize: 18,
+        fontWeight: '600',
+    },
+    smallText: {
+        fontSize: 10,
+        color: 'grey'
+    },
+    descriptive: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 10,
+    },
+});

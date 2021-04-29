@@ -51,7 +51,7 @@ function Item({ uid, name }) {
                 <Avatar.Image source={require("../../../assets/dummy.jpeg")} size={46}/>
                 <View style={styles.textContainer}>
                     <Text style={styles.name}>{name}</Text>
-                    <Text style={styles.smallText}>{name}</Text>
+                    <Text style={styles.smallText}>@username</Text>
                 </View>
             </TouchableOpacity>
 
