@@ -88,16 +88,18 @@ export default function Add() {
 
     const upload = () => {
         addPost(image, "Testing Post Upload", 'PUBLIC', user.uid)
-        ToastAndroid.showWithGravity(
-            "Picture Uploaded!!", 
-            ToastAndroid.LONG,
-            ToastAndroid.CENTER)
+        if (Platform.OS = 'android') {
+            ToastAndroid.showWithGravity(
+                "Picture Uploaded!!",
+                ToastAndroid.LONG,
+                ToastAndroid.CENTER)
+        }
 
         setUploaded(true)
     }
 
-    const CustomButton = ({onPress, text}) => {
-        return(
+    const CustomButton = ({ onPress, text }) => {
+        return (
             <TouchableOpacity onPress={onPress} style={styles.button}>
                 <Text style={styles.text}>{text}</Text>
             </TouchableOpacity>
@@ -105,7 +107,7 @@ export default function Add() {
     }
     return (
         <View style={styles.container}>
-            <CustomButton 
+            <CustomButton
                 onPress={pickImage}
                 text='Pick an image from camera roll' />
 
@@ -114,15 +116,15 @@ export default function Add() {
                 text='Click an image now' />
 
             {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
-            {image && !uploaded && <CustomButton onPress={upload} text="Upload Image"/>}
+            {image && !uploaded && <CustomButton onPress={upload} text="Upload Image" />}
         </View>
     )
 }
 
 const styles = StyleSheet.create({
-    container : {
-        flex: 1, 
-        alignItems: 'center', 
+    container: {
+        flex: 1,
+        alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: theme.lightbg,
     },
@@ -137,5 +139,5 @@ const styles = StyleSheet.create({
     },
     text: {
         fontSize: 16,
-    } 
+    }
 });
