@@ -4,7 +4,12 @@ import { auth } from '../firebase/firebase'
 import LoggedIn from './LoggedIn'
 import LoggedOut from './LoggedOut'
 import { Text, View } from 'react-native'
+<<<<<<< HEAD
 
+=======
+import { useDispatch, useSelector } from 'react-redux'
+import { selectUser, set as setUser, unset as unsetUser } from '../redux/slices/userSlice'
+>>>>>>> 689d7e4... Partial minor mistake resolve
 
 function Main() {
     const [uid, setUid] = useState("");
@@ -32,10 +37,18 @@ function Main() {
     // loading animation goes here probably
     if (loading) {
         return (
+<<<<<<< HEAD
             <View style={{ flexDirection: 'column', flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                 <Text style={{ fontSize: 30 }}>MIRAI C</Text>
             </View>
         )
+=======
+            <View>
+                <Text> Loading </Text>
+
+            </View>
+        );
+>>>>>>> 689d7e4... Partial minor mistake resolve
     }
 
     if (uid.length > 0) {
