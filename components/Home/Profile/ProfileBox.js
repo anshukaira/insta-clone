@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
     },
     details: {
-        paddingLeft: 10,
+        paddingLeft: 20,
         paddingRight: 10,
         paddingTop: 10,
         justifyContent: 'flex-start',
@@ -101,7 +101,6 @@ const styles = StyleSheet.create({
     },
     dpshape: {
         marginRight: 30,
-        marginLeft: 14,
         marginBottom: 10,
     },
     countbox: {

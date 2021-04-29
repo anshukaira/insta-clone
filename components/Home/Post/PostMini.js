@@ -9,10 +9,10 @@ import { selectAllPosts } from '../../../redux/slices/allPostsSlice';
 
 
 const window = Dimensions.get("window");
-const divideBig = 5.5;
-const divideSmall = 3.5;
+const divideBig = 5;
+const divideSmall = 3;
 const initialWidth = Platform.OS === 'web' ? window.width / divideBig : window.width / divideSmall;
-
+const SPACE = Platform.OS === 'web' ? 5 : 0;
 
 const createSimilarPostList = (pid, uid, allPosts) => {
     let list = [];
@@ -26,7 +26,7 @@ const createSimilarPostList = (pid, uid, allPosts) => {
 
 export default function PostMini({ pid, style, navigateTo }) {
     const navigation = useNavigation();
-    const [dimensions, setDimensions] = useState(initialWidth);
+    const [width, setWidth] = useState(initialWidth);
 
     const allPosts = useSelector(selectAllPosts);
     const allUsers = useSelector(selectAllUser);
@@ -44,9 +44,9 @@ export default function PostMini({ pid, style, navigateTo }) {
 
     const onChange = ({ window }) => {
         if (Platform.OS == 'web')
-            setDimensions(window.width / divideBig);
+            setWidth(window.width / divideBig);
         else
-            setDimensions(window.width / divideSmall);
+            setWidth(window.width / divideSmall);
     };
 
     useEffect(() => {
@@ -63,14 +63,12 @@ export default function PostMini({ pid, style, navigateTo }) {
 
     if (!currentPost || !currentPost.uid) {
         return (
-            <View>
-                <Text>Loading Post</Text>
-            </View>
+            <View style={styles.loading} />
         )
     }
     return (
-        <TouchableOpacity onPress={openRelatedPosts} style={[styles.image, { height: dimensions, width: dimensions }, style]}>
-            <Image source={{ uri: currentPost.url }} style={{ height: '100%', resizeMode: 'cover' }} />
+        <TouchableOpacity onPress={openRelatedPosts} style={[styles.image, { height: width-SPACE, width: width-SPACE }, style]}>
+            <Image source={{ uri: currentPost.url }} style={{ height: '100%', resizeMode: 'cover', backgroundColor: 'lightgray' }} />
         </TouchableOpacity>
     )
 }
@@ -80,4 +78,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         backgroundColor: 'green'
     },
+    loading: {
+        backgroundColor: 'gray',
+    }
 })
