@@ -9,6 +9,7 @@ import { subChat } from '../../../firebase/subscriptions'
 import { selectAllUser } from '../../../redux/slices/allUserSlice'
 import { selectUser } from '../../../redux/slices/userSlice'
 import { theme } from '../../Style/Constants'
+import DummyImage from '../../../assets/dummy.jpeg'
 
 export default function Chat() {
     const route = useRoute()
@@ -31,10 +32,6 @@ export default function Chat() {
         let list = getChatList(data);
         setChatList(list);
     }, [data])
-
-    useEffect(() => {
-
-    }, [chatList])
 
 
     const sendMessage = async () => {
@@ -64,10 +61,10 @@ export default function Chat() {
                 ref={scrollViewRef}
                 onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}
             >
-                <Text style={{ alignSelf: 'center', color: 'gray', fontSize:12 }}>{route.params.uid}</Text>
+                <Text style={{ alignSelf: 'center', color: 'gray', fontSize: 12 }}>{route.params.uid}</Text>
                 {chatList.map((item) => {
                     return (
-                        <ChatItem data={item} key={item.ccid} />
+                        <ChatItem data={item} key={item.ccid} keyId={item.ccid} />
                     )
                 })}
             </ScrollView>
@@ -79,33 +76,33 @@ export default function Chat() {
                     numberOfLines={1}
                 />
                 <TouchableOpacity onPress={sendMessage}
-                        disabled = {message.length === 0} 
-                        style={{ alignSelf: 'flex-end', borderRadius: 50, borderWidth: 2, marginBottom: 10, borderColor: iconColor}}>
-                        <Icon name="send" style={[styles.icon, {color : iconColor}]}/>
+                    disabled={message.length === 0}
+                    style={{ alignSelf: 'flex-end', borderRadius: 50, borderWidth: 2, marginBottom: 10, borderColor: iconColor }}>
+                    <Icon name="send" style={[styles.icon, { color: iconColor }]} />
                 </TouchableOpacity>
             </View>
-            
+
         </View>
     )
 }
 
-const ChatItem = ({ data }) => {
+const ChatItem = ({ data, keyId }) => {
     const allUser = useSelector(selectAllUser);
     const user = useSelector(selectUser)
     const time = new Date(data.time)
 
-    const UserAvatar = () => {
-        if(data.uid == user.uid)
+    const userAvatar = () => {
+        if (data.uid == user.uid)
             return null
-        return(<Avatar.Image source={require("../../../assets/dummy.jpeg")} size={42} style={{ marginTop : 10}}/>) 
-     
+        return (<Avatar.Image source={DummyImage} size={42} style={{ marginTop: 10 }} key={keyId} />)
+
     }
 
     const alignDirection = data.uid == user.uid ? 'flex-end' : 'flex-start';
-    const borderBottomRadius = data.uid == user.uid ? { borderBottomEndRadius: 5} : {borderBottomLeftRadius : 35};
+    const borderBottomRadius = data.uid == user.uid ? { borderBottomEndRadius: 5 } : { borderBottomLeftRadius: 35 };
     const viewStyle = data.uid == user.uid ? null : styles.vStyle
-    const backgroundColor =  data.uid == user.uid ? { backgroundColor: '#623FD7'} :{ backgroundColor: 'lightgray'}
-    const colorText = data.uid == user.uid ? null : { color : theme.lightfont }
+    const backgroundColor = data.uid == user.uid ? { backgroundColor: '#623FD7' } : { backgroundColor: 'lightgray' }
+    const colorText = data.uid == user.uid ? null : { color: theme.lightfont }
     if (!data) {
         return (
             <View style={[styles.chatItem, { alignSelf: alignDirection }, borderBottomRadius, backgroundColor]}>
@@ -123,12 +120,12 @@ const ChatItem = ({ data }) => {
     }
     return (
         <View style={viewStyle}>
-            <UserAvatar />
+            {userAvatar()}
             <View style={[styles.chatItem, { alignSelf: alignDirection }, borderBottomRadius, backgroundColor]}>
-            <Text style={[styles.chatText, colorText]}>{data.content}</Text>
-            {/* <Text style={styles.chatTextSmall}>Sender: {data.uid == user.uid ? "ME" : allUser[data.uid].name} at  */}
-            <Text style={[styles.chatTextSmall, colorText]}>{time.toLocaleString()}</Text>
-        </View>
+                <Text style={[styles.chatText, colorText]}>{data.content}</Text>
+                {/* <Text style={styles.chatTextSmall}>Sender: {data.uid == user.uid ? "ME" : allUser[data.uid].name} at  */}
+                <Text style={[styles.chatTextSmall, colorText]}>{time.toLocaleString()}</Text>
+            </View>
         </View>
 
     )
@@ -144,7 +141,7 @@ function getChatList(data) {
             continue;
         }
         list.push({
-            ccid: data[key].ccid,
+            ccid: key,
             content: data[key].content,
             time: data[key].time,
             toccid: data[key].toccid,
@@ -162,7 +159,7 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
         justifyContent: 'center',
         padding: 12,
-        paddingLeft : 18,
+        paddingLeft: 18,
         paddingRight: 18,
         paddingBottom: 10,
         width: Dimensions.get('window').width / 1.5,
@@ -197,7 +194,7 @@ const styles = StyleSheet.create({
         padding: 3,
         paddingLeft: 7,
     },
-    sendMessageContainer: { 
+    sendMessageContainer: {
         flexDirection: 'row',
     }
 })
