@@ -6,7 +6,7 @@ import { theme } from '../../Style/Constants'
 import { useSelector } from 'react-redux'
 import { selectUser } from '../../../redux/slices/userSlice'
 import { selectAllPosts } from '../../../redux/slices/allPostsSlice'
-
+import Icon from 'react-native-vector-icons/Ionicons'
 
 function extractPostsList(allPosts, user) {
     const following = user.following;
@@ -68,7 +68,7 @@ export default function Feed() {
         <View style={styles.container}>
             <Header />
             <Posts showStory={false} margin={50} data={currentPostList} />
-            {update ? <Button title="uppdate" onPress={updateData} /> : null}
+            {update ? <Icon name="md-add-circle-outline" onPress={updateData} style={styles.icon} /> : null}
         </View>
     )
 }
@@ -81,5 +81,11 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         flexDirection: 'column',
         paddingTop: StatusBar.currentHeight,
+    },
+    icon: {
+            fontSize: 32,
+            fontWeight: 'bold',
+            justifyContent: 'center',
+            alignContent: 'center'
     }
 })

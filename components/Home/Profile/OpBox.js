@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     box: {
         borderWidth: 1,
         borderRadius: 5,
-        borderColor: '#DCDCDC',
+        borderColor: theme.lightGrayBorder,
         marginLeft: 4,
         marginRight: 4,
         padding: 5,

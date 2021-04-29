@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderTopWidth: 1,
-        borderTopColor: '#DCDCDC',
+        borderTopColor: theme.lightGrayBorder,
         marginTop: 10
     }
 })

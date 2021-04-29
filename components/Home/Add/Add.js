@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, Platform, Button, Image } from 'react-native'
+import { View, Text, Platform, Button, Image, TouchableOpacity, StyleSheet, ToastAndroid } from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 import { addPost, addPostNative } from '../../../firebase/functions';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../../../redux/slices/userSlice'
+import { theme } from '../../Style/Constants';
 
 export default function Add() {
     const user = useSelector(selectUser);
     const [hasCameraPermission, setHasCameraPermission] = useState(null);
     const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
     const [image, setImage] = useState(null)
+    const [uploaded, setUploaded] = useState(false)
 
     useEffect(() => {
         (async () => {
@@ -52,6 +54,7 @@ export default function Add() {
     }
 
     const pickImage = async () => {
+        setUploaded(false);
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
@@ -68,6 +71,7 @@ export default function Add() {
     };
 
     const clickImage = async () => {
+        setUploaded(false);
         let result = await ImagePicker.launchCameraAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
@@ -84,14 +88,54 @@ export default function Add() {
 
     const upload = () => {
         addPost(image, "Testing Post Upload", 'PUBLIC', user.uid)
+        ToastAndroid.showWithGravity(
+            "Picture Uploaded!!", 
+            ToastAndroid.LONG,
+            ToastAndroid.CENTER)
+
+        setUploaded(true)
     }
 
+    const CustomButton = ({onPress, text}) => {
+        return(
+            <TouchableOpacity onPress={onPress} style={styles.button}>
+                <Text style={styles.text}>{text}</Text>
+            </TouchableOpacity>
+        )
+    }
     return (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            <Button title="Pick an image from camera roll" onPress={pickImage} />
-            <Button title="Click An Image" onPress={clickImage} />
+        <View style={styles.container}>
+            <CustomButton 
+                onPress={pickImage}
+                text='Pick an image from camera roll' />
+
+            <CustomButton
+                onPress={clickImage}
+                text='Click an image now' />
+
             {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
-            {image && <Button onPress={upload} title="Upload Image" />}
+            {image && !uploaded && <CustomButton onPress={upload} text="Upload Image"/>}
         </View>
     )
 }
+
+const styles = StyleSheet.create({
+    container : {
+        flex: 1, 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        backgroundColor: theme.lightbg,
+    },
+    button: {
+        borderWidth: 1,
+        borderRadius: 5,
+        borderColor: theme.lightGrayBorder,
+        width: 250,
+        padding: 5,
+        margin: 10,
+        alignItems: 'center',
+    },
+    text: {
+        fontSize: 16,
+    } 
+});

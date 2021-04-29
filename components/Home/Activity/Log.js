@@ -2,12 +2,13 @@ import React from 'react'
 import { View, Text, StyleSheet } from 'react-native'
 import { useSelector } from 'react-redux'
 import { selectUser } from '../../../redux/slices/userSlice'
+import { theme } from '../../Style/Constants';
 
 export default function Log() {
     const user = useSelector(selectUser);
 
     return (
-        <View>
+        <View style={{backgroundColor: theme.lightbg}}>
             {user.activity.map((item) => {
                 return (
                     <LogItem content={item.content} time={item.time} key={item.time} />
@@ -36,7 +37,9 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         alignItems: 'stretch',
         justifyContent: 'flex-start',
-        backgroundColor: '#e2e2e2',
+        backgroundColor: theme.lightbg,
+        borderBottomWidth: 0.5,
+        borderBottomColor: theme.lightGrayBorder,
     },
     messageContainer: {
         flexDirection: 'column',

@@ -4,4 +4,6 @@ export const theme = {
     lightbg: '#fCfCfC',
     lightfont: '#020202',
     lightHeader: '#ffffff',
+    lightGrayBorder: '#DCDCDC',
+    lightButton: '#0494F8',
 }
