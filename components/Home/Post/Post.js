@@ -176,6 +176,7 @@ const styles = StyleSheet.create({
     image: {
         flexDirection: 'column',
         minWidth: 360,
+        minHeight: 360,
     },
     flexRow: {
         flexDirection: 'row',
