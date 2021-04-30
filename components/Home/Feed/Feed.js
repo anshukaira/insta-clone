@@ -55,7 +55,7 @@ export default function Feed() {
 
 
     if (currentPostList.length == 0) {
-        return ( descriptiveText('Opps! No Post Yet.'))
+        return (descriptiveText('Opps! No Post Yet.'))
     }
     return (
         <View style={styles.container}>

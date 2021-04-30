@@ -162,17 +162,20 @@ const styles = StyleSheet.create({
     container: {
         flexDirection: 'column',
         paddingTop: 5,
-        paddingBottom: 8
+        paddingBottom: 8,
+        minWidth: 360,
     },
     header: {
         flexDirection: 'row',
         padding: 10,
+        minWidth: 360,
     },
     bold: {
         fontWeight: 'bold',
     },
     image: {
         flexDirection: 'column',
+        minWidth: 360,
     },
     flexRow: {
         flexDirection: 'row',
@@ -185,6 +188,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         padding: 5,
         paddingTop: 0,
+        minWidth: 360,
     },
     lightgrey: {
         color: 'darkgrey',
