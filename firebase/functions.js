@@ -81,7 +81,7 @@ function createUserInDatabase(uid, name, email, pass) {
             vis: visibility,
             delete: false,
             dp: '',
-            username:
+            email: email
         }
     }, { merge: true })
 
