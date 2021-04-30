@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, StyleSheet, StatusBar, Button, Text } from 'react-native'
+import { View, StyleSheet, StatusBar, ActivityIndicator, Text, Dimensions } from 'react-native'
 import Posts from '../Post/Posts'
 import Header from './Header'
 import { theme } from '../../Style/Constants'
@@ -19,6 +19,9 @@ export default function Feed() {
     const [currentPostList, setCurrentPostList] = useState([]);
 
     useEffect(() => {
+        if (loadingDependency(user, allPosts)) {
+            return
+        }
         let data = extractPostsList(allPosts, user);
         let toBeUpdated = false;
         if (currentPostList.length == 0) {
@@ -34,6 +37,14 @@ export default function Feed() {
             setUpdate(toBeUpdated)
         }
     }, [allPosts, user])
+
+    if (loadingDependency(user, allPosts)) {
+        return (
+            <View style={{ flexDirection: 'column', flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <ActivityIndicator size="large" color="blue" />
+            </View>
+        )
+    }
 
     const updateData = () => {
         let data = extractPostsList(allPosts, user);
@@ -77,6 +88,16 @@ function extractPostsList(allPosts, user) {
     return list;
 }
 
+function loadingDependency(user, allPosts) {
+    if (!user || !user.loaded) {
+        return true
+    }
+    if (!allPosts || !allPosts.loaded) {
+        return true
+    }
+    return false
+}
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -90,6 +111,9 @@ const styles = StyleSheet.create({
         fontSize: 32,
         fontWeight: 'bold',
         justifyContent: 'center',
-        alignContent: 'center'
+        alignContent: 'center',
+        position: 'absolute',
+        top: StatusBar.currentHeight + 30,
+        left: Dimensions.get('window').width / 2
     }
 })

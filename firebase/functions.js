@@ -3,6 +3,7 @@ import { auth, firestore, storage } from './firebase'
 import store from '../redux/store/app'
 import { addPost as addCachedPost } from '../redux/slices/cachedPosts'
 import { set as setUser } from '../redux/slices/userSlice'
+import { DUMMY_DATA, PROFIILE_VISIBILITY } from '../components/CONSTANTS';
 
 /**
  * Authentication Functions
@@ -30,7 +31,7 @@ export function signIn(email, pass) {
                     console.log("Welcome Back!!");
                 } else {
                     console.log("Opps! No data. Creating data...");
-                    createUserInDatabase(result.user.uid, result.user.displayName || "MIRAI NAME", result.user.email, pass);
+                    createUserInDatabase(result.user.uid, result.user.displayName || DUMMY_DATA.name, result.user.email, pass);
                 }
             })
         })
@@ -55,7 +56,7 @@ function createUserInDatabase(uid, name, email, pass) {
     let userRef = firestore.collection("users").doc(uid);
     let pubRef = firestore.collection("public").doc("users");
 
-    let visibility = 'PRIVATE'
+    let visibility = PROFIILE_VISIBILITY.PRIVATE
 
     batch.set(userRef, {
         name: name,
@@ -78,7 +79,9 @@ function createUserInDatabase(uid, name, email, pass) {
         [uid]: {
             name: name,
             vis: visibility,
-            delete: false
+            delete: false,
+            dp: '',
+            username:
         }
     }, { merge: true })
 
@@ -228,14 +231,14 @@ export async function updateCachedPosts(pid, forceUpdate = false) {
     }
 
     if (forceUpdate || shouldFetch) {
-        store.dispatch(addCachedPost({ key: pid, content: {} }))
+        store.dispatch(addCachedPost({ key: pid, content: { loaded: false } }))
         await firestore.collection("users").doc(uid).collection("posts").doc(pid).get().then((doc) => {
             if (doc.exists) {
                 console.log("updating cachedPost" + pid)
                 let docData = doc.data()
                 let data = {
                     key: pid,
-                    content: { ...docData, uid: uid }
+                    content: { ...docData, uid: uid, loaded: true }
                 }
                 store.dispatch(addCachedPost(data));
             } else {

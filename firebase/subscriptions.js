@@ -35,6 +35,10 @@ export function subAllUser() {
             if (doc.exists) {
                 console.log("Update in public users database!! fetching new content!!");
                 let data = doc.data();
+                data = {
+                    loaded: true,
+                    ...data
+                }
                 store.dispatch(setAllUser(data));
 
             } else {

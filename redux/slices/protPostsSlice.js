@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
+    loaded: false
 }
 
 export const protPostsSlice = createSlice({

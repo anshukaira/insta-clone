@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { POST_VISIBILITY } from "../../components/CONSTANTS";
 
 const initialState = {
+    loaded: false
 }
 
 export const allPostsSlice = createSlice({
@@ -21,6 +22,7 @@ export const allPostsSlice = createSlice({
                 allProtected[key].visibility = POST_VISIBILITY.PROTECTED
             }
             let all = {
+                loaded: true,
                 ...allPublic,
                 ...allProtected
             }
@@ -39,6 +41,7 @@ export const allPostsSlice = createSlice({
                 allPublic[key].visibility = POST_VISIBILITY.PUBLIC
             }
             let all = {
+                loaded: true,
                 ...allProtected,
                 ...allPublic
             }

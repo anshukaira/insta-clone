@@ -11,31 +11,23 @@ const LIMIT = 2;
 
 
 export default function Posts({ showStory, margin, data }) {
+
     const [visible, setVisible] = useState([]);
-    const [showLoad, setShowLoad] = useState(true);
+
     const route = useRoute();
+
+    const postList = data || route.params.data || []
+    const showLoad = visible.length < postList.length
 
     useEffect(() => {
         let newVisible = []
-        if (route.params.screen == 'Feed') {
-            newVisible = updateNextVisible(visible, data, LIMIT)
-            setShowLoad(newVisible.length < data.length)
-        } else {
-            newVisible = updateNextVisible(visible, route.params.data, LIMIT);
-            setShowLoad(newVisible.length < route.params.data.length)
-        }
+        newVisible = updateNextVisible(visible, postList, LIMIT)
         setVisible(newVisible);
     }, [data])
 
     const loadMore = () => {
         let newVisible = []
-        if (route.params?.screen == 'PostMini') {
-            newVisible = updateNextVisible(visible, route.params.data, LIMIT);
-            setShowLoad(newVisible.length < route.params.data.length)
-        } else {
-            newVisible = updateNextVisible(visible, data, LIMIT)
-            setShowLoad(newVisible.length < data.length)
-        }
+        newVisible = updateNextVisible(visible, postList, LIMIT);
         setVisible(newVisible);
     }
 

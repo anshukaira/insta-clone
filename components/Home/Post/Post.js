@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/core'
 import React, { useEffect, useState } from 'react'
-import { View, Text, StyleSheet, Dimensions, Platform, Image, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, Dimensions, Platform, Image, TouchableOpacity, ActivityIndicator } from 'react-native'
 import { useSelector } from 'react-redux';
 import { selectAllUser } from '../../../redux/slices/allUserSlice';
 import { selectCachedPosts } from '../../../redux/slices/cachedPosts';
@@ -31,7 +31,7 @@ export default function Post({ pid }) {
 
     useEffect(() => {
         updateCachedPosts(pid);
-    }, [allPosts])
+    }, [])
 
     useEffect(() => {
         if (cachedPosts && cachedPosts[pid] && cachedPosts[pid].likes) {
@@ -65,10 +65,10 @@ export default function Post({ pid }) {
         }
     }
 
-    if (!currentPost || !currentPost.uid) {
+    if (loadingDependency(allPosts, allUsers, cachedPosts, user, pid) || !currentPost || !currentPost.loaded) {
         return (
-            <View>
-                <Text>Loading Post</Text>
+            <View style={{ justifyContent: 'center', alignItems: 'center', height: dimensions, width: dimensions }}>
+                <ActivityIndicator size="large" color="green" />
             </View>
         )
     }
@@ -141,6 +141,22 @@ export default function Post({ pid }) {
     )
 }
 
+
+function loadingDependency(allPosts, allUsers, cachedPosts, user, pid) {
+    if (!allPosts || !allPosts.loaded) {
+        return true
+    }
+    if (!cachedPosts || !cachedPosts[pid] || !cachedPosts[pid].loaded) {
+        return true;
+    }
+    if (!allUsers || !allUsers.loaded) {
+        return true;
+    }
+    if (!user || !user.loaded) {
+        return true
+    }
+    return false
+}
 
 const styles = StyleSheet.create({
     container: {

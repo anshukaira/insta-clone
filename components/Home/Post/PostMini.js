@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/core'
 import React, { useEffect, useState } from 'react'
-import { Text, View, StyleSheet, Dimensions, Platform, TouchableOpacity, Image } from 'react-native'
+import { Text, View, StyleSheet, Dimensions, Platform, TouchableOpacity, Image, ActivityIndicator } from 'react-native'
 import { useSelector } from 'react-redux';
 import { selectAllUser } from '../../../redux/slices/allUserSlice';
 import { selectCachedPosts } from '../../../redux/slices/cachedPosts';
@@ -14,29 +14,19 @@ const divideSmall = 3;
 const initialWidth = Platform.OS === 'web' ? window.width / divideBig : window.width / divideSmall;
 const SPACE = Platform.OS === 'web' ? 5 : 0;
 
-const createSimilarPostList = (pid, uid, allPosts) => {
-    let list = [];
-    for (const key in allPosts) {
-        if (allPosts[key].uid == uid) {
-            list.push({ pid: key, ...allPosts[key] })
-        }
-    }
-    return list
-}
 
 export default function PostMini({ pid, style, navigateTo }) {
     const navigation = useNavigation();
     const [width, setWidth] = useState(initialWidth);
 
     const allPosts = useSelector(selectAllPosts);
-    const allUsers = useSelector(selectAllUser);
     const cachedPosts = useSelector(selectCachedPosts);
 
     const [currentPost, setCurrentPost] = useState(null);
 
     useEffect(() => {
         updateCachedPosts(pid);
-    }, [allPosts, allUsers])
+    }, [])
 
     useEffect(() => {
         setCurrentPost(cachedPosts[pid]);
@@ -61,16 +51,28 @@ export default function PostMini({ pid, style, navigateTo }) {
         navigation.navigate(navigateTo || "Explore", { pid: pid, uid: currentPost.uid, screen: 'PostMini', data: data })
     }
 
-    if (!currentPost || !currentPost.uid) {
+    if (!currentPost || !currentPost.loaded) {
         return (
-            <View style={styles.loading} />
+            <View style={[{ justifyContent: 'center', alignItems: 'center' }, { height: width - SPACE, width: width - SPACE }]}>
+                <ActivityIndicator size="large" color="green" />
+            </View>
         )
     }
     return (
-        <TouchableOpacity onPress={openRelatedPosts} style={[styles.image, { height: width-SPACE, width: width-SPACE }, style]}>
+        <TouchableOpacity onPress={openRelatedPosts} style={[styles.image, { height: width - SPACE, width: width - SPACE }, style]}>
             <Image source={{ uri: currentPost.url }} style={{ height: '100%', resizeMode: 'cover', backgroundColor: 'lightgray' }} />
         </TouchableOpacity>
     )
+}
+
+const createSimilarPostList = (pid, uid, allPosts) => {
+    let list = [];
+    for (const key in allPosts) {
+        if (allPosts[key].uid == uid) {
+            list.push({ pid: key, ...allPosts[key] })
+        }
+    }
+    return list
 }
 
 const styles = StyleSheet.create({

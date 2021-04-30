@@ -9,25 +9,17 @@ import { selectAllPosts } from '../../../redux/slices/allPostsSlice'
 import { selectUser } from '../../../redux/slices/userSlice'
 import { theme } from '../../Style/Constants'
 import Icon from 'react-native-vector-icons/Ionicons'
+import { PROFIILE_VISIBILITY } from '../../CONSTANTS'
 
-function extractPostsList(allPosts, uid) {
-    let userPosts = [];
-    for (const key in allPosts) {
-        if (allPosts[key].uid == uid) {
-            userPosts.push({ pid: key, ...allPosts[key] })
-        }
-    }
-    return userPosts;
-}
 
 const Tab = createMaterialTopTabNavigator();
 
 
-const { width: WIDTH } = Dimensions.get('window');
-const SPACE = Platform.OS === 'web' ? 20 : 0;
 export default function PostsView({ user }) {
+
     const me = useSelector(selectUser);
-    if (me.uid !== user.uid && (user.vis == 'PROTECTED' || user.vis == 'PRIVATE') && !user.followers.includes(me.uid)) {
+
+    if (me.uid !== user.uid && (user.vis == PROFIILE_VISIBILITY.PROTECTED || user.vis == PROFIILE_VISIBILITY.PRIVATE) && !user.followers.includes(me.uid)) {
         return (
             <View style={styles.privateAccContainer}>
                 <Icon name='lock-closed-outline' style={{ fontSize: 96, marginTop: 80 }} />
@@ -48,7 +40,7 @@ export default function PostsView({ user }) {
                 tabBarOptions={{ showLabel: false, showIcon: true }}
             >
                 <Tab.Screen
-                    name="Normal"
+                    name="User | Posts"
                     component={Normal}
                     options={{
                         tabBarIcon: () => (
@@ -78,6 +70,16 @@ function Normal() {
             })}
         </View>
     )
+}
+
+function extractPostsList(allPosts, uid) {
+    let userPosts = [];
+    for (const key in allPosts) {
+        if (allPosts[key].uid == uid) {
+            userPosts.push({ pid: key, ...allPosts[key] })
+        }
+    }
+    return userPosts;
 }
 
 const styles = StyleSheet.create({

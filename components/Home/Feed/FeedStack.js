@@ -2,8 +2,6 @@ import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
 import FeedScreen from './Feed'
 import ProfileScreen from '../Profile/ProfileStack'
-import { useSelector } from 'react-redux';
-import { selectAllUser } from '../../../redux/slices/allUserSlice';
 
 const Stack = createStackNavigator();
 

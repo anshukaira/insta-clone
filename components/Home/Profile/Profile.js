@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, StyleSheet, StatusBar, Text, ScrollView } from 'react-native'
+import { View, StyleSheet, StatusBar, Text, ScrollView, ActivityIndicator } from 'react-native'
 import { useSelector } from 'react-redux'
 import { selectUser } from '../../../redux/slices/userSlice'
 import { theme } from '../../Style/Constants'
@@ -17,7 +17,7 @@ export default function Profile() {
     const [currentUser, setCurrentUser] = useState(null);
 
     const style = route.params.screen == 'Home' ? { marginTop: 50 } : { marginTop: 0 };
-    const paddingTop = route.params.screen == 'Home' ? StatusBar.currentHeight : 0;
+    const paddingTop = route.params.screen == 'Home' ? { paddingTop: StatusBar.currentHeight } : { paddingTop: 0 };
 
     useEffect(() => {
         if (route.params.uid !== user.uid) {
@@ -47,10 +47,8 @@ export default function Profile() {
 
     if (currentUser == null) {
         return (
-            <View>
-                <Text>
-                    Loading...
-                </Text>
+            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                <ActivityIndicator size="large" color="green" />
             </View>
         )
     }

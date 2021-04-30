@@ -88,19 +88,12 @@ export default function Add() {
 
     const upload = () => {
         addPost(image, "Testing Post Upload", 'PUBLIC', user.uid)
-<<<<<<< HEAD
         if (Platform.OS = 'android') {
             ToastAndroid.showWithGravity(
                 "Picture Uploaded!!",
                 ToastAndroid.LONG,
                 ToastAndroid.CENTER)
         }
-=======
-        ToastAndroid.showWithGravity(
-            "Picture Uploaded!!",
-            ToastAndroid.LONG,
-            ToastAndroid.CENTER)
->>>>>>> 1cba7da... Continue refactor
 
         setUploaded(true)
     }
