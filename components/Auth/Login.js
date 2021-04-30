@@ -25,15 +25,12 @@ function Login({ navigation }) {
         <View style={styles.container}>
           <StatusBar style="auto" />
           <Text style={styles.h1}>MIRAI C</Text>
-          <View>
             <TextInput
               style={styles.input}
               placeholder="Email."
               onChangeText={(email) => setEmail(email)}
               underlineColorAndroid="transparent"
             />
-          </View>
-
           <View style={styles.input}>
             <TextInput
               placeholder="Password."

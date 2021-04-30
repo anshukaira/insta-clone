@@ -23,23 +23,18 @@ function Register({ navigation }) {
         <View style={styles.container}>
           <StatusBar style="auto" />
             <Text style={styles.h1}>MIRAI C</Text>
-          <View >
             <TextInput
               style={styles.input}
               placeholder="Username"
               onChangeText={(name) => setName(name)}
               underlineColorAndroid="transparent"
             />
-          </View>
-          <View >
             <TextInput
               style={styles.input}
               placeholder="Email."
               onChangeText={(email) => setEmail(email)}
               underlineColorAndroid="transparent"
             />
-          </View>
-
           <View style={styles.input}>
             <TextInput
               placeholder="Password."
@@ -79,12 +74,18 @@ function Register({ navigation }) {
 
           <View style={styles.container2}>
             <Text style={{ color: '#8e8e8e', marginRight: 5 }}>By signing up, you agree to our</Text>
-            <TouchableOpacity >Terms</TouchableOpacity>
+            <TouchableOpacity >
+                 <Text>Terms</Text>
+            </TouchableOpacity>
             <Text style={{ color: '#8e8e8e', marginRight: 5 }} >,</Text>
-            <TouchableOpacity > Data Policy </TouchableOpacity>
+            <TouchableOpacity > 
+                <Text> Data Policy </Text> 
+            </TouchableOpacity>
             <Text style={{ color: '#8e8e8e', marginRight: 5 }}>,</Text>
             <Text style={{ color: '#8e8e8e', marginRight: 5 }}>and</Text>
-            <TouchableOpacity> Cookies Policy.</TouchableOpacity>
+            <TouchableOpacity > 
+                  <Text>Cookies Policy.</Text>
+             </TouchableOpacity>
           </View>
         </View>
         <View style={styles.container1}>
