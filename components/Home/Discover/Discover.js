@@ -7,6 +7,7 @@ import { selectPubPosts } from '../../../redux/slices/pubPostsSlice'
 import { selectProtPosts } from '../../../redux/slices/protPostsSlice'
 import { selectUser } from '../../../redux/slices/userSlice'
 import { theme } from '../../Style/Constants'
+import { descriptiveText } from '../../Style/Common'
 
 const { width: WIDTH } = Dimensions.get('window');
 
@@ -40,20 +41,11 @@ export default function Discover() {
 
 
     if (currentPostList === null) {
-        return (
-            <View>
-                <Text>Loading...</Text>
-            </View>)
+        return ( descriptiveText('Loading...'))
     }
 
     if (currentPostList.length == 0) {
-        return (
-            <View>
-                <Text>
-                    Opps! No Post Yet.
-                </Text>
-            </View>
-        )
+        return ( descriptiveText('Opps! No Post Yet.'))
     }
 
 

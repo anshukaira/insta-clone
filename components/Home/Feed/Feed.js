@@ -8,6 +8,7 @@ import { selectUser } from '../../../redux/slices/userSlice'
 import { selectAllPosts } from '../../../redux/slices/allPostsSlice'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { POST_VISIBILITY } from '../../CONSTANTS'
+import { descriptiveText } from '../../Style/Common'
 
 
 export default function Feed() {
@@ -54,13 +55,7 @@ export default function Feed() {
 
 
     if (currentPostList.length == 0) {
-        return (
-            <View style={styles.container}>
-                <Text>
-                    Opps! No Post Yet.
-                </Text>
-            </View>
-        )
+        return ( descriptiveText('Opps! No Post Yet.'))
     }
     return (
         <View style={styles.container}>

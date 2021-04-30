@@ -20,11 +20,6 @@ export default function Header({ uid="xxx"}) {
                 <Icon name="person" style={styles.icon} />
                 <Text style={styles.text} onPress={openProfile}> {uid}</Text>
             </View>
-            
-            {/* <View style={styles.row}>
-                <Icon name="add-circle-outline" onPress={() => navigation.navigate("Add")} style={styles.iconright}/>
-                <Icon name="md-options" onPress={() => navigation.navigate("Options")} style={styles.iconright}/> 
-            </View> */}
         </View>
     )
 }

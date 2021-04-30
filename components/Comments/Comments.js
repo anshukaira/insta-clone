@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 import { selectUser } from '../../redux/slices/userSlice';
 import { Avatar } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons'
+import { descriptiveText } from '../Style/Common';
 
 export default function Comments() {
     const route = useRoute()
@@ -26,9 +27,7 @@ export default function Comments() {
 
     if (data === null || !data.comments) {
         return (
-            <View>
-                <Text>Loading Comments</Text>
-            </View>
+            descriptiveText('Loading Comments')
         )
     }
 

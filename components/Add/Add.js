@@ -5,6 +5,7 @@ import { addPost, addPostNative } from '../../firebase/functions';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../../redux/slices/userSlice'
 import { theme } from '../Style/Constants';
+import { descriptiveText } from '../Style/Common';
 
 export default function Add() {
     const user = useSelector(selectUser);
@@ -39,18 +40,14 @@ export default function Add() {
 
     if (hasCameraPermission === null || hasGalleryPermission === null) {
         return (
-            <View>
-                <Text>Waiting for Permission</Text>
-            </View>
+            descriptiveText('Waiting for permissions')
         )
     }
 
     if (hasCameraPermission === false || hasGalleryPermission === false) {
         return (
-            <View>
-                <Text>Sorry we need permissions</Text>
-            </View>
-        )
+            descriptiveText('Sorry we need permissions')
+          )
     }
 
     const pickImage = async () => {

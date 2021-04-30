@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux'
 import { initiateChat } from '../../../firebase/functions'
 import { selectAllUser } from '../../../redux/slices/allUserSlice'
 import { selectUser } from '../../../redux/slices/userSlice'
+import { descriptiveText } from '../../Style/Common'
 import { theme } from '../../Style/Constants'
 import Header from './Header'
 
@@ -27,7 +28,7 @@ export default function ChatHome() {
 const Message = () => {
     return (
         <View style={styles.messageContainer}>
-            <Text style={styles.messages}> Messages</Text>
+            <Text style={styles.messages}>Messages</Text>
         </View>
     )
 }
@@ -43,11 +44,7 @@ const ExistingList = () => {
 
     if (existing.length == 0) {
         return (
-            <View style={styles.descriptive}>
-                <View style={styles.textContainer}>
-                    <Text style={styles.smallText}>No Existing Chats Found</Text>
-                </View>
-            </View>
+            descriptiveText('No Existing Chats Found')
         )
     }
 
@@ -74,11 +71,7 @@ const PossibleList = () => {
 
     if (possible.length == 0) {
         return (
-            <View style={styles.descriptive}>
-                <View style={styles.textContainer}>
-                    <Text style={[styles.smallText, { fontSize: 12 }]}>Follow users to start chating</Text>
-                </View>
-            </View>
+            descriptiveText('Follow users to start chating')
         )
     }
 
@@ -109,11 +102,7 @@ const ExistingListItem = ({ uid, chatId }) => {
     }
     if (loading) {
         return (
-            <View style={styles.descriptive}>
-                <View style={styles.textContainer}>
-                    <Text style={styles.smallText}>Loading Please Wait</Text>
-                </View>
-            </View>
+            descriptiveText('Loading Please Wait')
         )
     }
     return (
@@ -145,11 +134,7 @@ const PossibleListItem = ({ uid }) => {
     }
     if (loading) {
         return (
-            <View style={styles.descriptive}>
-                <View style={styles.textContainer}>
-                    <Text style={styles.smallText}>Loading Please Wait</Text>
-                </View>
-            </View>
+            descriptiveText('Loading Please Wait')
         )
     }
     return (
@@ -217,10 +202,5 @@ const styles = StyleSheet.create({
     smallText: {
         fontSize: 10,
         color: 'grey'
-    },
-    descriptive: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 10,
     },
 });

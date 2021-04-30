@@ -9,7 +9,7 @@ export default function Header() {
             <Icon 
                 name="add-circle-sharp" 
                 style={styles.iconleft} />
-            <Text style={styles.text}>MIRAI</Text>
+            <Text style={styles.text}>MIRAI~C</Text>
             <Icon 
                 name="md-chatbubble-ellipses-sharp" 
                 style={styles.iconright} />
