@@ -3,7 +3,7 @@ import { auth, firestore, storage } from './firebase'
 import store from '../redux/store/app'
 import { addPost as addCachedPost } from '../redux/slices/cachedPosts'
 import { set as setUser } from '../redux/slices/userSlice'
-import { DUMMY_DATA, PROFIILE_VISIBILITY } from '../components/CONSTANTS';
+import { DUMMY_DATA, POST_VISIBILITY, PROFIILE_VISIBILITY } from '../components/CONSTANTS';
 
 /**
  * Authentication Functions
@@ -99,6 +99,14 @@ export async function addPost(img, caption, visibility, uid) {
     let newPostRef = firestore.collection('users').doc(uid).collection("posts").doc()
     let pid = newPostRef.id;
     let rootRef = storage.ref();
+
+    let pubPostRef;
+    if (visibility === POST_VISIBILITY.PUBLIC) {
+        pubPostRef = firestore.collection('public').doc('pubPosts')
+    } else if (visibility === POST_VISIBILITY.PROTECTED) {
+        pubPostRef = firestore.collection('public').doc('protPosts')
+    }
+
     let currentTime = Date.now();
 
     const response = await fetch(img);
@@ -109,65 +117,31 @@ export async function addPost(img, caption, visibility, uid) {
     fileRef.put(blob).then((snapshot) => {
         console.log("image uploaded with p_id: " + pid)
         snapshot.ref.getDownloadURL().then((downloadURL) => {
-            console.log(downloadURL)
-            newPostRef.set({
+            let batch = firestore.batch();
+            batch.set(newPostRef, {
                 caption: caption,
                 comments: [],
                 url: downloadURL,
                 likes: [],
                 time: currentTime
-            }, { merge: true }).then(() => {
-                let toBeAdded = {
+            }, { merge: true })
+
+            batch.update(pubPostRef, {
+                [pid]: {
                     uid: uid,
-                    numLike: 0,
-                    numComments: 0,
+                    numLikes: 0,
                     time: currentTime
                 }
-                console.log("Success uploading post data")
-                if (visibility === 'PUBLIC') {
-                    firestore.collection("public").doc("pubPosts").update({
-                        [pid]: toBeAdded
-                    }).then(() => {
-                        console.log('Updated Collection')
-                    })
-                } else if (visibility === 'PROTECTED') {
-                    firestore.collection("public").doc("protPosts").update({
-                        [pid]: toBeAdded
-                    }).then(() => {
-                        console.log('Updated Collection')
-                    })
-                }
             })
-
+            batch.commit().then(() => {
+                console.log("Post uploaded successfully to the database")
+            }).catch((error) => {
+                console.log("Error in doc update", error.message)
+                fileRef.delete();
+            })
         })
     }).catch((err) => {
         console.log(err);
-        console.log("Opps found error. Deleting temporary docs");
-        newPostRef.delete().then(() => {
-            console.log("Deleted doc Scussfully");
-        })
-        fileRef.delete().then(() => {
-            console.log("Deleted image Scussfully");
-        })
-        let toBeAdded = {
-            uid: uid,
-            numLike: 0,
-            numComments: 0,
-            time: currentTime
-        }
-        if (visibility == 'PUBLIC') {
-            firestore.collection("public").doc("pubPosts").update({
-                [pid]: toBeAdded
-            }).then(() => {
-                console.log('Deleted from Collection')
-            })
-        } else if (visibility == 'PROTECTED') {
-            firestore.collection("public").doc("protPosts").update({
-                [pid]: toBeAdded
-            }).then(() => {
-                console.log('Deleted Collection')
-            })
-        }
     })
 }
 
@@ -197,7 +171,7 @@ export function deletePost(pid) {
     let postRef = firestore.collection('users').doc(uid).collection('posts').doc(pid)
     let fileRef = storage.ref().child('users/' + uid + '/posts/' + pid)
     let postPublicRef
-    if (allPosts[pid] && allPosts[pid].visibility == 'PUBLIC') {
+    if (allPosts[pid] && allPosts[pid].visibility == POST_VISIBILITY.PUBLIC) {
         postPublicRef = firestore.collection('public').doc('pubPosts')
     } else {
         postPublicRef = firestore.collection('public').doc('protPosts')
