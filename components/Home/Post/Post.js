@@ -11,12 +11,12 @@ import IonIcons from 'react-native-vector-icons/Ionicons'
 import { Avatar } from 'react-native-paper';
 import { selectUser } from '../../../redux/slices/userSlice';
 
-const window = Dimensions.get("window");
-const divide = 2.5;
-const initialWidth = Platform.OS === 'web' ? window.width / divide : window.width;
 
 export default function Post({ pid }) {
 
+    const window = Dimensions.get("window");
+    const divide = 2.5;
+    const initialWidth = Platform.OS === 'web' ? window.width / divide : window.width;
     const allPosts = useSelector(selectAllPosts);
     const allUsers = useSelector(selectAllUser);
     const cachedPosts = useSelector(selectCachedPosts);

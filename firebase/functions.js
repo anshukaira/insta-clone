@@ -231,7 +231,7 @@ export async function updateCachedPosts(pid, forceUpdate = false) {
     }
 
     if (forceUpdate || shouldFetch) {
-        store.dispatch(addCachedPost({ key: pid, content: { loaded: false } }))
+        store.dispatch(addCachedPost({ key: pid, content: { loaded: true } }))
         await firestore.collection("users").doc(uid).collection("posts").doc(pid).get().then((doc) => {
             if (doc.exists) {
                 console.log("updating cachedPost" + pid)
