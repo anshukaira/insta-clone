@@ -23,7 +23,7 @@ export default function Posts({ showStory, margin, data }) {
         let newVisible = []
         newVisible = updateNextVisible(visible, postList, LIMIT)
         setVisible(newVisible);
-    }, [data])
+    }, [data, route.params])
 
     const loadMore = () => {
         let newVisible = []

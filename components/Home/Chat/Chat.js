@@ -25,7 +25,7 @@ export default function Chat() {
     const [sending, setSending] = useState(false);
 
     const scrollViewRef = useRef(null);
-    const [messageId, setMessageId] = useState(null);
+    const [itemPos, setItemPos] = useState({});
 
 
     useEffect(() => {
@@ -66,6 +66,16 @@ export default function Chat() {
 
     const iconColor = message.length > 0 ? theme.lightButton : 'gray';
 
+    const scrollTo = (key) => {
+        console.log(key)
+        console.log(itemPos[key])
+        scrollViewRef.current.scrollTo({
+            x: 0,
+            y: itemPos[key],
+            animated: true
+        })
+    }
+
     return (
         <View style={{ flex: 1, flexDirection: 'column' }}>
             <ScrollView
@@ -75,24 +85,20 @@ export default function Chat() {
                 <Text style={{ alignSelf: 'center', color: 'gray', fontSize: 12 }}>{route.params.uid}</Text>
                 {chatList.map((item) => {
                     let key = item.ccid.uid + '_' + item.ccid.time;
-                    let scroll = false;
-                    if (messageId && messageId.uid == item.uid && messageId.time == item.time) {
-                        scroll = true;
-                    }
                     if (item.type == CHAT_MESSAGE_TYPE.NORMAL) {
                         return (
-                            <ChatNormal data={item} key={key} keyID={key} toccidSetter={setToccid} scroll={scroll} />
+                            <ChatNormal data={item} key={key} keyId={key} toccidSetter={setToccid} setItemPos={setItemPos} />
                         )
                     }
                     if (item.type == CHAT_MESSAGE_TYPE.POST) {
                         return (
-                            <ChatPost data={item} key={key} keyID={key} toccidSetter={setToccid} ref={attachRef ? currentIdRef : null} scroll={scroll} />
+                            <ChatPost data={item} key={key} keyId={key} toccidSetter={setToccid} ref={attachRef ? currentIdRef : null} setItemPos={setItemPos} />
                         )
                     }
                     if (item.type == CHAT_MESSAGE_TYPE.REPLY) {
                         let replyTo = data[item.toccid.uid][item.toccid.time]
                         return (
-                            <ChatReply data={item} key={key} keyID={key} toccidSetter={setToccid} replyTo={replyTo} setMessageId={setMessageId} ref={attachRef ? currentIdRef : null} scroll={scroll} />
+                            <ChatReply data={item} key={key} keyId={key} toccidSetter={setToccid} replyTo={replyTo} setItemPos={setItemPos} scrollTo={scrollTo} />
                         )
                     }
 
@@ -100,7 +106,7 @@ export default function Chat() {
             </ScrollView>
 
             <View>
-                {toccid ? <ReplyBox data={data[toccid.uid][toccid.time]} uid={toccid.uid} time={toccid.time} setMessageId={setMessageId} toccidSetter={setToccid} /> : null}
+                {toccid ? <ReplyBox data={data[toccid.uid][toccid.time]} uid={toccid.uid} time={toccid.time} toccidSetter={setToccid} scrollTo={scrollTo} /> : null}
                 <View style={styles.sendMessageContainer}>
                     <TextInput style={styles.sendInput} multiline={true} placeholder="Type Your Message Here"
                         value={message}
@@ -120,16 +126,16 @@ export default function Chat() {
     )
 }
 
-const ReplyBox = ({ data, setMessageId, toccidSetter, uid, time }) => {
+const ReplyBox = ({ data, toccidSetter, uid, time, scrollTo }) => {
 
     const handlePress = () => {
-        setMessageId({ uid: uid, time: time })
+        scrollTo(uid + '_' + time)
     }
     const handleLongPress = () => {
         toccidSetter(null)
     }
     return (
-        <Pressable onPress={handlePress} onLongPress={handleLongPress}>
+        <Pressable onPress={handlePress} onLongPress={handleLongPress} style={{ backgroundColor: '#bfbfbf', padding: 10 }}>
             <Text>
                 {data.content}
             </Text>
@@ -137,11 +143,11 @@ const ReplyBox = ({ data, setMessageId, toccidSetter, uid, time }) => {
     )
 }
 
-const ChatNormal = ({ data, keyId, toccidSetter, scroll }) => {
+const ChatNormal = ({ data, keyId, toccidSetter, setItemPos }) => {
     const allUser = useSelector(selectAllUser);
     const user = useSelector(selectUser)
     const time = new Date(data.time)
-    const ref = useRef(null);
+
     const userAvatar = () => {
         if (data.uid == user.uid)
             return null
@@ -150,11 +156,18 @@ const ChatNormal = ({ data, keyId, toccidSetter, scroll }) => {
 
     }
 
-    useEffect(() => {
-        if (scroll) {
-            ref.current.scrollIntoView();
-        }
-    }, [])
+    const handleLayout = (event) => {
+        const layout = event.nativeEvent.layout;
+        setItemPos(prev => {
+            let data = {
+                ...prev
+            }
+            data[keyId] = layout.y
+            return {
+                ...data
+            }
+        })
+    }
 
     const alignDirection = data.uid == user.uid ? 'flex-end' : 'flex-start';
     const borderBottomRadius = data.uid == user.uid ? { borderBottomEndRadius: 5 } : { borderBottomLeftRadius: 35 };
@@ -171,11 +184,10 @@ const ChatNormal = ({ data, keyId, toccidSetter, scroll }) => {
     }
 
     return (
-        <Pressable style={viewStyle} onLongPress={() => toccidSetter(data.ccid)} ref={ref}>
+        <Pressable style={viewStyle} onLongPress={() => toccidSetter(data.ccid)} onLayout={handleLayout}>
             {userAvatar()}
             <View style={[styles.chatItem, { alignSelf: alignDirection }, borderBottomRadius, backgroundColor]}>
                 <Text style={[styles.chatText, colorText]}>{data.content}</Text>
-                {/* <Text style={styles.chatTextSmall}>Sender: {data.uid == user.uid ? "ME" : allUser[data.uid].name} at  */}
                 <Text style={[styles.chatTextSmall, colorText]}>{time.toLocaleString()}</Text>
             </View>
         </Pressable>
@@ -183,7 +195,7 @@ const ChatNormal = ({ data, keyId, toccidSetter, scroll }) => {
     )
 }
 
-const ChatReply = ({ data, keyId, toccidSetter }) => {
+const ChatReply = ({ data, keyId, toccidSetter, setItemPos, scrollTo, replyTo }) => {
     const allUser = useSelector(selectAllUser);
     const user = useSelector(selectUser)
     const time = new Date(data.time)
@@ -210,15 +222,27 @@ const ChatReply = ({ data, keyId, toccidSetter }) => {
         )
     }
 
+    const handleLayout = (event) => {
+        const layout = event.nativeEvent.layout;
+        setItemPos(prev => {
+            let data = {
+                ...prev
+            }
+            data[keyId] = layout.y
+            return {
+                ...data
+            }
+        })
+    }
+
     return (
-        <View style={viewStyle}>
-            <Pressable onPress={() => setMessageId(data.toccid)}>
+        <View style={viewStyle} onLayout={handleLayout}>
+            {userAvatar()}
+            <Pressable onPress={() => scrollTo(data.toccid.uid + '_' + data.toccid.time)} style={{ alignSelf: alignDirection, padding: 10, backgroundColor: '#bfbfbf' }}>
                 <Text>{replyTo.content}</Text>
             </Pressable>
-            {userAvatar()}
             <Pressable style={[styles.chatItem, { alignSelf: alignDirection }, borderBottomRadius, backgroundColor]} onLongPress={() => toccidSetter(data.ccid)}>
                 <Text style={[styles.chatText, colorText]}>{data.content}</Text>
-                {/* <Text style={styles.chatTextSmall}>Sender: {data.uid == user.uid ? "ME" : allUser[data.uid].name} at  */}
                 <Text style={[styles.chatTextSmall, colorText]}>{time.toLocaleString()}</Text>
             </Pressable>
         </View>
@@ -226,7 +250,7 @@ const ChatReply = ({ data, keyId, toccidSetter }) => {
     )
 }
 
-const ChatPost = ({ data, keyId, toccidSetter }) => {
+const ChatPost = ({ data, keyId, toccidSetter, setItemPos }) => {
     const allUser = useSelector(selectAllUser);
     const user = useSelector(selectUser)
     const time = new Date(data.time)
@@ -253,8 +277,21 @@ const ChatPost = ({ data, keyId, toccidSetter }) => {
         )
     }
 
+    const handleLayout = (event) => {
+        const layout = event.nativeEvent.layout;
+        setItemPos(prev => {
+            let data = {
+                ...prev
+            }
+            data[keyId] = layout.y
+            return {
+                ...data
+            }
+        })
+    }
+
     return (
-        <Pressable style={viewStyle} onLongPress={() => toccidSetter(data.ccid)}>
+        <Pressable style={viewStyle} onLongPress={() => toccidSetter(data.ccid)} onLayout={handleLayout}>
             {userAvatar()}
             <View style={[styles.chatItem, { alignSelf: alignDirection }, borderBottomRadius, backgroundColor]}>
                 <Text style={[styles.chatText, colorText]}>{data.content}</Text>

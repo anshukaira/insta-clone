@@ -13,11 +13,7 @@ import Header from './Header'
 
 export default function ChatHome() {
     const user = useSelector(selectUser)
-    const route = useRoute();
-    useEffect(() => {
-        let username = user.email.substring(0, user.email.indexOf('@'))
-        // route.params.setOptions({ headerShown: true, title: username })
-    })
+
     if (!user || !user.loaded) {
         return (
             <View>

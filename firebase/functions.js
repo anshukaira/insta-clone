@@ -54,7 +54,7 @@ function createUserInDatabase(uid, name, email, pass) {
     let userRef = firestore.collection("users").doc(uid);
     let pubRef = firestore.collection("public").doc("users");
 
-    let visibility = PROFIILE_VISIBILITY.PRIVATE // default visibilty is PRIVATE while creating user
+    let visibility = PROFIILE_VISIBILITY.PROTECTED // default visibilty is PROTECTED while creating user
     let username = email.substring(0, email.indexOf('@'))
 
     batch.set(userRef, {

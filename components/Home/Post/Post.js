@@ -10,6 +10,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import IonIcons from 'react-native-vector-icons/Ionicons'
 import { Avatar } from 'react-native-paper';
 import { selectUser } from '../../../redux/slices/userSlice';
+import { DUMMY_DATA } from '../../CONSTANTS';
 
 
 export default function Post({ pid }) {
@@ -65,7 +66,7 @@ export default function Post({ pid }) {
         }
     }
 
-    if (loadingDependency(allPosts, allUsers, cachedPosts, user, pid) || !currentPost || !currentPost.loaded) {
+    if (loadingDependency(allPosts, allUsers, cachedPosts, user, pid) || !currentPost || !currentPost.loaded || !allPosts[pid]) {
         return (
             <View style={{ justifyContent: 'center', alignItems: 'center', height: dimensions, width: dimensions }}>
                 <ActivityIndicator size="large" color="green" />
@@ -85,7 +86,7 @@ export default function Post({ pid }) {
                     onPress={openProfile}
                     style={styles.flexRow}>
                     <Avatar.Image
-                        source={{ uri: currentPost.url }}
+                        source={{ uri: allUsers[allPosts[pid].uid].dp ? allUsers[allPosts[pid].uid].dp : DUMMY_DATA.dp }}
                         size={32}
                     />
                     <Text style={[styles.bold, { padding: 4 }]} > {allUsers[currentPost.uid].name}</Text>

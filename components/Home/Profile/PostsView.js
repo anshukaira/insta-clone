@@ -3,7 +3,6 @@ import { View, Platform, FlatList, StyleSheet, StatusBar, Dimensions, Text } fro
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import Post from '../Post/PostMini'
 import { useRoute } from '@react-navigation/core'
-import { ScrollView } from 'react-native-gesture-handler'
 import { useSelector } from 'react-redux'
 import { selectAllPosts } from '../../../redux/slices/allPostsSlice'
 import { selectUser } from '../../../redux/slices/userSlice'
