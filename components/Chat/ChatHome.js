@@ -3,16 +3,21 @@ import React, { useEffect, useState } from 'react'
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native'
 import { Avatar } from 'react-native-paper'
 import { useSelector } from 'react-redux'
-import { initiateChat } from '../../../firebase/functions'
-import { selectAllUser } from '../../../redux/slices/allUserSlice'
-import { selectUser } from '../../../redux/slices/userSlice'
-import { descriptiveText } from '../../Style/Common'
-import { theme } from '../../Style/Constants'
+import { initiateChat } from '../../firebase/functions'
+import { selectAllUser } from '../../redux/slices/allUserSlice'
+import { selectUser } from '../../redux/slices/userSlice'
+import { DUMMY_DATA } from '../CONSTANTS'
+import { descriptiveText } from '../Style/Common'
+import { theme } from '../Style/Constants'
 import Header from './Header'
 
 export default function ChatHome() {
     const user = useSelector(selectUser)
-
+    const navigation = useNavigation();
+    useEffect(() => {
+        let username = user.email.substring(0, user.email.indexOf('@'))
+        navigation.setOptions({ headerShown: true, title: username })
+    })
     return (
         <View style={{ flex: 1, flexDirection: 'column' }}>
             <Header uid={user.name} />
@@ -92,12 +97,13 @@ const ExistingListItem = ({ uid, chatId }) => {
     const navigation = useNavigation();
     const handlePress = () => {
         setLoading(true);
-        navigation.navigate('Chat', { uid: uid, chatId: chatId, header: allUser[uid].name })
+        navigation.navigate('Chat', { uid: uid, chatId: chatId, header: allUser[uid].username })
         setLoading(false);
     }
 
     const navigateProfile = () => {
         //ToDo: Navigate to the particular user profile
+        // we dont provide this option now because of too much nesting
         navigation.navigate('Profile', { uid: uid, screen: 'Chat' })
     }
     if (loading) {
@@ -108,7 +114,7 @@ const ExistingListItem = ({ uid, chatId }) => {
     return (
 
         <View style={styles.chatContainer}>
-            <Avatar.Image source={require("../../../assets/dummy.jpeg")} size={54} onPress={navigateProfile} />
+            <Avatar.Image source={DUMMY_DATA.dp} size={54} onPress={navigateProfile} />
             <TouchableOpacity onPress={handlePress}>
                 <View style={styles.textContainer}>
                     <Text style={styles.name} >{allUser[uid].name}</Text>
@@ -128,7 +134,7 @@ const PossibleListItem = ({ uid }) => {
         setLoading(true);
         let chatId = await initiateChat(uid);
         if (chatId !== null) {
-            navigation.navigate('Chat', { uid: uid, chatId: chatId, header: allUser[uid].name })
+            navigation.navigate('Chat', { uid: uid, chatId: chatId, header: allUser[uid].username })
         }
         setLoading(false);
     }
@@ -140,7 +146,7 @@ const PossibleListItem = ({ uid }) => {
     return (
         <TouchableOpacity onPress={handlePress}>
             <View style={styles.chatContainer}>
-                <Avatar.Image source={require("../../../assets/dummy.jpeg")} size={54} />
+                <Avatar.Image source={DUMMY_DATA.dp} size={54} />
                 <View style={styles.textContainer}>
                     <Text style={styles.name} >{allUser[uid].name}</Text>
                 </View>

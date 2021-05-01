@@ -20,3 +20,9 @@ export const DUMMY_DATA = {
     message: 'This is dummy message',
     dp: DummyDp
 }
+
+export const CHAT_MESSAGE_TYPE = {
+    NORMAL: 'NORMAL',
+    REPLY: 'REPLY',
+    POST: 'POST'
+}

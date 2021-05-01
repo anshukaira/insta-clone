@@ -74,13 +74,21 @@ export default function Feed() {
 
 function extractPostsList(allPosts, user) {
     let list = [];
-    let avgLikes = 0;
+    let totalLikes = 0;
     const following = user.following;
 
     for (const key in allPosts) {
-        if (following.includes(allPosts[key].uid) || allPosts[key].uid == user.uid || (allPosts[key].visibility == POST_VISIBILITY.PUBLIC && allPosts[key].numLikes >= avgLikes)) {
-            avgLikes = (avgLikes * list.length + allPosts[key].numLikes) / (list.length + 1)
+        if (following.includes(allPosts[key].uid)) {
             list.push({ pid: key, ...allPosts[key] })
+            totalLikes = totalLikes + allPosts[key].numLikes
+        } else if (allPosts[key].uid == user.uid) {
+            list.push({ pid: key, ...allPosts[key] })
+            totalLikes = totalLikes + allPosts[key].numLikes
+        } else if (allPosts[key].visibility == POST_VISIBILITY.PUBLIC) {
+            if (totalLikes <= allPosts[key].numLikes * list.length) {
+                list.push({ pid: key, ...allPosts[key] })
+                totalLikes = totalLikes + allPosts[key].numLikes
+            }
         }
     }
 

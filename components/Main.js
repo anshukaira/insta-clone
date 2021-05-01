@@ -21,7 +21,6 @@ function Main() {
             }
             setLoading(false);
         })
-
         return () => {
             console.log("Unsubscribing auth listner")
             unsubscribe()

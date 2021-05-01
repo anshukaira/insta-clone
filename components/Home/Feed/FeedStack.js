@@ -8,7 +8,7 @@ const Stack = createStackNavigator();
 export default function FeedStack() {
     return (
         <Stack.Navigator >
-            <Stack.Screen name="FeedHome" component={FeedScreen} options={{ headerShown: false }} initialParams={{ screen: 'Feed' }} />
+            <Stack.Screen name="FeedHome" component={FeedScreen} options={{ headerShown: false, title: 'Feed' }} initialParams={{ screen: 'Feed' }} />
             <Stack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }} initialParams={{ screen: 'Feed' }} />
         </Stack.Navigator>
     )
