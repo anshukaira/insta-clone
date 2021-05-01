@@ -1,7 +1,10 @@
 import React, { useState } from 'react'
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Dimensions } from 'react-native'
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Dimensions, Platform } from 'react-native'
+import { Avatar, Checkbox } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../../redux/slices/userSlice';
+import { PROFIILE_VISIBILITY } from '../CONSTANTS';
+import { theme } from '../Style/Constants';
 
 export default function Edit() {
 
@@ -10,61 +13,89 @@ export default function Edit() {
     const [name, setName] = useState(user.name);
     const [about, setAbout] = useState(user.about);
     const [vis, setVis] = useState(user.vis);
+    const [checked, setChecked] = useState(vis == PROFIILE_VISIBILITY.PROTECTED);
 
-    const editUserInfo = (data) => {
-        console.log('data is', data);
+    const editUserInfo = () => {
+        console.log('data is', vis);
+        setVis(checked ? PROFIILE_VISIBILITY.PROTECTED : PROFIILE_VISIBILITY.PUBLIC);
+    }
+
+    const changeDP = () => {
+        console.log('changing dp');
     }
 
     return (
-        <View style={styles.container}>
-            <View style={styles.inputContainer}>
-                <Text>Name : </Text>
-                <TextInput
-                    placeholder='Nmae wa?'
-                    value={name}
-                    onChangeText={(name) => setName(name)}
-                    style={styles.textBox}
-                />
+        <View style={styles.mainContainer}>
+            <View style={styles.container}>
+                <View>
+                <View style={styles.row}>
+                <Avatar.Image source={require('../../assets/dummy.jpeg')} />
+                <View style={styles.nameContainer}>
+                    <Text style={styles.name}>{name}</Text>
+                    <Text onPress={changeDP} style={styles.changedp}>Change Profile Photo</Text>
+                </View>
             </View>
-            
-            <View style={styles.inputContainer}>
-                <Text >About : </Text>
-                <TextInput
-                    placeholder='About'
-                    value={about}
-                    onChangeText={(about) => setAbout(about)}
-                    style={styles.textBox}
-                />
+
+            <View style={styles.row}>
+                <Text style={[styles.label, {paddingBottom: 25}]}>Name</Text>
+                <View style={[styles.nameContainer, {width: 300}]}>
+                    <TextInput 
+                        placeholder='Name'
+                        value={name}
+                        onChangeText={(data) => setName(data)}
+                        style={styles.textBox}
+                    />
+                    <Text style={styles.description}>Help people discover your account bu using the name you're known by.</Text>
+                </View>
             </View>
-            
-            <View style={styles.inputContainer}>
-                <Text >Vis : </Text>
-                <Text 
-                    onPress={() => setVis("PROTECTED")}
-                    style={vis == "PROTECTED" ? styles.greenBox : styles.box}>
-                        Private
-                </Text>
-                <Text 
-                    onPress={() => setVis("PUBLIC")}
-                    style={vis == "PUBLIC" ? styles.greenBox : styles.box}>
-                        Public
-                </Text>
-                <Text 
-                    onPress={() => setVis("PRIVATE")}
-                    style={vis == "PRIVATE" ? styles.greenBox : styles.box}>
-                        Deactivate
-                </Text>
+
+            <View style={styles.row}>
+                <Text style={[styles.label, {paddingLeft: 16}]}>Bio</Text>
+                <View style={[styles.nameContainer, {width: 300}]}>
+                    <TextInput 
+                        placeholder='About yourself'
+                        value={about}
+                        onChangeText={(data) => setAbout(data)}
+                        style={styles.textBox}
+                    />
+                </View>
             </View>
+                </View>
             
-            <View styles={styles.inputContainer}>
-            <TouchableOpacity
-                    style={styles.button}
-                    onPress={() => editUserInfo({name, vis, about})}
-                >
-                    <Text style={styles.text}>Save</Text>
-            </TouchableOpacity>
+            
+            <View>
+            <View style={[styles.col, {marginTop: 34}]}>
+                <View style={styles.row}>
+                <Checkbox 
+                    status={ checked ? 'checked' : 'unchecked'}
+                    onPress={() => {
+                        setChecked(!checked)
+                    }}
+                    color={theme.lightButton}
+                    />
+                <Text style={styles.label}>Private Account</Text>
+                </View>
+                
+                <Text style={styles.description}>When your account is private, only people you approve can see your photos and videos on Mirai~C.</Text>
+            </View>
+            <View>
+                <Text style={[styles.changedp, {alignSelf: 'flex-end', color: 'gray'}]}>Temporarily disable my account</Text>
+            </View>
+
+            
+            <View style={{padding: 16}}>
+                <TouchableOpacity
+                        style={styles.button}
+                        onPress={() => editUserInfo()}
+                    >
+                        <Text style={styles.text}>Save</Text>
+                </TouchableOpacity>
             </View> 
+            </View>
+            
         </View>
+        </View>
+        
         
     )
 }
@@ -73,57 +104,69 @@ const { width: WIDTH } = Dimensions.get('window');
 
 const styles = StyleSheet.create(
     {
+        mainContainer: {
+            height: '100%',
+            width: '100%',
+            backgroundColor: theme.lightbg,
+            justifyContent:  Platform.OS == 'web' ? 'center' : 'flex-start',
+            alignItems: Platform.OS == 'web' ? 'center'  : 'flex-start',
+        },
         container: {
-            flex: 1,
-            width: null,
-            height: null,
-            alignItems: 'center',
-            justifyContent: 'center',
+            height: 600,
+            width: 400,
+            backgroundColor: theme.lightbg,
+            padding: 20,
+            borderWidth: Platform.OS == 'web' ? 0.5 : 0,
+            borderColor: theme.lightGrayBorder,
+            justifyContent: Platform.OS == 'web' ? 'space-between' : 'flex-start',
+        },
+        row: {
+            flexDirection: 'row',
+        },
+        nameContainer:{
+            flexDirection: 'column',
+            margin: 10,
+            alignSelf: "flex-end",
+        },
+        name:{
+            fontSize: 22,
+        },
+        changedp: {
+            fontSize: 14,
+            color: theme.lightButton,
+            fontWeight: 'bold',
         },
         textBox: {
-            width: 200,
-            height: 48,
-            borderRadius: 25,
+            width: 280,
+            height: 38,
+            borderWidth: 1,
+            borderColor: theme.lightGrayBorder,
+            borderRadius: 5,
             fontSize: 16,
-            paddingLeft: 45,
-            backgroundColor: 'rgba(0, 0, 0, 0.35)',
-            color: 'rgba(255, 255, 255, 0.7)',
-            marginHorizontal: 25
+            color: theme.lightfont,
+            padding: 10,
         },
-        inputContainer: {
-            marginTop: 10,
-            flexDirection: 'row',
+        description: {
+            fontSize: 12,
+            color: 'gray',
+            flexWrap: 'wrap'
+        },
+        label: {
+            fontWeight: 'bold',
+            alignSelf: 'center'
         },
         button: {
             width: 100,
-            height: 48,
-            borderRadius: 25,
-            backgroundColor: '#8e96bb',
+            height: 40,
+            borderRadius: 5,
+            backgroundColor: theme.lightButton,
             justifyContent: 'center',
-            marginTop: 20
+            alignSelf: 'center',
         },
         text: {
-            color: 'rgba(255, 255, 255, 0.7)',
+            color: theme.darkfont,
             fontSize: 16,
-            textAlign: 'center'
+            textAlign: 'center',
+            fontWeight: 'bold'
         },
-        box: {
-            borderWidth: 1,
-            borderRadius: 5,
-            marginLeft: 10,
-            marginRight: 10,
-            padding: 5,
-            alignItems: 'center'
-        },
-        greenBox:{
-            borderWidth: 1,
-            borderRadius: 5,
-            marginLeft: 10,
-            marginRight: 10,
-            padding: 5,
-            alignItems: 'center',
-            backgroundColor: 'green',
-            color: 'white',
-        }
-
 });
