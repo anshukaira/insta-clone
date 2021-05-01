@@ -1,9 +1,9 @@
 import { useNavigation } from '@react-navigation/core'
 import React from 'react'
 import { View, Text, StyleSheet, StatusBar } from 'react-native'
-import { theme } from '../Style/Constants'
+import { theme } from '../../Style/Constants'
 import Icon from 'react-native-vector-icons/Ionicons'
-import { selectUser } from '../../redux/slices/userSlice'
+import { selectUser } from '../../../redux/slices/userSlice'
 import { useSelector } from 'react-redux'
 
 export default function Header({ uid = "xxx" }) {

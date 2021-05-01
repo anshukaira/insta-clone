@@ -1,4 +1,5 @@
 import DummyDp from '../assets/dummy.jpeg'
+import { Image, Platform } from 'react-native';
 
 export const POST_VISIBILITY = {
     PUBLIC: 'PUBLIC',
@@ -18,7 +19,7 @@ export const DUMMY_DATA = {
     about: 'Hi! I am Dummy User',
     caption: 'This is dummy caption',
     message: 'This is dummy message',
-    dp: DummyDp
+    dp: Platform.OS == 'web' ? DummyDp : Image.resolveAssetSource(DummyDp).uri
 }
 
 export const CHAT_MESSAGE_TYPE = {

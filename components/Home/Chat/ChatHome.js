@@ -1,27 +1,32 @@
-import { useNavigation } from '@react-navigation/core'
+import { useNavigation, useRoute } from '@react-navigation/core'
 import React, { useEffect, useState } from 'react'
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, StatusBar } from 'react-native'
 import { Avatar } from 'react-native-paper'
 import { useSelector } from 'react-redux'
-import { initiateChat } from '../../firebase/functions'
-import { selectAllUser } from '../../redux/slices/allUserSlice'
-import { selectUser } from '../../redux/slices/userSlice'
-import { DUMMY_DATA } from '../CONSTANTS'
-import { descriptiveText } from '../Style/Common'
-import { theme } from '../Style/Constants'
+import { initiateChat } from '../../../firebase/functions'
+import { selectAllUser } from '../../../redux/slices/allUserSlice'
+import { selectUser } from '../../../redux/slices/userSlice'
+import { DUMMY_DATA } from '../../CONSTANTS'
+import { descriptiveText } from '../../Style/Common'
+import { theme } from '../../Style/Constants'
 import Header from './Header'
 
 export default function ChatHome() {
     const user = useSelector(selectUser)
-    const navigation = useNavigation();
+    const route = useRoute();
     useEffect(() => {
         let username = user.email.substring(0, user.email.indexOf('@'))
-        navigation.setOptions({ headerShown: true, title: username })
+        // route.params.setOptions({ headerShown: true, title: username })
     })
+    if (!user || !user.loaded) {
+        return (
+            <View>
+                <Text>Loading</Text>
+            </View>
+        )
+    }
     return (
-        <View style={{ flex: 1, flexDirection: 'column' }}>
-            <Header uid={user.name} />
-            <Message />
+        <View style={{ flex: 1, flexDirection: 'column', paddingTop: StatusBar.currentHeight }}>
             <ScrollView>
                 <ExistingList />
                 <PossibleList />
@@ -30,13 +35,6 @@ export default function ChatHome() {
     )
 }
 
-const Message = () => {
-    return (
-        <View style={styles.messageContainer}>
-            <Text style={styles.messages}>Messages</Text>
-        </View>
-    )
-}
 
 const ExistingList = () => {
     const user = useSelector(selectUser)
@@ -54,7 +52,8 @@ const ExistingList = () => {
     }
 
     return (
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, borderBottomWidth: 1, paddingBottom: 10 }}>
+            <Text style={{ padding: 10, fontSize: 16 }}>Your Chats</Text>
             {existing.map((item) => {
                 console.log(item);
                 return (
@@ -81,7 +80,8 @@ const PossibleList = () => {
     }
 
     return (
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, borderBottomWidth: 1, paddingBottom: 10 }}>
+            <Text style={{ padding: 10, fontSize: 16 }}>Your Chats</Text>
             {possible.map((item) => {
                 return (
                     <PossibleListItem uid={item.uid} key={item.uid} />
@@ -97,7 +97,7 @@ const ExistingListItem = ({ uid, chatId }) => {
     const navigation = useNavigation();
     const handlePress = () => {
         setLoading(true);
-        navigation.navigate('Chat', { uid: uid, chatId: chatId, header: allUser[uid].username })
+        navigation.navigate('Chat', { uid: uid, chatId: chatId })
         setLoading(false);
     }
 
@@ -114,7 +114,7 @@ const ExistingListItem = ({ uid, chatId }) => {
     return (
 
         <View style={styles.chatContainer}>
-            <Avatar.Image source={DUMMY_DATA.dp} size={54} onPress={navigateProfile} />
+            <Avatar.Image source={{ uri: allUser[uid].dp ? allUser[uid].dp : DUMMY_DATA.dp }} size={54} onPress={navigateProfile} />
             <TouchableOpacity onPress={handlePress}>
                 <View style={styles.textContainer}>
                     <Text style={styles.name} >{allUser[uid].name}</Text>
@@ -146,7 +146,7 @@ const PossibleListItem = ({ uid }) => {
     return (
         <TouchableOpacity onPress={handlePress}>
             <View style={styles.chatContainer}>
-                <Avatar.Image source={DUMMY_DATA.dp} size={54} />
+                <Avatar.Image source={{ uri: allUser[uid].dp ? allUser[uid].dp : DUMMY_DATA.dp }} size={54} />
                 <View style={styles.textContainer}>
                     <Text style={styles.name} >{allUser[uid].name}</Text>
                 </View>

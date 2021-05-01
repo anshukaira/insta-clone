@@ -129,7 +129,7 @@ function extractPostsList(allPosts, user) {
         }
         list.push({ pid: pid, time: allPosts[pid].time })
     }
-    list.sort((a, b) => a.time < b.time)
+    list.sort((a, b) => a.time < b.time ? 1 : -1)
     return list;
 }
 

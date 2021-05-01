@@ -1,18 +1,20 @@
-import { useRoute } from '@react-navigation/core'
+import { useNavigation, useRoute } from '@react-navigation/core'
 import React, { useEffect, useRef, useState } from 'react'
 import { View, Text, TextInput, StyleSheet, Dimensions, ScrollView, TouchableOpacity, Pressable } from 'react-native'
 import { Avatar } from 'react-native-paper'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { useSelector } from 'react-redux'
-import { addMessage } from '../../firebase/functions'
-import { subChat } from '../../firebase/subscriptions'
-import { selectAllUser } from '../../redux/slices/allUserSlice'
-import { selectUser } from '../../redux/slices/userSlice'
-import { theme } from '../Style/Constants'
-import { CHAT_MESSAGE_TYPE, DUMMY_DATA } from '../CONSTANTS'
+import { addMessage } from '../../../firebase/functions'
+import { subChat } from '../../../firebase/subscriptions'
+import { selectAllUser } from '../../../redux/slices/allUserSlice'
+import { selectUser } from '../../../redux/slices/userSlice'
+import { theme } from '../../Style/Constants'
+import { CHAT_MESSAGE_TYPE, DUMMY_DATA } from '../../CONSTANTS'
 
 export default function Chat() {
+    const navigation = useNavigation();
     const route = useRoute()
+    const allUser = useSelector(selectAllUser)
 
     const [data, setData] = useState(null)
     const [chatList, setChatList] = useState([]);
@@ -28,6 +30,9 @@ export default function Chat() {
 
     useEffect(() => {
         const unsubscribe = subChat(route.params.chatId, setData)
+        if (allUser && allUser.loaded) {
+            navigation.setOptions({ title: allUser[route.params.uid].username })
+        }
         return () => {
             console.log("unsubcribed chat: " + route.params.chatId)
             unsubscribe();
@@ -62,7 +67,7 @@ export default function Chat() {
     const iconColor = message.length > 0 ? theme.lightButton : 'gray';
 
     return (
-        <View style={{ flex: 1, backgroundColor: theme.lightbg }}>
+        <View style={{ flex: 1, flexDirection: 'column' }}>
             <ScrollView
                 ref={scrollViewRef}
                 onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}
@@ -136,14 +141,20 @@ const ChatNormal = ({ data, keyId, toccidSetter, scroll }) => {
     const allUser = useSelector(selectAllUser);
     const user = useSelector(selectUser)
     const time = new Date(data.time)
-
+    const ref = useRef(null);
     const userAvatar = () => {
         if (data.uid == user.uid)
             return null
         let img = allUser[data.uid].dp.length > 0 ? allUser[data.uid].dp : DUMMY_DATA.dp;
-        return (<Avatar.Image source={img} size={42} style={{ marginTop: 10 }} key={keyId} />)
+        return (<Avatar.Image source={{ uri: img }} size={42} style={{ marginTop: 10 }} key={keyId} />)
 
     }
+
+    useEffect(() => {
+        if (scroll) {
+            ref.current.scrollIntoView();
+        }
+    }, [])
 
     const alignDirection = data.uid == user.uid ? 'flex-end' : 'flex-start';
     const borderBottomRadius = data.uid == user.uid ? { borderBottomEndRadius: 5 } : { borderBottomLeftRadius: 35 };
@@ -160,7 +171,7 @@ const ChatNormal = ({ data, keyId, toccidSetter, scroll }) => {
     }
 
     return (
-        <Pressable style={viewStyle} onLongPress={() => toccidSetter(data.ccid)}>
+        <Pressable style={viewStyle} onLongPress={() => toccidSetter(data.ccid)} ref={ref}>
             {userAvatar()}
             <View style={[styles.chatItem, { alignSelf: alignDirection }, borderBottomRadius, backgroundColor]}>
                 <Text style={[styles.chatText, colorText]}>{data.content}</Text>
@@ -181,7 +192,7 @@ const ChatReply = ({ data, keyId, toccidSetter }) => {
         if (data.uid == user.uid)
             return null
         let img = allUser[data.uid].dp.length > 0 ? allUser[data.uid].dp : DUMMY_DATA.dp;
-        return (<Avatar.Image source={img} size={42} style={{ marginTop: 10 }} key={keyId} />)
+        return (<Avatar.Image source={{ uri: img }} size={42} style={{ marginTop: 10 }} key={keyId} />)
 
     }
 
@@ -224,7 +235,7 @@ const ChatPost = ({ data, keyId, toccidSetter }) => {
         if (data.uid == user.uid)
             return null
         let img = allUser[data.uid].dp.length > 0 ? allUser[data.uid].dp : DUMMY_DATA.dp;
-        return (<Avatar.Image source={img} size={42} style={{ marginTop: 10 }} key={keyId} />)
+        return (<Avatar.Image source={{ uri: img }} size={42} style={{ marginTop: 10 }} key={keyId} />)
 
     }
 
@@ -266,16 +277,16 @@ function getChatList(data) {
         }
         for (const time in data[uid]) {
             list.push({
-                ccid: { uid: uid, time: time },
+                ccid: { uid: uid, time: parseInt(time) },
                 content: data[uid][time].content,
-                time: time,
+                time: parseInt(time),
                 toccid: data[uid][time].toccid,
                 type: data[uid][time].type,
                 uid: uid
             })
         }
     }
-    list.sort((a, b) => a.time > b.time)
+    list.sort((a, b) => a.time > b.time ? 1 : -1)
     return list
 }
 

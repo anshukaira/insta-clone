@@ -14,7 +14,7 @@ function extractUserPosts(allPosts, uid) {
             list.push({ pid: key, ...allPosts[key] })
         }
     }
-    list = list.sort((a, b) => a.time < b.time)
+    list = list.sort((a, b) => a.time < b.time ? 1 : -1)
     return list;
 }
 

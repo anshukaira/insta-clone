@@ -29,7 +29,6 @@ export default function Profile() {
         }
     }, [])
 
-    console.log("PARAMS HERE", route.params)
     useEffect(() => {
         if (route.params.screen != 'Home') {
             navigation.setOptions({

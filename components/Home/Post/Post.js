@@ -55,7 +55,6 @@ export default function Post({ pid }) {
     }, []);
 
     const openProfile = () => {
-        console.log('CURRENT POST', currentPost)
         navigation.navigate("Profile", { pid: pid, uid: currentPost.uid, screen: 'Post', username: allUsers[currentPost.uid].username })
     }
 

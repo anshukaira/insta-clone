@@ -431,10 +431,8 @@ export async function addMessage(chatId, data, state) {
     let { user } = store.getState()
     let time = Date.now();
     await firestore.collection('chats').doc(chatId).update({
-        [user.uid]: {
-            [time]: {
-                ...data,
-            }
+        [user.uid + '.' + time]: {
+            ...data
         }
     }).then(() => {
         console.log("Chat Added");

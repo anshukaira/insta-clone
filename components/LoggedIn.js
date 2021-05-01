@@ -15,7 +15,6 @@ import CommentsScreen from './Comments/Comments'
 import OptionsScreen from './Options/OptionStack';
 import EditScreen from './Edit/Edit'
 import AddScreen from './Add/Add'
-import ChatScreen from './Chat/ChatStack'
 
 
 const Stack = createStackNavigator();
@@ -46,7 +45,6 @@ function LoggedIn({ uid }) {
             <Stack.Screen name="Options" component={OptionsScreen} />
             <Stack.Screen name="Edit" component={EditScreen} />
             <Stack.Screen name="Add" component={AddScreen} />
-            <Stack.Screen name="Chat" component={ChatScreen} options={{ headerShown: false }} initialParams={{ default: 'ChatHome' }} />
         </Stack.Navigator>
     )
 }
