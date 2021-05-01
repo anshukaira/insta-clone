@@ -5,6 +5,7 @@ import { Avatar } from 'react-native-paper';
 import { useSelector } from 'react-redux'
 import { selectAllPosts } from '../../../redux/slices/allPostsSlice'
 import { selectUser } from '../../../redux/slices/userSlice';
+import { DUMMY_DATA } from '../../CONSTANTS';
 
 
 export default function ProfileBox({ style, user }) {
@@ -42,14 +43,14 @@ export default function ProfileBox({ style, user }) {
     return (
         <View style={[styles.container, style]}>
             <View style={styles.details}>
-                <DPContainer uri={user.dp} />
+                <DPContainer url={user.dp ? user.dp : DUMMY_DATA.dp} />
                 <CountBox count={numPosts} text="Posts" press={postPress} />
                 <CountBox count={user.followers.length} text="Followers" press={followersPress} />
                 <CountBox count={user.following.length} text="Following" press={followingPress} />
             </View>
             <View style={styles.content}>
-                <Text style={{ fontSize: 16 }}>Its Me {user.about}</Text>
-                <Text style={{ fontSize: 16 }}>About me</Text>
+                <Text style={{ fontSize: 16 }}>{user.name ? user.name : DUMMY_DATA.name}</Text>
+                <Text style={{ fontSize: 16 }}>{user.about ? user.about : DUMMY_DATA.about}</Text>
             </View>
         </View>
     )

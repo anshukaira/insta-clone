@@ -29,11 +29,12 @@ export default function Profile() {
         }
     }, [])
 
+    console.log("PARAMS HERE", route.params)
     useEffect(() => {
         if (route.params.screen != 'Home') {
             navigation.setOptions({
                 headerShown: true,
-                headerTitle: route.params.name
+                title: route.params.username
             })
         }
     }, [])
@@ -52,10 +53,10 @@ export default function Profile() {
             </View>
         )
     }
-
+    const username = currentUser.email.substring(0, currentUser.email.indexOf('@'))
     return (
         <View style={[styles.container, paddingTop]}>
-            {route.params.screen == 'Home' ? <Header name={currentUser.name} /> : null}
+            {route.params.screen == 'Home' ? <Header username={username} /> : null}
             <ScrollView>
                 <ProfileBox user={currentUser} style={style} />
                 {route.params.screen == 'Home' ? <OwnBox user={currentUser} /> : <OtherBox user={currentUser} />}

@@ -2,8 +2,14 @@ import React from 'react'
 import { View, Text, StyleSheet, StatusBar } from 'react-native'
 import { theme } from '../../Style/Constants'
 import Icon from 'react-native-vector-icons/Ionicons'
+import { useNavigation } from '@react-navigation/core'
+
 
 export default function Header() {
+    const navigation = useNavigation();
+    const gotoChat = () => {
+        navigation.navigate('Chat', { default: 'ChatHome' })
+    }
     return (
         <View style={styles.container}>
             <Icon
@@ -12,7 +18,9 @@ export default function Header() {
             <Text style={styles.text}>MIRAI~C</Text>
             <Icon
                 name="md-chatbubble-ellipses-sharp"
-                style={styles.iconright} />
+                style={styles.iconright}
+                onPress={gotoChat}
+            />
         </View>
     )
 }

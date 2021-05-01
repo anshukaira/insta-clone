@@ -267,7 +267,7 @@ export async function unlikePost(uid, pid, myuid, state) {
         likes: FieldValue.arrayRemove(myuid)
     })
     batch.update(pubPostRef, {
-        [pid + '.numLike']: FieldValue.increment(-1)
+        [pid + '.numLikes']: FieldValue.increment(-1)
     })
     await batch.commit().then(async () => {
         console.log("Unliked" + pid)

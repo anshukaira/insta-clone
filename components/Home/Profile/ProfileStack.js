@@ -13,7 +13,7 @@ export default function ProfileStack() {
         <Stack.Navigator initialRouteName="ProfileHome">
             <Stack.Screen name="ProfileHome" component={ProfileScreen} options={{ headerShown: false }} initialParams={route.params} />
             <Stack.Screen name="Saved" component={SavedScreen} />
-            <Stack.Screen name="Posts" component={PostsScreen} />
+            <Stack.Screen name="Posts" component={PostsScreen} options={({ route }) => ({ title: 'Posts' })} />
         </Stack.Navigator>
     )
 }

@@ -1,86 +1,136 @@
 import React, { useState, useEffect } from 'react'
-import { Text, View, StyleSheet, Platform, FlatList, StatusBar, Dimensions } from 'react-native'
+import { Text, View, StyleSheet, StatusBar, Dimensions, Button } from 'react-native'
 import { Searchbar } from 'react-native-paper'
 import Post from '../Post/PostMini'
 import { useSelector } from 'react-redux'
-import { selectPubPosts } from '../../../redux/slices/pubPostsSlice'
-import { selectProtPosts } from '../../../redux/slices/protPostsSlice'
 import { selectUser } from '../../../redux/slices/userSlice'
 import { theme } from '../../Style/Constants'
 import { descriptiveText } from '../../Style/Common'
+import { selectAllPosts } from '../../../redux/slices/allPostsSlice'
+import { ScrollView } from 'react-native-gesture-handler'
+import { POST_VISIBILITY } from '../../CONSTANTS'
 
 const { width: WIDTH } = Dimensions.get('window');
 
-function extractPostsList(pubPost, protPost, mydata) {
-    const following = mydata.following;
-    let combine = [];
-    for (const post in pubPost) {
-        if (pubPost[post].uid != mydata.uid) {
-            combine.push({ pid: post, time: pubPost[post].time })
-        }
-    }
-    for (const post in protPost) {
-        if (protPost[post].uid != mydata.uid && following.includes(protPost[post])) {
-            combine.push({ pid: post, time: pubPost[post].time })
-        }
-    }
-    combine.sort((a, b) => a.time < b.time)
-    return combine;
-}
+const LIMIT = 5;
 
 export default function Discover() {
-    const [currentPostList, setCurrentPostList] = useState(null);
-    const pubPosts = useSelector(selectPubPosts);
-    const protPosts = useSelector(selectProtPosts);
-    const myData = useSelector(selectUser);
+    const [currentPostList, setCurrentPostList] = useState([]);
+    const [visible, setVisible] = useState([]);
+    const [update, setUpdate] = useState(false)
+
+    const allPosts = useSelector(selectAllPosts)
+    const user = useSelector(selectUser);
 
     useEffect(() => {
-        let data = extractPostsList(pubPosts, protPosts, myData);
-        setCurrentPostList(data);
-    }, [pubPosts, protPosts, myData])
+        if (loadingDependency(user, allPosts)) {
+            return
+        }
+        let data = extractPostsList(allPosts, user);
+        if (currentPostList.length == 0) {
+            setCurrentPostList(data);
+        } else {
+            let toBeUpdated = false;
+            for (const item of data) {
+                let diff = currentPostList.filter((val) => val.pid == item.pid)
+                if (diff.length == 0) {
+                    toBeUpdated = true;
+                    break;
+                }
+            }
+            setUpdate(toBeUpdated)
+        }
+    }, [allPosts, user])
 
+    useEffect(() => {
+        let newVisible = []
+        newVisible = updateNextVisible(visible, currentPostList, LIMIT)
+        setVisible(newVisible);
+    }, [currentPostList])
 
-    if (currentPostList === null) {
-        return ( descriptiveText('Loading...'))
+    if (loadingDependency(user, allPosts)) {
+        return (descriptiveText('Loading...'))
     }
 
     if (currentPostList.length == 0) {
-        return ( descriptiveText('Opps! No Post Yet.'))
+        return (descriptiveText('Opps! No Post Yet.'))
+    }
+
+    const loadMore = () => {
+        let newVisible = []
+        newVisible = updateNextVisible(visible, currentPostList, LIMIT);
+        setVisible(newVisible);
     }
 
 
-    if (Platform.OS === 'web') {
-        return (
-            <FlatList
-                data={currentPostList}
-                renderItem={({ item }) => {
-                    return <Post style={styles.listItem} pid={item.pid} />
-                }}
-                keyExtractor={item => item.pid}
-                initialNumToRender={10}
-                refreshing={true}
-                style={styles.list}
-                ListHeaderComponent={Searchbar}
-                numColumns={5}
-                columnWrapperStyle={styles.col}
-            />
-        )
-    }
     return (
-        <FlatList
-            data={currentPostList}
-            renderItem={({ item }) => {
-                return <Post style={styles.listItem} pid={item.pid} />
-            }}
-            keyExtractor={item => item.pid}
-            initialNumToRender={10}
-            refreshing={true}
-            style={styles.list}
-            ListHeaderComponent={Searchbar}
-            numColumns={3}
-            columnWrapperStyle={styles.col}
-        />
+        <View style={{ flex: 1 }}>
+            <Searchbar />
+            <ScrollView>
+                {visible.map((item) => {
+                    console.log(item)
+                    return <Post pid={item.pid} key={item.pid} />
+                })}
+                <Button onPress={loadMore} title="Load More" />
+            </ScrollView>
+            {update ? <Button onPress={updateList} title="Update" /> : null}
+        </View>
     )
+}
+
+function loadingDependency(user, allPosts) {
+    if (!user || !user.loaded) {
+        return true
+    }
+    if (!allPosts || !allPosts.loaded) {
+        return true
+    }
+    return false
+}
+
+function updateNextVisible(visible, data, LIMIT) {
+    let newVisible = [];
+    let count = 0;
+    console.log(data);
+    for (const item of data) {
+        let diff = visible.filter((it) => it.pid == item.pid)
+        if (diff.length == 0) {
+            count++;
+        }
+        else {
+            console.log("exists")
+        }
+        newVisible.push(item);
+        if (count > LIMIT) {
+            break;
+        }
+    }
+    return newVisible;
+}
+
+function extractPostsList(allPosts, user) {
+    const following = user.following;
+    let list = [];
+    if (following === undefined) {
+        return list;
+    }
+    for (const pid in allPosts) {
+        if (pid == 'loaded') {
+            continue
+        }
+        if (allPosts[pid].uid == user.uid) {
+            continue;
+        }
+        if (allPosts[pid].visibility == POST_VISIBILITY.PROTECTED) {
+            continue;
+        }
+        if (user.following.includes(allPosts[pid].uid)) {
+            continue;
+        }
+        list.push({ pid: pid, time: allPosts[pid].time })
+    }
+    list.sort((a, b) => a.time < b.time)
+    return list;
 }
 
 const styles = StyleSheet.create({

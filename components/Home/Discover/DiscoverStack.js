@@ -11,7 +11,7 @@ export default function DiscoverStack() {
         <Stack.Navigator>
             <Stack.Screen name="DiscoverHome" component={DiscoverScreen} options={{ headerShown: false }} />
             <Stack.Screen name="Explore" component={Posts} />
-            <Stack.Screen name="Profile" component={ProfileScreen} options={({ route }) => ({ headerTitle: route.params.uid })} />
+            <Stack.Screen name="Profile" component={ProfileScreen} options={({ route }) => ({ headerShown: false })} />
         </Stack.Navigator>
     )
 }

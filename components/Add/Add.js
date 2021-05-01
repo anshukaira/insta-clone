@@ -9,10 +9,15 @@ import { descriptiveText } from '../Style/Common';
 
 export default function Add() {
     const user = useSelector(selectUser);
+
     const [hasCameraPermission, setHasCameraPermission] = useState(null);
     const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
-    const [image, setImage] = useState(null)
+
     const [uploaded, setUploaded] = useState(false)
+
+    const [image, setImage] = useState(null)
+    const [visibility, setVisibility] = useState(user.vis)
+    const [caption, setCaption] = useState("Caption")
 
     useEffect(() => {
         (async () => {
@@ -47,7 +52,7 @@ export default function Add() {
     if (hasCameraPermission === false || hasGalleryPermission === false) {
         return (
             descriptiveText('Sorry we need permissions')
-          )
+        )
     }
 
     const pickImage = async () => {
@@ -84,8 +89,8 @@ export default function Add() {
     };
 
     const upload = () => {
-        addPost(image, "Testing Post Upload", 'PUBLIC', user.uid)
-        if (Platform.OS = 'android') {
+        addPost(image, caption, visibility, user.uid)
+        if (Platform.OS == 'android') {
             ToastAndroid.showWithGravity(
                 "Picture Uploaded!!",
                 ToastAndroid.LONG,

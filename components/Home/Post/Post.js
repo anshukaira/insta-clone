@@ -55,7 +55,8 @@ export default function Post({ pid }) {
     }, []);
 
     const openProfile = () => {
-        navigation.navigate("Profile", { pid: pid, uid: currentPost.uid, screen: 'Post', name: allUsers[currentPost.uid].name })
+        console.log('CURRENT POST', currentPost)
+        navigation.navigate("Profile", { pid: pid, uid: currentPost.uid, screen: 'Post', username: allUsers[currentPost.uid].username })
     }
 
     const likeToggle = async () => {
@@ -124,7 +125,7 @@ export default function Post({ pid }) {
             </View>
 
             <View style={styles.footer}>
-                <Text style={styles.bold}>{allPosts[pid].numLike} likes</Text>
+                <Text style={styles.bold}>{allPosts[pid].numLikes} likes</Text>
 
                 <View style={styles.flexRow}>
                     <Text style={styles.bold}>{allUsers[currentPost.uid].name} </Text>

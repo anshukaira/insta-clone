@@ -1,6 +1,6 @@
 import { useRoute } from '@react-navigation/core'
 import React, { useEffect, useRef, useState } from 'react'
-import { View, Text, TextInput, StyleSheet, Dimensions, ScrollView, TouchableOpacity } from 'react-native'
+import { View, Text, TextInput, StyleSheet, Dimensions, ScrollView, TouchableOpacity, Pressable } from 'react-native'
 import { Avatar } from 'react-native-paper'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { useSelector } from 'react-redux'
@@ -10,16 +10,20 @@ import { selectAllUser } from '../../redux/slices/allUserSlice'
 import { selectUser } from '../../redux/slices/userSlice'
 import { theme } from '../Style/Constants'
 import { CHAT_MESSAGE_TYPE, DUMMY_DATA } from '../CONSTANTS'
-import Pressable from 'react-native/Libraries/Components/Pressable/Pressable'
 
 export default function Chat() {
     const route = useRoute()
+
     const [data, setData] = useState(null)
     const [chatList, setChatList] = useState([]);
+
     const [message, setMessage] = useState("");
     const [toccid, setToccid] = useState(null);
+
     const [sending, setSending] = useState(false);
-    const scrollViewRef = useRef();
+
+    const scrollViewRef = useRef(null);
+    const [messageId, setMessageId] = useState(null);
 
 
     useEffect(() => {
@@ -48,7 +52,7 @@ export default function Chat() {
         setSending(true);
         let data = {
             content: message,
-            toccid: '',
+            toccid: toccid,
             type: toccid ? CHAT_MESSAGE_TYPE.REPLY : CHAT_MESSAGE_TYPE.NORMAL
         }
         await addMessage(route.params.chatId, data, setSending)
@@ -66,20 +70,24 @@ export default function Chat() {
                 <Text style={{ alignSelf: 'center', color: 'gray', fontSize: 12 }}>{route.params.uid}</Text>
                 {chatList.map((item) => {
                     let key = item.ccid.uid + '_' + item.ccid.time;
+                    let scroll = false;
+                    if (messageId && messageId.uid == item.uid && messageId.time == item.time) {
+                        scroll = true;
+                    }
                     if (item.type == CHAT_MESSAGE_TYPE.NORMAL) {
                         return (
-                            <ChatNormal data={item} key={key} keyID={key} toccidSetter={setToccid} />
+                            <ChatNormal data={item} key={key} keyID={key} toccidSetter={setToccid} scroll={scroll} />
                         )
                     }
                     if (item.type == CHAT_MESSAGE_TYPE.POST) {
                         return (
-                            <ChatPost data={item} key={key} keyID={key} toccidSetter={setToccid} />
+                            <ChatPost data={item} key={key} keyID={key} toccidSetter={setToccid} ref={attachRef ? currentIdRef : null} scroll={scroll} />
                         )
                     }
                     if (item.type == CHAT_MESSAGE_TYPE.REPLY) {
                         let replyTo = data[item.toccid.uid][item.toccid.time]
                         return (
-                            <ChatReply data={item} key={key} keyID={key} toccidSetter={setToccid} replyTo={replyTo} />
+                            <ChatReply data={item} key={key} keyID={key} toccidSetter={setToccid} replyTo={replyTo} setMessageId={setMessageId} ref={attachRef ? currentIdRef : null} scroll={scroll} />
                         )
                     }
 
@@ -87,7 +95,7 @@ export default function Chat() {
             </ScrollView>
 
             <View>
-                {toccid ? <Text>{data[toccid.uid][toccid.time].content}</Text> : null}
+                {toccid ? <ReplyBox data={data[toccid.uid][toccid.time]} uid={toccid.uid} time={toccid.time} setMessageId={setMessageId} toccidSetter={setToccid} /> : null}
                 <View style={styles.sendMessageContainer}>
                     <TextInput style={styles.sendInput} multiline={true} placeholder="Type Your Message Here"
                         value={message}
@@ -107,7 +115,24 @@ export default function Chat() {
     )
 }
 
-const ChatNormal = ({ data, keyId, toccidSetter }) => {
+const ReplyBox = ({ data, setMessageId, toccidSetter, uid, time }) => {
+
+    const handlePress = () => {
+        setMessageId({ uid: uid, time: time })
+    }
+    const handleLongPress = () => {
+        toccidSetter(null)
+    }
+    return (
+        <Pressable onPress={handlePress} onLongPress={handleLongPress}>
+            <Text>
+                {data.content}
+            </Text>
+        </Pressable>
+    )
+}
+
+const ChatNormal = ({ data, keyId, toccidSetter, scroll }) => {
     const allUser = useSelector(selectAllUser);
     const user = useSelector(selectUser)
     const time = new Date(data.time)
@@ -135,7 +160,7 @@ const ChatNormal = ({ data, keyId, toccidSetter }) => {
     }
 
     return (
-        <Pressable style={viewStyle}>
+        <Pressable style={viewStyle} onLongPress={() => toccidSetter(data.ccid)}>
             {userAvatar()}
             <View style={[styles.chatItem, { alignSelf: alignDirection }, borderBottomRadius, backgroundColor]}>
                 <Text style={[styles.chatText, colorText]}>{data.content}</Text>
@@ -175,14 +200,17 @@ const ChatReply = ({ data, keyId, toccidSetter }) => {
     }
 
     return (
-        <Pressable style={viewStyle}>
+        <View style={viewStyle}>
+            <Pressable onPress={() => setMessageId(data.toccid)}>
+                <Text>{replyTo.content}</Text>
+            </Pressable>
             {userAvatar()}
-            <View style={[styles.chatItem, { alignSelf: alignDirection }, borderBottomRadius, backgroundColor]}>
+            <Pressable style={[styles.chatItem, { alignSelf: alignDirection }, borderBottomRadius, backgroundColor]} onLongPress={() => toccidSetter(data.ccid)}>
                 <Text style={[styles.chatText, colorText]}>{data.content}</Text>
                 {/* <Text style={styles.chatTextSmall}>Sender: {data.uid == user.uid ? "ME" : allUser[data.uid].name} at  */}
                 <Text style={[styles.chatTextSmall, colorText]}>{time.toLocaleString()}</Text>
-            </View>
-        </Pressable>
+            </Pressable>
+        </View>
 
     )
 }
@@ -215,7 +243,7 @@ const ChatPost = ({ data, keyId, toccidSetter }) => {
     }
 
     return (
-        <Pressable style={viewStyle}>
+        <Pressable style={viewStyle} onLongPress={() => toccidSetter(data.ccid)}>
             {userAvatar()}
             <View style={[styles.chatItem, { alignSelf: alignDirection }, borderBottomRadius, backgroundColor]}>
                 <Text style={[styles.chatText, colorText]}>{data.content}</Text>

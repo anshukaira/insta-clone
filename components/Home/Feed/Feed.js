@@ -10,11 +10,13 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import { POST_VISIBILITY } from '../../CONSTANTS'
 import { descriptiveText } from '../../Style/Common'
 
+const LIMIT = 3;
 
 export default function Feed() {
 
     const user = useSelector(selectUser);
     const allPosts = useSelector(selectAllPosts);
+
 
     const [update, setUpdate] = useState(false)
     const [currentPostList, setCurrentPostList] = useState([]);
@@ -25,7 +27,7 @@ export default function Feed() {
         }
         let data = extractPostsList(allPosts, user);
         let toBeUpdated = false;
-        if (currentPostList.length == 0) {
+        if (currentPostList.length < LIMIT) {
             setCurrentPostList(data)
         } else {
             for (const item of data) {
@@ -53,7 +55,6 @@ export default function Feed() {
         setUpdate(false);
     }
 
-
     if (currentPostList.length == 0) {
         return (
             <View style={{ flex: 1 }}>
@@ -78,13 +79,18 @@ function extractPostsList(allPosts, user) {
     const following = user.following;
 
     for (const key in allPosts) {
+        if (key == 'loaded') {
+            continue
+        }
         if (following.includes(allPosts[key].uid)) {
             list.push({ pid: key, ...allPosts[key] })
             totalLikes = totalLikes + allPosts[key].numLikes
         } else if (allPosts[key].uid == user.uid) {
+            console.log("here?")
             list.push({ pid: key, ...allPosts[key] })
             totalLikes = totalLikes + allPosts[key].numLikes
         } else if (allPosts[key].visibility == POST_VISIBILITY.PUBLIC) {
+            console.log("here")
             if (totalLikes <= allPosts[key].numLikes * list.length) {
                 list.push({ pid: key, ...allPosts[key] })
                 totalLikes = totalLikes + allPosts[key].numLikes
@@ -121,7 +127,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignContent: 'center',
         position: 'absolute',
-        top: StatusBar.currentHeight + 30,
-        left: Dimensions.get('window').width / 2
+        top: 60,
+        left: Dimensions.get('window').width / 2,
+        zIndex: 99999
     }
 })

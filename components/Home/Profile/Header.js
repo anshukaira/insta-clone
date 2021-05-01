@@ -4,13 +4,13 @@ import { View, Text, StyleSheet, StatusBar } from 'react-native'
 import { theme } from '../../Style/Constants'
 import Icon from 'react-native-vector-icons/Ionicons'
 
-export default function Header({ name }) {
+export default function Header({ username }) {
     const navigation = useNavigation();
     return (
         <View style={styles.container}>
             <View style={styles.row}>
                 <Icon name="md-lock-closed-outline" style={styles.icon} />
-                <Text style={styles.text}> {name}</Text>
+                <Text style={styles.text}> {username}</Text>
             </View>
 
             <View style={styles.row}>
