@@ -6,12 +6,12 @@ import Icon from 'react-native-vector-icons/Ionicons'
 export default function Header() {
     return (
         <View style={styles.container}>
-            <Icon 
-                name="add-circle-sharp" 
+            <Icon
+                name="add-circle-sharp"
                 style={styles.iconleft} />
             <Text style={styles.text}>MIRAI~C</Text>
-            <Icon 
-                name="md-chatbubble-ellipses-sharp" 
+            <Icon
+                name="md-chatbubble-ellipses-sharp"
                 style={styles.iconright} />
         </View>
     )

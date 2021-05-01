@@ -11,9 +11,10 @@ export function descriptiveText(text = '') {
 
 const styles = StyleSheet.create({
     descriptive: {
+        flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 10,
+        padding: 10
     },
     smallText: {
         fontSize: 12,

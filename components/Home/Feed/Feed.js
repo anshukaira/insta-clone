@@ -55,7 +55,12 @@ export default function Feed() {
 
 
     if (currentPostList.length == 0) {
-        return (descriptiveText('Opps! No Post Yet.'))
+        return (
+            <View style={{ flex: 1 }}>
+                <Header />
+                {descriptiveText('Opps! No Post Yet.')}
+            </View>
+        )
     }
     return (
         <View style={styles.container}>

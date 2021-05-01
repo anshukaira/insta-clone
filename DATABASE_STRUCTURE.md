@@ -19,7 +19,7 @@ activity = [{content: string,time: time (ms)}]
 allUser
 (redux & global)
 (public/users)
-uid:{name:string, vis: 'VIS_ENUM', delete, dp: url,email}
+uid:{name:string, vis: 'VIS_ENUM', delete, dp: url,username}
 
 pubPosts
 (redux & global)

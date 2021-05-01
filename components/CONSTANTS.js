@@ -2,8 +2,7 @@ import DummyDp from '../assets/dummy.jpeg'
 
 export const POST_VISIBILITY = {
     PUBLIC: 'PUBLIC',
-    PROTECTED: 'PROTECTED',
-    PRIVATE: 'PRIVATE'
+    PROTECTED: 'PROTECTED'
 }
 
 export const PROFIILE_VISIBILITY = {

@@ -1,8 +1,6 @@
-import firebase from 'firebase';
-import { auth, firestore, storage } from './firebase'
+import { auth, FieldValue, firestore, storage } from './firebase'
 import store from '../redux/store/app'
 import { addPost as addCachedPost } from '../redux/slices/cachedPosts'
-import { set as setUser } from '../redux/slices/userSlice'
 import { DUMMY_DATA, POST_VISIBILITY, PROFIILE_VISIBILITY } from '../components/CONSTANTS';
 
 /**
@@ -16,7 +14,7 @@ import { DUMMY_DATA, POST_VISIBILITY, PROFIILE_VISIBILITY } from '../components/
 export function signUp(name, email, pass) {
     auth.createUserWithEmailAndPassword(email, pass)
         .then((result) => {
-            createUserInDatabase(result.user.uid, name || result.user.displayName, result.user.email, pass);
+            createUserInDatabase(result.user.uid, name || result.user.displayName || "NO NAME", result.user.email, pass);
             console.log("signup", result.user);
         })
         .catch(error => console.log(error.message));
@@ -31,7 +29,7 @@ export function signIn(email, pass) {
                     console.log("Welcome Back!!");
                 } else {
                     console.log("Opps! No data. Creating data...");
-                    createUserInDatabase(result.user.uid, result.user.displayName || DUMMY_DATA.name, result.user.email, pass);
+                    createUserInDatabase(result.user.uid, result.user.displayName || "NO NAME", result.user.email, pass);
                 }
             })
         })
@@ -47,7 +45,7 @@ export function signOut() {
         .then(() => {
             console.log("Sign out successful");
         })
-        .catch((error) => console.error);
+        .catch((error) => console.log(error.message));
 }
 
 // Creating user in database using uid to store user account informations related to app
@@ -56,7 +54,8 @@ function createUserInDatabase(uid, name, email, pass) {
     let userRef = firestore.collection("users").doc(uid);
     let pubRef = firestore.collection("public").doc("users");
 
-    let visibility = PROFIILE_VISIBILITY.PRIVATE
+    let visibility = PROFIILE_VISIBILITY.PRIVATE // default visibilty is PRIVATE while creating user
+    let username = email.substring(0, email.indexOf('@'))
 
     batch.set(userRef, {
         name: name,
@@ -81,7 +80,7 @@ function createUserInDatabase(uid, name, email, pass) {
             vis: visibility,
             delete: false,
             dp: '',
-            email: email
+            username: username
         }
     }, { merge: true })
 
@@ -99,11 +98,12 @@ export async function addPost(img, caption, visibility, uid) {
     let newPostRef = firestore.collection('users').doc(uid).collection("posts").doc()
     let pid = newPostRef.id;
     let rootRef = storage.ref();
+    let userRef = firestore.collection('users').doc(uid);
 
     let pubPostRef;
     if (visibility === POST_VISIBILITY.PUBLIC) {
         pubPostRef = firestore.collection('public').doc('pubPosts')
-    } else if (visibility === POST_VISIBILITY.PROTECTED) {
+    } else {
         pubPostRef = firestore.collection('public').doc('protPosts')
     }
 
@@ -133,6 +133,9 @@ export async function addPost(img, caption, visibility, uid) {
                     time: currentTime
                 }
             })
+            batch.update(userRef, {
+                ['activity']: FieldValue.arrayUnion({ content: 'Uploaded New Post ' + pid, time: currentTime })
+            })
             batch.commit().then(() => {
                 console.log("Post uploaded successfully to the database")
             }).catch((error) => {
@@ -145,20 +148,15 @@ export async function addPost(img, caption, visibility, uid) {
     })
 }
 
-// Edit post. CUrrent it allows only caption to edit
+// Currently only captiion change is allowrd. No Visibility Change
 
 export function editPost(pid, data) {
-    const { user, cachedPosts } = store.getState();
+    const { user } = store.getState();
     const uid = user.uid;
-    let newData = {
-        ...cachedPosts[pid]
-    }
-    delete newData.uid;
-    if (data && data.caption) {
-        newData.caption = data.caption
-    }
 
-    firestore.collection('users').doc(uid).collection('posts').doc(pid).update(newData).then(() => {
+    firestore.collection('users').doc(uid).collection('posts').doc(pid).update({
+        caption: data.caption
+    }).then(() => {
         updateCachedPosts(pid, true)
         console.log("Updated post " + pid);
     }).catch((err) => console.log(err.message))
@@ -167,18 +165,29 @@ export function editPost(pid, data) {
 export function deletePost(pid) {
     const { user, allPosts } = store.getState();
     const uid = user.uid;
+    let time = Date.now()
+
     let batch = firestore.batch();
+
     let postRef = firestore.collection('users').doc(uid).collection('posts').doc(pid)
     let fileRef = storage.ref().child('users/' + uid + '/posts/' + pid)
+    let userRef = firestore.collection('users').doc(uid)
+
     let postPublicRef
     if (allPosts[pid] && allPosts[pid].visibility == POST_VISIBILITY.PUBLIC) {
         postPublicRef = firestore.collection('public').doc('pubPosts')
     } else {
         postPublicRef = firestore.collection('public').doc('protPosts')
     }
+
     batch.update(postPublicRef, {
-        [pid]: firebase.firestore.FieldValue.delete()
+        [pid]: FieldValue.delete()
     })
+
+    batch.update(userRef, {
+        ['activity']: FieldValue.arrayUnion({ content: 'Deleted post ' + pid, time: time })
+    })
+
     batch.delete(postRef)
     batch.commit().then(() => {
         fileRef.delete().then(() => {
@@ -235,10 +244,10 @@ export async function likePost(uid, pid, myuid, state) {
     let postRef = firestore.collection("users").doc(uid).collection("posts").doc(pid);
     let pubPostRef = firestore.collection("public").doc("pubPosts");
     batch.update(postRef, {
-        likes: firebase.firestore.FieldValue.arrayUnion(myuid)
+        likes: FieldValue.arrayUnion(myuid)
     })
     batch.update(pubPostRef, {
-        [pid + '.numLike']: firebase.firestore.FieldValue.increment(1)
+        [pid + '.numLikes']: FieldValue.increment(1)
     })
     await batch.commit().then(async () => {
         console.log("liked" + pid)
@@ -255,10 +264,10 @@ export async function unlikePost(uid, pid, myuid, state) {
     let postRef = firestore.collection("users").doc(uid).collection("posts").doc(pid);
     let pubPostRef = firestore.collection("public").doc("pubPosts");
     batch.update(postRef, {
-        likes: firebase.firestore.FieldValue.arrayRemove(myuid)
+        likes: FieldValue.arrayRemove(myuid)
     })
     batch.update(pubPostRef, {
-        [pid + '.numLike']: firebase.firestore.FieldValue.increment(-1)
+        [pid + '.numLike']: FieldValue.increment(-1)
     })
     await batch.commit().then(async () => {
         console.log("Unliked" + pid)
@@ -276,30 +285,36 @@ export async function unlikePost(uid, pid, myuid, state) {
  * Methods Related to Follow Requests
  */
 export function followUser(uid) {
-    const { user } = store.getState();
+    const { user, allUser } = store.getState();
+    let time = Date.now()
     let batch = firestore.batch();
     let myDocRef = firestore.collection("users").doc(user.uid);
     let userDocRef = firestore.collection("users").doc(uid);
     batch.update(myDocRef, {
-        following: firebase.firestore.FieldValue.arrayUnion(uid)
+        following: FieldValue.arrayUnion(uid),
+        activity: FieldValue.arrayUnion({ content: 'You started Following ' + allUser[uid].username, time: time })
     })
     batch.update(userDocRef, {
-        followers: firebase.firestore.FieldValue.arrayUnion(user.uid)
+        followers: FieldValue.arrayUnion(user.uid),
+        activity: FieldValue.arrayUnion({ content: allUser[user.uid].username + ' started Following You', time: time })
     })
 
     batch.commit().then(() => console.log("Now Following user")).catch((err) => console.log(err.message))
 }
 
 export function unfollowUser(uid) {
-    const { user } = store.getState();
+    let time = Date.now()
+    const { user, allUser } = store.getState();
     let batch = firestore.batch();
     let myDocRef = firestore.collection("users").doc(user.uid);
     let userDocRef = firestore.collection("users").doc(uid);
     batch.update(myDocRef, {
-        following: firebase.firestore.FieldValue.arrayRemove(uid)
+        following: FieldValue.arrayRemove(uid),
+        activity: FieldValue.arrayUnion({ content: 'You unfollowed ' + allUser[uid].username, time: time })
     })
     batch.update(userDocRef, {
-        followers: firebase.firestore.FieldValue.arrayRemove(user.uid)
+        followers: FieldValue.arrayRemove(user.uid),
+        activity: FieldValue.arrayUnion({ content: allUser[user.uid].username + ' unfollowed You', time: time })
     })
 
     batch.commit().then(() => console.log("Now Unfollowing user")).catch((err) => console.log(err.message))
@@ -311,10 +326,10 @@ export function unsendFollowReq(uid) {
     let myDocRef = firestore.collection("users").doc(user.uid);
     let userDocRef = firestore.collection("users").doc(uid);
     batch.update(myDocRef, {
-        pendingReq: firebase.firestore.FieldValue.arrayRemove(uid)
+        pendingReq: FieldValue.arrayRemove(uid)
     })
     batch.update(userDocRef, {
-        followReq: firebase.firestore.FieldValue.arrayRemove(user.uid)
+        followReq: FieldValue.arrayRemove(user.uid)
     })
 
     batch.commit().then(() => console.log("Unsend Follow Req")).catch((err) => console.log(err.message))
@@ -326,52 +341,52 @@ export function sendFollowReq(uid) {
     let myDocRef = firestore.collection("users").doc(user.uid);
     let userDocRef = firestore.collection("users").doc(uid);
     batch.update(myDocRef, {
-        pendingReq: firebase.firestore.FieldValue.arrayUnion(uid)
+        pendingReq: FieldValue.arrayUnion(uid)
     })
     batch.update(userDocRef, {
-        followReq: firebase.firestore.FieldValue.arrayUnion(user.uid)
+        followReq: FieldValue.arrayUnion(user.uid)
     })
 
     batch.commit().then(() => console.log("Send Follow Req")).catch((err) => console.log(err.message))
 }
 
 export function acceptFollowReq(uid) {
-    const { user } = store.getState();
+    const { user, allUser } = store.getState();
     let batch = firestore.batch();
     let myDocRef = firestore.collection("users").doc(user.uid);
     let userDocRef = firestore.collection("users").doc(uid);
     let currentTime = Date.now();
-    let mycontent = "Accepted Follow Req of " + uid;
-    let usercontent = uid + " accepted your follow req";
+    let mycontent = "Accepted Follow Req of " + allUser[uid];
+    let usercontent = allUser[user.uid].username + " accepted your follow req";
     batch.update(myDocRef, {
-        followReq: firebase.firestore.FieldValue.arrayRemove(uid),
-        followers: firebase.firestore.FieldValue.arrayUnion(uid),
-        activity: firebase.firestore.FieldValue.arrayUnion({ content: mycontent, time: currentTime })
+        followReq: FieldValue.arrayRemove(uid),
+        followers: FieldValue.arrayUnion(uid),
+        activity: FieldValue.arrayUnion({ content: mycontent, time: currentTime })
     })
     batch.update(userDocRef, {
-        pendingReq: firebase.firestore.FieldValue.arrayRemove(user.uid),
-        following: firebase.firestore.FieldValue.arrayUnion(user.uid),
-        activity: firebase.firestore.FieldValue.arrayUnion({ content: usercontent, time: currentTime })
+        pendingReq: FieldValue.arrayRemove(user.uid),
+        following: FieldValue.arrayUnion(user.uid),
+        activity: FieldValue.arrayUnion({ content: usercontent, time: currentTime })
     })
 
     batch.commit().then(() => console.log("Aceepted Follow Req")).catch((err) => console.log(err.message))
 }
 
 export function rejectFollowReq(uid) {
-    const { user } = store.getState();
+    const { user, allUser } = store.getState();
     let currentTime = Date.now();
-    let mycontent = "Rejected Follow Req of " + uid;
-    let usercontent = uid + " rejected your follow req";
+    let mycontent = "Rejected Follow Req of " + allUser[uid].username;
+    let usercontent = allUser[user.uid].username + " rejected your follow req";
     let batch = firestore.batch();
     let myDocRef = firestore.collection("users").doc(user.uid);
     let userDocRef = firestore.collection("users").doc(uid);
     batch.update(myDocRef, {
-        followReq: firebase.firestore.FieldValue.arrayRemove(uid),
-        activity: firebase.firestore.FieldValue.arrayUnion({ content: mycontent, time: currentTime })
+        followReq: FieldValue.arrayRemove(uid),
+        activity: FieldValue.arrayUnion({ content: mycontent, time: currentTime })
     })
     batch.update(userDocRef, {
-        pendingReq: firebase.firestore.FieldValue.arrayRemove(user.uid),
-        activity: firebase.firestore.FieldValue.arrayUnion({ content: usercontent, time: currentTime })
+        pendingReq: FieldValue.arrayRemove(user.uid),
+        activity: FieldValue.arrayUnion({ content: usercontent, time: currentTime })
     })
 
     batch.commit().then(() => console.log("Aceepted Follow Req")).catch((err) => console.log(err.message))
@@ -381,20 +396,26 @@ export function rejectFollowReq(uid) {
 // Methods for Chats
 
 export async function initiateChat(uid) {
-    const { user } = store.getState()
+
+    const { user, allUser } = store.getState();
+    const time = Date.now()
+
     let newChatRef = firestore.collection("chats").doc();
     let myRef = firestore.collection("users").doc(user.uid);
     let userRef = firestore.collection("users").doc(uid);
     let chatId = newChatRef.id;
+
     let batch = firestore.batch();
     batch.set(newChatRef, {
         subscribed: [uid, user.uid]
     }, { merge: true })
     batch.update(myRef, {
-        ['chats.' + uid]: chatId
+        ['chats.' + uid]: chatId,
+        'activity': FieldValue.arrayUnion({ content: 'Initiated Chat With ' + allUser[uid].username, time: time })
     })
     batch.update(userRef, {
-        ['chats.' + user.uid]: chatId
+        ['chats.' + user.uid]: chatId,
+        'activity': FieldValue.arrayUnion({ content: 'Initiated Chat With ' + allUser[user.uid].username, time: time })
     })
     await batch.commit().then(() => console.log("Chat initiated with id: " + chatId)).catch((error) => {
         console.log(error.message);
@@ -409,12 +430,11 @@ export async function initiateChat(uid) {
 export async function addMessage(chatId, data, state) {
     let { user } = store.getState()
     let time = Date.now();
-    let ccid = time + "_" + user.uid
     await firestore.collection('chats').doc(chatId).update({
-        [ccid]: {
-            ...data,
-            time: time,
-            uid: user.uid
+        [user.uid]: {
+            [time]: {
+                ...data,
+            }
         }
     }).then(() => {
         console.log("Chat Added");
@@ -431,9 +451,74 @@ export async function addComment(uid, pid, comment, state) {
         content: comment
     }
     await firestore.collection('users').doc(uid).collection('posts').doc(pid).update({
-        comments: firebase.firestore.FieldValue.arrayUnion(data)
+        comments: FieldValue.arrayUnion(data)
     }).then(() => {
         console.log("Comment uploaded");
     }).catch((err) => console.log(err.message))
     state(false);
+}
+
+// Update Profile of User
+export function updateProfile(data) {
+
+    const { user } = store.getState();
+    const uid = user.uid;
+
+    let userRef = firestore.collection('users').doc(uid);
+    let publicUser = firestore.collection('public').doc('users');
+
+    let time = Date.now();
+
+    let batch = firestore.batch();
+    batch.update(userRef, {
+        ...data,
+        activity: FieldValue.arrayUnion({ content: "Update Profile", time: time })
+    });
+    batch.update(publicUser, {
+        [uid]: {
+            name: data.name,
+            vis: data.visibility,
+        }
+    })
+    batch.commit().then(() => {
+        console.log("Profile Updated")
+    }).catch((error) => {
+        console.log(error.message);
+    })
+}
+
+// update Dp
+export async function updateDp(img) {
+
+    const response = await fetch(img);
+    const blob = await response.blob();
+
+    const { user } = store.getState();
+    const uid = user.uid
+
+    let time = Date.now()
+
+    let storageRef = storage.ref().child('users/' + uid + '/' + uid);
+    let userRef = firestore.collection('users').doc(uid)
+    let publicUser = firestore.collection('public').doc('users');
+
+    storageRef.put(blob).then((snapshot) => {
+        console.log("Dp Uploaded");
+        snapshot.ref.getDownloadURL().then((downloadURL) => {
+            let batch = firestore.batch();
+            batch.update(userRef, {
+                ['dp']: downloadURL,
+                ['activity']: { content: 'DP Updated', time: time }
+            })
+            batch.update(publicUser, {
+                [uid + '.dp']: downloadURL
+            })
+            batch.commit().then(() => {
+                console.log("Dp updated in database")
+            }).catch((error) => {
+                console.log("Error Writing in database. Deleting file")
+                storageRef.delete()
+            })
+        })
+    }).catch((error) => console.log(error.message))
 }
