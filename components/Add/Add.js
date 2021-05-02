@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, Platform, Button, Image, TouchableOpacity, StyleSheet, ToastAndroid } from 'react-native'
+import { View, Text, Platform, Button, Image, TouchableOpacity, StyleSheet, ToastAndroid, TextInput } from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 import { addPost, addPostNative } from '../../firebase/functions';
 import { useSelector } from 'react-redux';
@@ -100,15 +100,27 @@ export default function Add() {
         setUploaded(true)
     }
 
-    const CustomButton = ({ onPress, text }) => {
+    const CustomButton = ({ onPress, text, style }) => {
         return (
-            <TouchableOpacity onPress={onPress} style={styles.button}>
+            <TouchableOpacity onPress={onPress} style={[styles.button, style]}>
                 <Text style={styles.text}>{text}</Text>
             </TouchableOpacity>
         )
     }
+
+    const ImageContainer = () => {
+        return(
+            <View style={{ justifyContent: 'center', alignItems: 'center'}}>
+                <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />
+                <TextInput placeholder='Add a Caption' onChangeText={(data) => setCaption(data)} multiline={true} style={styles.caption}/>
+            </View>
+        )
+    }
+
     return (
         <View style={styles.container}>
+            {image && !uploaded && ImageContainer()}
+            {image && !uploaded && <CustomButton onPress={upload} text="Upload Image" style={{marginBottom : 50}}/>}
             <CustomButton
                 onPress={pickImage}
                 text='Pick an image from camera roll' />
@@ -116,9 +128,6 @@ export default function Add() {
             <CustomButton
                 onPress={clickImage}
                 text='Click an image now' />
-
-            {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
-            {image && !uploaded && <CustomButton onPress={upload} text="Upload Image" />}
         </View>
     )
 }
@@ -131,15 +140,25 @@ const styles = StyleSheet.create({
         backgroundColor: theme.lightbg,
     },
     button: {
-        borderWidth: 1,
+        backgroundColor: theme.lightButton,
         borderRadius: 5,
-        borderColor: theme.lightGrayBorder,
         width: 250,
-        padding: 5,
+        padding: 10,
         margin: 10,
         alignItems: 'center',
     },
     text: {
         fontSize: 16,
+        color: theme.darkfont,
+        fontWeight: 'bold',
+    },
+    caption: {
+        width: 250,
+        minHeight: 40,
+        maxHeight: 150,
+        borderWidth: 0.5,
+        padding: 5,
+        margin: 10,
+        borderRadius: 5,
     }
 });

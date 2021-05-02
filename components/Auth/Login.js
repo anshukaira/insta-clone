@@ -27,13 +27,13 @@ function Login({ navigation }) {
           <Text style={styles.h1}>MIRAI C</Text>
             <TextInput
               style={styles.input}
-              placeholder="Email."
+              placeholder="Email"
               onChangeText={(email) => setEmail(email)}
               underlineColorAndroid="transparent"
             />
           <View style={styles.input}>
             <TextInput
-              placeholder="Password."
+              placeholder="Password"
               secureTextEntry={confirm_secureTextEntry ? true : false}
               onChangeText={(password) => setPassword(password)}
               underlineColorAndroid="transparent"

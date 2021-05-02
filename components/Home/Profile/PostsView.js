@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Platform, FlatList, StyleSheet, StatusBar, Dimensions, Text, Image, TouchableOpacity } from 'react-native'
+import { View, Platform, FlatList, StyleSheet, StatusBar, Dimensions, Text, Image, TouchableOpacity, ScrollView } from 'react-native'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import Post from '../Post/PostMini'
 import { useNavigation, useRoute } from '@react-navigation/core'
@@ -61,16 +61,19 @@ function Normal() {
     }, [allPosts])
 
     return (
-        <View style={styles.container}>
-            {currentPostList.length ? 
-            currentPostList.map((item) => {
-                return (
-                    <Post key={item.pid} pid={item.pid} navigateTo="Posts" style={styles.item} />
-                )
-            })
-            : <NoPost />}
+        <View style={{flexDirection: 'column', backgroundColor: theme.lightbg}}>
+            <View style={styles.container}>
+                {currentPostList.length ? 
+                currentPostList.map((item) => {
+                    return (
+                        <Post key={item.pid} pid={item.pid} navigateTo="Posts" style={styles.item} />
+                    )
+                })
+                : <NoPost />}
+            </View>
             <CompleteProfile />
         </View>
+        
     )
 }
 
@@ -88,7 +91,9 @@ function NoPost(){
             <View style={styles.noPostContainer}>
                 <Text style={{ fontSize: 28}}>Profile</Text>
                 <Text style={{ fontSize: 12, textAlign: 'center'}}>When you share photos and videos, they'll appear on your profile</Text>
-                <Text style={{ color: theme.lightButton }}>Share your first photo or video</Text>
+                <TouchableOpacity>
+                    <Text style={{ color: theme.lightButton }}>Share your first photo</Text>
+                </TouchableOpacity>
             </View>    
             
         )    
@@ -105,7 +110,7 @@ function CompleteProfile(){
         return(
             <View style={[styles.box, {paddingTop: 20}]}>
                 <View style={styles.imgC}>
-                    <Icon name={name} style={styles.icon}/>
+                    <Icon name={name} style={[styles.icon, {color : `${name == 'checkmark-circle' ? '#009e00' : 'black'}`}]}/>
                 </View>
                 <Text style={styles.head}>{head}</Text>
                 <Text style={styles.description}>{desc}</Text>
@@ -116,30 +121,31 @@ function CompleteProfile(){
     const goToEdit = () => {
         navigation.navigate('Edit')
     }
+    
     return(
-        <View style={styles.completeProfile}>
+        <View style={[styles.completeProfile, {flex: 1}]}>
             <Text style={[styles.head]}>Complete Your Profile</Text>
-                <View style={styles.boxC}>
-                    {user.about.length == 0 && iconBox({
-                            name: 'chatbubble-outline',
-                            head: 'Add Bio',
-                            desc: 'Tell your followers a little bit about yourself.'
+            <ScrollView horizontal={true}>
+                {iconBox({
+                    name : `${user.name.length == 0 ? 'person-outline' : 'checkmark-circle'}`, 
+                    head : 'Add Your Name', 
+                    desc: 'Add your full name so your friends know it\'s you.',
                     })}
-                    {user.name.length == 0 && iconBox({
-                            name : 'person-outline', 
-                            head : 'Add Your Name', 
-                            desc: 'Add your full name so your friends know it\'s you.'
-                        })}
-                    {user.dp.length == 0 && iconBox({
-                        name: 'image-outline',
-                        head: 'Add Profile Pic',
-                        desc: 'Add a profile pic to let people identify you better.'
+                {iconBox({
+                    name: `${user.dp.length == 0 ? 'image-outline' : 'checkmark-circle'}`,
+                    head: 'Add Profile Pic',
+                    desc: 'Add a profile pic to let people identify you better.' 
                     })}
-                </View>
-                <TouchableOpacity>
-                    <Text style={styles.button} onPress={goToEdit}>Edit Profile</Text>
-                </TouchableOpacity>
-            </View>    
+                {iconBox({
+                    name: `${user.about.length == 0 ? 'chatbubble-outline' : 'checkmark-circle'}`,
+                    head: 'Add Bio',
+                    desc: 'Tell your followers a little bit about yourself.',
+                    })}
+            </ScrollView>
+            <TouchableOpacity>
+                <Text style={styles.button} onPress={goToEdit}>Edit Profile</Text>
+            </TouchableOpacity>
+        </View>    
 )}
 
 function extractPostsList(allPosts, uid) {
@@ -157,7 +163,6 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
         flexWrap: 'wrap',
-        backgroundColor: theme.lightbg,
     },
     scroll: {
         // flexDirection: 'row',

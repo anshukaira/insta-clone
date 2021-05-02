@@ -99,25 +99,21 @@ export default function Post({ pid }) {
             </View>
 
             <View style={styles.flexRow}>
-                <TouchableOpacity
-                    title="like"
-                    onPress={() => likeToggle()}>
+                <TouchableOpacity title="like" onPress={() => likeToggle()}>
                     <IonIcons
                         name={liked ? "heart" : "heart-outline"}
                         style={[styles.icon, { fontSize: 28 }, { color: liked ? 'crimson' : 'black' }]}
                     />
                 </TouchableOpacity>
 
-                <TouchableOpacity
-                    title="comment">
+                <TouchableOpacity title="comment">
                     <IonIcons
                         name="chatbubble-outline"
                         style={styles.icon}
                     />
                 </TouchableOpacity>
 
-                <TouchableOpacity
-                    title="send">
+                <TouchableOpacity title="send">
                     <Icon
                         name="send-o"
                         style={styles.icon}
@@ -130,12 +126,10 @@ export default function Post({ pid }) {
 
                 <View style={styles.flexRow}>
                     <Text style={styles.bold}>{allUsers[currentPost.uid].name} </Text>
-                    <Text>{currentPost.caption}</Text>
+                    <Text style={styles.comment}>{currentPost.caption}</Text>
                 </View>
 
-                <TouchableOpacity
-                    onPress={gotoComments}
-                >
+                <TouchableOpacity onPress={gotoComments}>
                     <Text style={styles.lightgrey}>View all comments</Text>
                 </TouchableOpacity>
             </View>
@@ -195,5 +189,9 @@ const styles = StyleSheet.create({
     },
     lightgrey: {
         color: 'darkgrey',
+    },
+    comment: {
+        maxHeight: 54,
+        overflow: 'hidden',
     }
 })
