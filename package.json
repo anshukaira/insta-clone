@@ -1,6 +1,8 @@
 {
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
+    "predeploy": "expo build:web",
+    "deploy-hosting": "npm run predeploy && firebase deploy --only hosting",
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
