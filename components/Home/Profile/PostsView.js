@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { View, Platform, FlatList, StyleSheet, StatusBar, Dimensions, Text, Image, TouchableOpacity } from 'react-native'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import Post from '../Post/PostMini'
-import { useRoute } from '@react-navigation/core'
+import { useNavigation, useRoute } from '@react-navigation/core'
 import { useSelector } from 'react-redux'
 import { selectAllPosts } from '../../../redux/slices/allPostsSlice'
 import { selectUser } from '../../../redux/slices/userSlice'
@@ -62,16 +62,14 @@ function Normal() {
 
     return (
         <View style={styles.container}>
-            {
-            console.log(currentPostList.length)}
             {currentPostList.length ? 
             currentPostList.map((item) => {
                 return (
                     <Post key={item.pid} pid={item.pid} navigateTo="Posts" style={styles.item} />
                 )
             })
-            : <NoPost />
-            }
+            : <NoPost />}
+            <CompleteProfile />
         </View>
     )
 }
@@ -87,38 +85,62 @@ function NoPost(){
     //     )
     // }
         return(
-            <View style={styles.noPostC}>
-                <View style={styles.noPostContainer}>
-                    <Text style={{ fontSize: 28}}>Profile</Text>
-                    <Text style={{ fontSize: 12, textAlign: 'center'}}>When you share photos and videos, they'll appear on your profile</Text>
-                    <Text style={{ color: theme.lightButton }}>Share your first photo or video</Text>
-                </View>
-                <View style={styles.completeProfile}>
-                    <Text style={[styles.head]}>Complete Your Profile</Text>
-                    <View style={styles.boxC}>
-                        <View style={styles.box}>
-                            <View style={styles.imgC}>
-                                <Icon name='chatbubble-outline' style={styles.icon}/>
-                            </View>
-                            <Text style={styles.head}>Add Bio</Text>
-                            <Text style={styles.description}>Tell your followers a little bit about yourself.</Text>
-                        </View>
-                        <View style={[styles.box, {paddingTop: 20}]}>
-                            <View style={styles.imgC}>
-                                <Icon name='person-outline' style={styles.icon}/>
-                            </View>
-                            <Text style={styles.head}>Add Your Name</Text>
-                            <Text style={styles.description}>Add your full name so your friends know it's you.</Text>
-                        </View>
-                    </View>
-                    <TouchableOpacity>
-                        <Text style={styles.button}>Edit Profile</Text>
-                    </TouchableOpacity>
-                </View>    
-            </View>
+            <View style={styles.noPostContainer}>
+                <Text style={{ fontSize: 28}}>Profile</Text>
+                <Text style={{ fontSize: 12, textAlign: 'center'}}>When you share photos and videos, they'll appear on your profile</Text>
+                <Text style={{ color: theme.lightButton }}>Share your first photo or video</Text>
+            </View>    
             
         )    
 }
+
+function CompleteProfile(){
+    const user = useSelector(selectUser);
+    const navigation = useNavigation();
+
+    if(user.name && user.dp && user.about)
+        return null
+
+    const iconBox = ({name, head, desc}) => {
+        return(
+            <View style={[styles.box, {paddingTop: 20}]}>
+                <View style={styles.imgC}>
+                    <Icon name={name} style={styles.icon}/>
+                </View>
+                <Text style={styles.head}>{head}</Text>
+                <Text style={styles.description}>{desc}</Text>
+            </View>
+        )
+    }
+
+    const goToEdit = () => {
+        navigation.navigate('Edit')
+    }
+    return(
+        <View style={styles.completeProfile}>
+            <Text style={[styles.head]}>Complete Your Profile</Text>
+                <View style={styles.boxC}>
+                    {user.about.length == 0 && iconBox({
+                            name: 'chatbubble-outline',
+                            head: 'Add Bio',
+                            desc: 'Tell your followers a little bit about yourself.'
+                    })}
+                    {user.name.length == 0 && iconBox({
+                            name : 'person-outline', 
+                            head : 'Add Your Name', 
+                            desc: 'Add your full name so your friends know it\'s you.'
+                        })}
+                    {user.dp.length == 0 && iconBox({
+                        name: 'image-outline',
+                        head: 'Add Profile Pic',
+                        desc: 'Add a profile pic to let people identify you better.'
+                    })}
+                </View>
+                <TouchableOpacity>
+                    <Text style={styles.button} onPress={goToEdit}>Edit Profile</Text>
+                </TouchableOpacity>
+            </View>    
+)}
 
 function extractPostsList(allPosts, uid) {
     let userPosts = [];
@@ -160,14 +182,19 @@ const styles = StyleSheet.create({
         paddingTop: 50,
     },
     noPostContainer: {
+        width: '100%',
         justifyContent: 'center',
         alignItems: 'center',
         padding: 10,
         margin: 10,
+        paddingTop: 50,
     },
     completeProfile: {
+        justifyContent: 'center',
+        alignItems: 'center',
         margin: 5,
         padding: 10,
+        width: '100%',
     },
     boxC: {
         flexDirection: 'row',
