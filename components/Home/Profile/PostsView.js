@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Platform, FlatList, StyleSheet, StatusBar, Dimensions, Text } from 'react-native'
+import { View, Platform, FlatList, StyleSheet, StatusBar, Dimensions, Text, Image, TouchableOpacity } from 'react-native'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import Post from '../Post/PostMini'
 import { useRoute } from '@react-navigation/core'
@@ -62,13 +62,62 @@ function Normal() {
 
     return (
         <View style={styles.container}>
-            {currentPostList.map((item) => {
+            {
+            console.log(currentPostList.length)}
+            {currentPostList.length ? 
+            currentPostList.map((item) => {
                 return (
                     <Post key={item.pid} pid={item.pid} navigateTo="Posts" style={styles.item} />
                 )
-            })}
+            })
+            : <NoPost />
+            }
         </View>
     )
+}
+
+function NoPost(){
+    // const me = useSelector(selectUser);
+
+    //  if(me.uid != user.uid){
+    //     return(
+    //         <View style={styles.noPostC}>
+    //                 <Image source={require('../../../assets/noPost.png')} />
+    //         </View>
+    //     )
+    // }
+        return(
+            <View style={styles.noPostC}>
+                <View style={styles.noPostContainer}>
+                    <Text style={{ fontSize: 28}}>Profile</Text>
+                    <Text style={{ fontSize: 12, textAlign: 'center'}}>When you share photos and videos, they'll appear on your profile</Text>
+                    <Text style={{ color: theme.lightButton }}>Share your first photo or video</Text>
+                </View>
+                <View style={styles.completeProfile}>
+                    <Text style={[styles.head]}>Complete Your Profile</Text>
+                    <View style={styles.boxC}>
+                        <View style={styles.box}>
+                            <View style={styles.imgC}>
+                                <Icon name='chatbubble-outline' style={styles.icon}/>
+                            </View>
+                            <Text style={styles.head}>Add Bio</Text>
+                            <Text style={styles.description}>Tell your followers a little bit about yourself.</Text>
+                        </View>
+                        <View style={[styles.box, {paddingTop: 20}]}>
+                            <View style={styles.imgC}>
+                                <Icon name='person-outline' style={styles.icon}/>
+                            </View>
+                            <Text style={styles.head}>Add Your Name</Text>
+                            <Text style={styles.description}>Add your full name so your friends know it's you.</Text>
+                        </View>
+                    </View>
+                    <TouchableOpacity>
+                        <Text style={styles.button}>Edit Profile</Text>
+                    </TouchableOpacity>
+                </View>    
+            </View>
+            
+        )    
 }
 
 function extractPostsList(allPosts, uid) {
@@ -102,5 +151,68 @@ const styles = StyleSheet.create({
         borderTopWidth: 1,
         borderTopColor: theme.lightGrayBorder,
         marginTop: 10
+    },
+    noPostC: {
+        height: '100%',
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingTop: 50,
+    },
+    noPostContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 10,
+        margin: 10,
+    },
+    completeProfile: {
+        margin: 5,
+        padding: 10,
+    },
+    boxC: {
+        flexDirection: 'row',
+    },
+    box: {
+        width: 160,
+        height: 170,
+        borderWidth: 1,
+        borderColor: theme.lightGrayBorder,
+        borderRadius: 5,
+        padding: 10,
+        margin: 5,
+        justifyContent: "center",
+        alignContent: 'center',
+    },
+    button : {
+        backgroundColor: theme.lightButton,
+        color: theme.darkfont,
+        fontWeight: 'bold',
+        padding: 8,
+        margin: 10,
+        alignSelf: 'center',
+        borderRadius: 5,
+    },
+    imgC: {
+        height: 50,
+        width: 50,
+        alignSelf: 'center',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 1.5,
+        borderRadius: 50,
+    },
+    icon: {
+        fontSize: 30,      
+    },
+    head: {
+        textAlign: 'center',
+        fontWeight: 'bold',
+        padding: 5,
+    },
+    description: {
+        fontSize: 12,
+        textAlign: 'center',
+        color: 'gray'
     }
+
 })

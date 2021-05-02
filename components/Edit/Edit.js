@@ -78,9 +78,9 @@ export default function Edit() {
                 
                 <Text style={styles.description}>When your account is private, only people you approve can see your photos and videos on Mirai~C.</Text>
             </View>
-            <View>
+            {/* <View>
                 <Text style={[styles.changedp, {alignSelf: 'flex-end', color: 'gray'}]}>Temporarily disable my account</Text>
-            </View>
+            </View> */}
 
             
             <View style={{padding: 16}}>
@@ -112,7 +112,7 @@ const styles = StyleSheet.create(
             alignItems: Platform.OS == 'web' ? 'center'  : 'flex-start',
         },
         container: {
-            height: 600,
+            // height: 600,
             width: 400,
             backgroundColor: theme.lightbg,
             padding: 20,

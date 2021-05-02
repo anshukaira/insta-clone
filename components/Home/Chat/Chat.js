@@ -92,7 +92,7 @@ export default function Chat() {
                     }
                     if (item.type == CHAT_MESSAGE_TYPE.POST) {
                         return (
-                            <ChatPost data={item} key={key} keyId={key} toccidSetter={setToccid} ref={attachRef ? currentIdRef : null} setItemPos={setItemPos} />
+                            <ChatPost data={item} key={key} keyId={key} toccidSetter={setToccid}  setItemPos={setItemPos} />
                         )
                     }
                     if (item.type == CHAT_MESSAGE_TYPE.REPLY) {
