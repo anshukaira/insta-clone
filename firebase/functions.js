@@ -203,10 +203,11 @@ export function deletePost(pid) {
 export async function updateCachedPosts(pid, forceUpdate = false) {
     const { cachedPosts, allPosts } = store.getState();
     let shouldFetch = true;
-    if (!allPosts[pid]) {
+    if (!allPosts || !allPosts[pid]) {
         console.log("No Post related to pid: " + pid);
         return;
     }
+    console.log(pid)
     let uid = allPosts[pid].uid;
 
     if (cachedPosts[pid]) {
@@ -240,15 +241,24 @@ export async function updateCachedPosts(pid, forceUpdate = false) {
 */
 
 export async function likePost(uid, pid, myuid, state) {
+    const { allPosts } = store.getState();
     let batch = firestore.batch();
     let postRef = firestore.collection("users").doc(uid).collection("posts").doc(pid);
-    let pubPostRef = firestore.collection("public").doc("pubPosts");
+    let pubPostRef;
+    if (allPosts[pid].visibility == POST_VISIBILITY.PUBLIC) {
+        pubPostRef = firestore.collection('public').doc('pubPosts');
+    } else {
+        pubPostRef = firestore.collection('public').doc('protPosts');
+    }
+
     batch.update(postRef, {
         likes: FieldValue.arrayUnion(myuid)
     })
+
     batch.update(pubPostRef, {
         [pid + '.numLikes']: FieldValue.increment(1)
     })
+
     await batch.commit().then(async () => {
         console.log("liked" + pid)
         await updateCachedPosts(pid, true)
@@ -260,9 +270,15 @@ export async function likePost(uid, pid, myuid, state) {
 }
 
 export async function unlikePost(uid, pid, myuid, state) {
+    const { allPosts } = store.getState();
     let batch = firestore.batch();
     let postRef = firestore.collection("users").doc(uid).collection("posts").doc(pid);
-    let pubPostRef = firestore.collection("public").doc("pubPosts");
+    let pubPostRef;
+    if (allPosts[pid].visibility == POST_VISIBILITY.PUBLIC) {
+        pubPostRef = firestore.collection('public').doc('pubPosts');
+    } else {
+        pubPostRef = firestore.collection('public').doc('protPosts');
+    }
     batch.update(postRef, {
         likes: FieldValue.arrayRemove(myuid)
     })

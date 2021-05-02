@@ -77,6 +77,7 @@ export default function Post({ pid }) {
     const gotoComments = () => {
         navigation.navigate('Comments', { uid: currentPost.uid, screen: 'Post', pid: pid })
     }
+    console.log("ALLPOSTS + " + pid, allPosts)
 
     return (
         <View style={styles.container}>

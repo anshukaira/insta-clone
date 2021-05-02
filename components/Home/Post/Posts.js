@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react'
-import { View, StyleSheet, Button } from 'react-native'
+import { View, StyleSheet, Button, Text } from 'react-native'
 import Post from './Post'
 import Story from '../Feed/Story'
 import { ScrollView } from 'react-native-gesture-handler'
@@ -29,6 +29,13 @@ export default function Posts({ showStory, margin, data }) {
         let newVisible = []
         newVisible = updateNextVisible(visible, postList, LIMIT);
         setVisible(newVisible);
+    }
+    if (visible.length == 0) {
+        return (
+            <View>
+                <Text>No Post</Text>
+            </View>
+        )
     }
 
     return (
