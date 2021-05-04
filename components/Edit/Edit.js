@@ -5,6 +5,8 @@ import { useSelector } from 'react-redux';
 import { selectUser } from '../../redux/slices/userSlice';
 import { PROFIILE_VISIBILITY } from '../CONSTANTS';
 import { theme } from '../Style/Constants';
+import * as ImagePicker from 'expo-image-picker'
+import { updateDp } from '../../firebase/functions';
 
 export default function Edit() {
 
@@ -14,22 +16,35 @@ export default function Edit() {
     const [about, setAbout] = useState(user.about);
     const [vis, setVis] = useState(user.vis);
     const [checked, setChecked] = useState(vis == PROFIILE_VISIBILITY.PROTECTED);
-
+    const [displayPic, setDisplayPic] = useState(require('../../assets/dummy.jpeg'))
+    
     const editUserInfo = () => {
+
+        updateDp(displayPic);
         console.log('data is', vis);
         setVis(checked ? PROFIILE_VISIBILITY.PROTECTED : PROFIILE_VISIBILITY.PUBLIC);
     }
 
-    const changeDP = () => {
-        console.log('changing dp');
-    }
+    const changeDP = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 0.5,
+            base64: false
+        });
+
+        if(!result.cancelled) {
+            setDisplayPic(displayPic);
+        }       
+    };
 
     return (
         <View style={styles.mainContainer}>
             <View style={styles.container}>
                 <View>
                 <View style={styles.row}>
-                <Avatar.Image source={require('../../assets/dummy.jpeg')} />
+                <Avatar.Image source={displayPic} />
                 <View style={styles.nameContainer}>
                     <Text style={styles.name}>{name}</Text>
                     <Text onPress={changeDP} style={styles.changedp}>Change Profile Photo</Text>
@@ -45,7 +60,7 @@ export default function Edit() {
                         onChangeText={(data) => setName(data)}
                         style={styles.textBox}
                     />
-                    <Text style={styles.description}>Help people discover your account bu using the name you're known by.</Text>
+                    <Text style={styles.description}>Help people discover your account by using the name you're known by.</Text>
                 </View>
             </View>
 
