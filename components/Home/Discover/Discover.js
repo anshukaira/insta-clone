@@ -64,13 +64,15 @@ export default function Discover() {
 
 
     return (
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, paddingTop: StatusBar.currentHeight }}>
             <Searchbar />
             <ScrollView>
-                {visible.map((item) => {
-                    console.log(item)
-                    return <Post pid={item.pid} key={item.pid} />
-                })}
+                <View style={styles.container}>
+                    {visible.map((item) => {
+                        console.log(item)
+                        return <Post pid={item.pid} key={item.pid} />
+                    })}
+                </View>
                 <Button onPress={loadMore} title="Load More" />
             </ScrollView>
             {update ? <Button onPress={updateList} title="Update" /> : null}
@@ -144,5 +146,10 @@ const styles = StyleSheet.create({
     listItem: {
         margin: 2,
         width: WIDTH / 3,
+    },
+    container: {
+        flexDirection: 'column',
+        flexWrap:'wrap',
+        justifyContent:'space-around'
     }
 })

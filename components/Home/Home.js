@@ -16,7 +16,7 @@ export default function Home() {
 
     return (
         <Tab.Navigator
-            tabBarOptions={{ showLabel: false, activeBackgroundColor: 'white' }}>
+            tabBarOptions={{ showLabel: false, activeBackgroundColor: 'white' }} initialRouteName="Feed">
             {stackShortner("Feed", FeedScreen, { active: "home-sharp", unactive: "home-outline" })}
             {stackShortner("Discover", DiscoverScreen, { active: "search", unactive: "md-search-outline" }, { uid: route.params.uid })}
             {stackShortner("Activity", ActivityScreen, { active: "heart", unactive: "heart-outline" })}

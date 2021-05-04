@@ -3,14 +3,14 @@ import React, { useEffect, useState } from 'react'
 import { View, Text, StyleSheet, Dimensions, Platform, Image, TouchableOpacity, ActivityIndicator } from 'react-native'
 import { useSelector } from 'react-redux';
 import { selectAllUser } from '../../../redux/slices/allUserSlice';
-import { selectCachedPosts } from '../../../redux/slices/cachedPosts';
-import { likePost, unlikePost, updateCachedPosts } from '../../../firebase/functions'
+import { likePost, setPostData, unlikePost, updateCachedPosts } from '../../../firebase/functions'
 import { selectAllPosts } from '../../../redux/slices/allPostsSlice';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import IonIcons from 'react-native-vector-icons/Ionicons'
 import { Avatar } from 'react-native-paper';
 import { selectUser } from '../../../redux/slices/userSlice';
 import { DUMMY_DATA } from '../../CONSTANTS';
+import Loading from '../../Helper/Loading';
 
 
 export default function Post({ pid }) {
@@ -20,33 +20,30 @@ export default function Post({ pid }) {
     const initialWidth = Platform.OS === 'web' ? window.width / divide : window.width;
     const allPosts = useSelector(selectAllPosts);
     const allUsers = useSelector(selectAllUser);
-    const cachedPosts = useSelector(selectCachedPosts);
     const user = useSelector(selectUser);
 
     const navigation = useNavigation();
 
     const [dimensions, setDimensions] = useState(initialWidth);
+    
     const [currentPost, setCurrentPost] = useState(null);
     const [liked, setliked] = useState(false);
+    
     const [likeClicked, setLikeClicked] = useState(false)
 
     useEffect(() => {
-        updateCachedPosts(pid);
-    }, [])
+        if (allPosts && allPosts[pid]) {
+            let uid = allPosts[pid].uid
+            setPostData(uid, pid, setCurrentPost)
+        }
+    }, [allPosts])
 
     useEffect(() => {
-        if (cachedPosts && cachedPosts[pid] && cachedPosts[pid].likes) {
-            setCurrentPost(cachedPosts[pid]);
-            setliked(cachedPosts[pid].likes.includes(user.uid))
+        if (currentPost && currentPost.likes) {
+            setliked(currentPost.likes.includes(user.uid))
         }
-    }, [cachedPosts])
+    }, [currentPost])
 
-    const onChange = ({ window }) => {
-        if (Platform.OS == 'web')
-            setDimensions(window.width / divide);
-        else
-            setDimensions(window.width);
-    };
 
     useEffect(() => {
         Dimensions.addEventListener("change", onChange);
@@ -55,29 +52,34 @@ export default function Post({ pid }) {
         };
     }, []);
 
+    const onChange = ({ window }) => {
+        if (Platform.OS == 'web')
+            setDimensions(window.width / divide);
+        else
+            setDimensions(window.width);
+    };
+
     const openProfile = () => {
         navigation.navigate("Profile", { pid: pid, uid: currentPost.uid, screen: 'Post', username: allUsers[currentPost.uid].username })
+    }
+
+    const gotoComments = () => {
+        navigation.navigate('Comments', { uid: currentPost.uid, screen: 'Post', pid: pid })
     }
 
     const likeToggle = async () => {
         if (!likeClicked) {
             setLikeClicked(true)
             liked ? await unlikePost(currentPost.uid, pid, user.uid, setLikeClicked) : await likePost(currentPost.uid, pid, user.uid, setLikeClicked)
+            setPostData(allPosts[pid].uid, pid, setCurrentPost,true)
         }
     }
 
-    if (loadingDependency(allPosts, allUsers, cachedPosts, user, pid) || !currentPost || !currentPost.loaded || !allPosts[pid]) {
+    if (loadingDependency(allPosts, allUsers, user) || !currentPost || !allPosts[pid]) {
         return (
-            <View style={{ justifyContent: 'center', alignItems: 'center', height: dimensions, width: dimensions }}>
-                <ActivityIndicator size="large" color="green" />
-            </View>
+            <Loading/>
         )
     }
-
-    const gotoComments = () => {
-        navigation.navigate('Comments', { uid: currentPost.uid, screen: 'Post', pid: pid })
-    }
-    console.log("ALLPOSTS + " + pid, allPosts)
 
     return (
         <View style={styles.container}>
@@ -138,15 +140,13 @@ export default function Post({ pid }) {
 }
 
 
-function loadingDependency(allPosts, allUsers, cachedPosts, user, pid) {
+function loadingDependency(allPosts, allUsers, user) {
     if (!allPosts || !allPosts.loaded) {
         return true
     }
-    if (!cachedPosts || !cachedPosts[pid] || !cachedPosts[pid].loaded) {
-        return true;
-    }
+
     if (!allUsers || !allUsers.loaded) {
-        return true;
+        return
     }
     if (!user || !user.loaded) {
         return true

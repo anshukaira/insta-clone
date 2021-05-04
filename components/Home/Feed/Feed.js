@@ -9,6 +9,7 @@ import { selectAllPosts } from '../../../redux/slices/allPostsSlice'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { POST_VISIBILITY } from '../../CONSTANTS'
 import { descriptiveText } from '../../Style/Common'
+import Loading from '../../Helper/Loading'
 
 const LIMIT = 3;
 
@@ -16,7 +17,6 @@ export default function Feed() {
 
     const user = useSelector(selectUser);
     const allPosts = useSelector(selectAllPosts);
-
 
     const [update, setUpdate] = useState(false)
     const [currentPostList, setCurrentPostList] = useState([]);
@@ -26,10 +26,10 @@ export default function Feed() {
             return
         }
         let data = extractPostsList(allPosts, user);
-        let toBeUpdated = false;
         if (currentPostList.length < LIMIT) {
             setCurrentPostList(data)
         } else {
+            let toBeUpdated = false; 
             for (const item of data) {
                 let diff = currentPostList.filter((val) => val.pid == item.pid)
                 if (diff.length == 0) {
@@ -37,22 +37,23 @@ export default function Feed() {
                     break;
                 }
             }
+            if(data.length != currentPostList.length){
+                toBeUpdated = true;
+            }
             setUpdate(toBeUpdated)
         }
     }, [allPosts, user])
-
-    if (loadingDependency(user, allPosts)) {
-        return (
-            <View style={{ flexDirection: 'column', flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <ActivityIndicator size="large" color="blue" />
-            </View>
-        )
-    }
 
     const updateData = () => {
         let data = extractPostsList(allPosts, user);
         setCurrentPostList(data);
         setUpdate(false);
+    }
+
+    if (loadingDependency(user, allPosts)) {
+        return (
+            <Loading />
+        )
     }
 
     if (currentPostList.length == 0) {
@@ -103,7 +104,7 @@ function extractPostsList(allPosts, user) {
 }
 
 function loadingDependency(user, allPosts) {
-    if (!user || !user.loaded) {
+    if (!user || !user.loaded || !user.following) {
         return true
     }
     if (!allPosts || !allPosts.loaded) {
@@ -129,6 +130,8 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 60,
         left: Dimensions.get('window').width / 2,
-        zIndex: 99999
+        zIndex: 99999,
+        height:30,
+        width:30
     }
 })

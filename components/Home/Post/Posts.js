@@ -1,9 +1,9 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react'
-import { View, StyleSheet, Button, Text } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { View, StyleSheet, Text } from 'react-native'
 import Post from './Post'
 import Story from '../Feed/Story'
 import { ScrollView } from 'react-native-gesture-handler'
-import { useNavigation, useRoute } from '@react-navigation/core'
+import { useRoute } from '@react-navigation/core'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { theme } from '../../Style/Constants'
 
@@ -12,9 +12,9 @@ const LIMIT = 2;
 
 export default function Posts({ showStory, margin, data }) {
 
-    const [visible, setVisible] = useState([]);
-
     const route = useRoute();
+
+    const [visible, setVisible] = useState([]);
 
     const postList = data || route.params.data || []
     const showLoad = visible.length < postList.length
@@ -60,14 +60,11 @@ export default function Posts({ showStory, margin, data }) {
 function updateNextVisible(visible, data, LIMIT) {
     let newVisible = [];
     let count = 0;
-    console.log(data);
+
     for (const item of data) {
         let diff = visible.filter((it) => it.pid == item.pid)
         if (diff.length == 0) {
             count++;
-        }
-        else {
-            console.log("exists")
         }
         newVisible.push(item);
         if (count > LIMIT) {
@@ -102,6 +99,8 @@ const styles = StyleSheet.create({
         fontSize: 32,
         fontWeight: 'bold',
         justifyContent: 'center',
-        alignContent: 'center'
+        alignContent: 'center',
+        height:20,
+        width:20
     }
 })

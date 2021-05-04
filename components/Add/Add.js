@@ -6,9 +6,11 @@ import { useSelector } from 'react-redux';
 import { selectUser } from '../../redux/slices/userSlice'
 import { theme } from '../Style/Constants';
 import { descriptiveText } from '../Style/Common';
+import {useNavigation} from '@react-navigation/native'
 
 export default function Add() {
     const user = useSelector(selectUser);
+    const navigation = useNavigation();
 
     const [hasCameraPermission, setHasCameraPermission] = useState(null);
     const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
@@ -42,6 +44,12 @@ export default function Add() {
             }
         })();
     }, [])
+
+    useEffect(()=>{
+        if(uploaded){
+            navigation.goBack()
+        }
+    },[uploaded])
 
     if (hasCameraPermission === null || hasGalleryPermission === null) {
         return (
@@ -89,15 +97,8 @@ export default function Add() {
     };
 
     const upload = () => {
-        addPost(image, caption, visibility, user.uid)
-        if (Platform.OS == 'android') {
-            ToastAndroid.showWithGravity(
-                "Picture Uploaded!!",
-                ToastAndroid.LONG,
-                ToastAndroid.CENTER)
-        }
-
-        setUploaded(true)
+        setUploaded(false)
+        addPost(image, caption, visibility, user.uid, setUploaded)
     }
 
     const CustomButton = ({ onPress, text, style }) => {

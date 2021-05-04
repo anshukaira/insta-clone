@@ -9,6 +9,7 @@ import { OwnBox, OtherBox } from './OpBox'
 import PostsView from './PostsView'
 import { subAnotherUser } from '../../../firebase/subscriptions'
 import { useNavigation, useRoute } from '@react-navigation/core'
+import Loading from '../../Helper/Loading'
 
 export default function Profile() {
     const user = useSelector(selectUser)
@@ -47,12 +48,11 @@ export default function Profile() {
 
     if (currentUser == null) {
         return (
-            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                <ActivityIndicator size="large" color="green" />
-            </View>
+            <Loading/>
         )
     }
     const username = currentUser.email.substring(0, currentUser.email.indexOf('@'))
+    
     return (
         <View style={[styles.container, paddingTop]}>
             {route.params.screen == 'Home' ? <Header username={username} /> : null}

@@ -1,6 +1,5 @@
-import { auth, FieldValue, firestore, storage } from './firebase'
+import { auth, FieldValue, firestore, getChatColl, getChatRef, getPostRef, getPubPostRef, getPubUserRef, getStorageDpPath, getStoragePostPath, getUserRef, storage } from './firebase'
 import store from '../redux/store/app'
-import { addPost as addCachedPost } from '../redux/slices/cachedPosts'
 import { DUMMY_DATA, POST_VISIBILITY, PROFIILE_VISIBILITY } from '../components/CONSTANTS';
 
 /**
@@ -8,20 +7,27 @@ import { DUMMY_DATA, POST_VISIBILITY, PROFIILE_VISIBILITY } from '../components/
  * All Firebase Auth functions are included here.
  */
 
-// TODO: ADD ACTIVITY in ALL
-
 // Sign Up function
-export function signUp(name, email, pass) {
+export function signUp(name, email, pass, setError) {
+    if (name.length == 0) {
+        setError("Name is required")
+        return
+    }
+    if (pass.length == 0) {
+        setError("Password is required")
+        return
+    }
     auth.createUserWithEmailAndPassword(email, pass)
         .then((result) => {
             createUserInDatabase(result.user.uid, name || result.user.displayName || "NO NAME", result.user.email, pass);
             console.log("signup", result.user);
+            setError(null)
         })
-        .catch(error => console.log(error.message));
+        .catch(error => setError(error.message));
 }
 
 // Sign in function
-export function signIn(email, pass) {
+export function signIn(email, pass, setError) {
     auth.signInWithEmailAndPassword(email, pass)
         .then(result => {
             firestore.collection("users").doc(result.user.uid).get().then((doc) => {
@@ -32,9 +38,10 @@ export function signIn(email, pass) {
                     createUserInDatabase(result.user.uid, result.user.displayName || "NO NAME", result.user.email, pass);
                 }
             })
+            setError(null)
         })
         .catch(error => {
-            console.log(error.message)
+            setError(error.message)
             signOut();
         });
 }
@@ -51,8 +58,8 @@ export function signOut() {
 // Creating user in database using uid to store user account informations related to app
 function createUserInDatabase(uid, name, email, pass) {
     let batch = firestore.batch();
-    let userRef = firestore.collection("users").doc(uid);
-    let pubRef = firestore.collection("public").doc("users");
+    let userRef = getUserRef(uid)
+    let pubUserRef = getPubUserRef();
 
     let visibility = PROFIILE_VISIBILITY.PUBLIC // default visibilty is PUBLIC while creating user
     let username = email.substring(0, email.indexOf('@'))
@@ -74,7 +81,7 @@ function createUserInDatabase(uid, name, email, pass) {
         saved: []
     }, { merge: true })
 
-    batch.set(pubRef, {
+    batch.set(pubUserRef, {
         [uid]: {
             name: name,
             vis: visibility,
@@ -93,19 +100,14 @@ function createUserInDatabase(uid, name, email, pass) {
  * Posts related Functions Here
  */
 
-export async function addPost(img, caption, visibility, uid) {
+export async function addPost(img, caption, visibility, uid, state) {
 
-    let newPostRef = firestore.collection('users').doc(uid).collection("posts").doc()
+    let userRef = getUserRef(uid);
+    let newPostRef = userRef.collection("posts").doc()
     let pid = newPostRef.id;
     let rootRef = storage.ref();
-    let userRef = firestore.collection('users').doc(uid);
 
-    let pubPostRef;
-    if (visibility === POST_VISIBILITY.PUBLIC) {
-        pubPostRef = firestore.collection('public').doc('pubPosts')
-    } else {
-        pubPostRef = firestore.collection('public').doc('protPosts')
-    }
+    let pubPostRef = getPubPostRef()
 
     let currentTime = Date.now();
 
@@ -113,7 +115,7 @@ export async function addPost(img, caption, visibility, uid) {
     const blob = await response.blob();
 
     // store post in user/{uid}/posts/{pid}
-    let fileRef = rootRef.child('users/' + uid + '/posts/' + pid);
+    let fileRef = rootRef.child(getStoragePostPath(uid, pid));
     fileRef.put(blob).then((snapshot) => {
         console.log("image uploaded with p_id: " + pid)
         snapshot.ref.getDownloadURL().then((downloadURL) => {
@@ -130,7 +132,8 @@ export async function addPost(img, caption, visibility, uid) {
                 [pid]: {
                     uid: uid,
                     numLikes: 0,
-                    time: currentTime
+                    time: currentTime,
+                    visibility: visibility
                 }
             })
             batch.update(userRef, {
@@ -143,8 +146,10 @@ export async function addPost(img, caption, visibility, uid) {
                 fileRef.delete();
             })
         })
+        state(true)
     }).catch((err) => {
         console.log(err);
+        state(true)
     })
 }
 
@@ -154,10 +159,13 @@ export function editPost(pid, data) {
     const { user } = store.getState();
     const uid = user.uid;
 
-    firestore.collection('users').doc(uid).collection('posts').doc(pid).update({
+    const dummySetter = (data) => data;
+
+    let postRef = getPostRef(uid, pid)
+    postRef.update({
         caption: data.caption
     }).then(() => {
-        updateCachedPosts(pid, true)
+        setPostData(uid, pid, dummySetter, true)
         console.log("Updated post " + pid);
     }).catch((err) => console.log(err.message))
 }
@@ -169,18 +177,13 @@ export function deletePost(pid) {
 
     let batch = firestore.batch();
 
-    let postRef = firestore.collection('users').doc(uid).collection('posts').doc(pid)
-    let fileRef = storage.ref().child('users/' + uid + '/posts/' + pid)
-    let userRef = firestore.collection('users').doc(uid)
+    let postRef = getPostRef(uid, pid)
+    let fileRef = storage.ref().child(getStoragePostPath(uid, pid))
+    let userRef = getUserRef(uid)
 
-    let postPublicRef
-    if (allPosts[pid] && allPosts[pid].visibility == POST_VISIBILITY.PUBLIC) {
-        postPublicRef = firestore.collection('public').doc('pubPosts')
-    } else {
-        postPublicRef = firestore.collection('public').doc('protPosts')
-    }
+    let pubPostRef = getPubPostRef()
 
-    batch.update(postPublicRef, {
+    batch.update(pubPostRef, {
         [pid]: FieldValue.delete()
     })
 
@@ -200,38 +203,43 @@ export function deletePost(pid) {
 
 // To help minimise calls to firebase we will store post data in our own cache
 
-export async function updateCachedPosts(pid, forceUpdate = false) {
-    const { cachedPosts, allPosts } = store.getState();
-    let shouldFetch = true;
-    if (!allPosts || !allPosts[pid]) {
-        console.log("No Post related to pid: " + pid);
-        return;
-    }
-    console.log(pid)
-    let uid = allPosts[pid].uid;
-
-    if (cachedPosts[pid]) {
-        shouldFetch = false;
+export function setPostData(uid, pid, setter, forceUpdate = false) {
+    const getOption = {
+        source : forceUpdate ? 'server' : 'cache'
     }
 
-    if (forceUpdate || shouldFetch) {
-        store.dispatch(addCachedPost({ key: pid, content: { loaded: true } }))
-        await firestore.collection("users").doc(uid).collection("posts").doc(pid).get().then((doc) => {
+    let postRef = getPostRef(uid, pid);
+    postRef.get(getOption).then((doc) => {
+        console.log("Fetched pid:" + pid + ' from cache')
+        let data = doc.data();
+        data = {
+            ...data,
+            uid: uid,
+            pid: pid
+        }
+        setter(data);
+    }).catch((err) => {
+        if (forceUpdate) {
+            console.log(err.message)
+            return
+        }
+        postRef.get().then((doc) => {
             if (doc.exists) {
-                console.log("updating cachedPost" + pid)
-                let docData = doc.data()
-                let data = {
-                    key: pid,
-                    content: { ...docData, uid: uid, loaded: true }
+                console.log("fetched pid: " + pid + " from server")
+                let data = doc.data()
+                data = {
+                    ...data,
+                    uid: uid,
+                    pid: pid
                 }
-                store.dispatch(addCachedPost(data));
+                setter(data)
             } else {
-                console.log(pid + " does not exists");
+                console.log("Post " + pid + " does not have doc")
             }
-        }).catch(err => console.log(err.message))
-    } else {
-        console.log(pid + " already present in cache");
-    }
+        }).catch((err) => {
+            console.log(err.message)
+        })
+    })
 }
 
 
@@ -243,13 +251,8 @@ export async function updateCachedPosts(pid, forceUpdate = false) {
 export async function likePost(uid, pid, myuid, state) {
     const { allPosts } = store.getState();
     let batch = firestore.batch();
-    let postRef = firestore.collection("users").doc(uid).collection("posts").doc(pid);
-    let pubPostRef;
-    if (allPosts[pid].visibility == POST_VISIBILITY.PUBLIC) {
-        pubPostRef = firestore.collection('public').doc('pubPosts');
-    } else {
-        pubPostRef = firestore.collection('public').doc('protPosts');
-    }
+    let postRef = getPostRef(uid, pid)
+    let pubPostRef = getPubPostRef()
 
     batch.update(postRef, {
         likes: FieldValue.arrayUnion(myuid)
@@ -261,7 +264,6 @@ export async function likePost(uid, pid, myuid, state) {
 
     await batch.commit().then(async () => {
         console.log("liked" + pid)
-        await updateCachedPosts(pid, true)
         state(false)
     }).catch(err => {
         console.log(err.message)
@@ -272,22 +274,19 @@ export async function likePost(uid, pid, myuid, state) {
 export async function unlikePost(uid, pid, myuid, state) {
     const { allPosts } = store.getState();
     let batch = firestore.batch();
-    let postRef = firestore.collection("users").doc(uid).collection("posts").doc(pid);
-    let pubPostRef;
-    if (allPosts[pid].visibility == POST_VISIBILITY.PUBLIC) {
-        pubPostRef = firestore.collection('public').doc('pubPosts');
-    } else {
-        pubPostRef = firestore.collection('public').doc('protPosts');
-    }
+    let postRef = getPostRef(uid, pid)
+    let pubPostRef = getPubPostRef()
+
     batch.update(postRef, {
         likes: FieldValue.arrayRemove(myuid)
     })
+
     batch.update(pubPostRef, {
         [pid + '.numLikes']: FieldValue.increment(-1)
     })
+
     await batch.commit().then(async () => {
         console.log("Unliked" + pid)
-        await updateCachedPosts(pid, true)
         state(false)
     }).catch(err => {
         console.log(err.message)
@@ -304,8 +303,8 @@ export function followUser(uid) {
     const { user, allUser } = store.getState();
     let time = Date.now()
     let batch = firestore.batch();
-    let myDocRef = firestore.collection("users").doc(user.uid);
-    let userDocRef = firestore.collection("users").doc(uid);
+    let myDocRef = getUserRef(user.uid)
+    let userDocRef = getUserRef(uid)
     batch.update(myDocRef, {
         following: FieldValue.arrayUnion(uid),
         activity: FieldValue.arrayUnion({ content: 'You started Following ' + allUser[uid].username, time: time })
@@ -322,8 +321,8 @@ export function unfollowUser(uid) {
     let time = Date.now()
     const { user, allUser } = store.getState();
     let batch = firestore.batch();
-    let myDocRef = firestore.collection("users").doc(user.uid);
-    let userDocRef = firestore.collection("users").doc(uid);
+    let myDocRef = getUserRef(user.uid)
+    let userDocRef = getUserRef(uid)
     batch.update(myDocRef, {
         following: FieldValue.arrayRemove(uid),
         activity: FieldValue.arrayUnion({ content: 'You unfollowed ' + allUser[uid].username, time: time })
@@ -339,8 +338,8 @@ export function unfollowUser(uid) {
 export function unsendFollowReq(uid) {
     const { user } = store.getState();
     let batch = firestore.batch();
-    let myDocRef = firestore.collection("users").doc(user.uid);
-    let userDocRef = firestore.collection("users").doc(uid);
+    let myDocRef = getUserRef(user.uid)
+    let userDocRef = getUserRef(uid)
     batch.update(myDocRef, {
         pendingReq: FieldValue.arrayRemove(uid)
     })
@@ -354,8 +353,8 @@ export function unsendFollowReq(uid) {
 export function sendFollowReq(uid) {
     const { user } = store.getState();
     let batch = firestore.batch();
-    let myDocRef = firestore.collection("users").doc(user.uid);
-    let userDocRef = firestore.collection("users").doc(uid);
+    let myDocRef = getUserRef(user.uid)
+    let userDocRef = getUserRef(uid)
     batch.update(myDocRef, {
         pendingReq: FieldValue.arrayUnion(uid)
     })
@@ -369,8 +368,8 @@ export function sendFollowReq(uid) {
 export function acceptFollowReq(uid) {
     const { user, allUser } = store.getState();
     let batch = firestore.batch();
-    let myDocRef = firestore.collection("users").doc(user.uid);
-    let userDocRef = firestore.collection("users").doc(uid);
+    let myDocRef = getUserRef(user.uid)
+    let userDocRef = getUserRef(uid)
     let currentTime = Date.now();
     let mycontent = "Accepted Follow Req of " + allUser[uid];
     let usercontent = allUser[user.uid].username + " accepted your follow req";
@@ -394,8 +393,8 @@ export function rejectFollowReq(uid) {
     let mycontent = "Rejected Follow Req of " + allUser[uid].username;
     let usercontent = allUser[user.uid].username + " rejected your follow req";
     let batch = firestore.batch();
-    let myDocRef = firestore.collection("users").doc(user.uid);
-    let userDocRef = firestore.collection("users").doc(uid);
+    let myDocRef = getUserRef(user.uid)
+    let userDocRef = getUserRef(uid)
     batch.update(myDocRef, {
         followReq: FieldValue.arrayRemove(uid),
         activity: FieldValue.arrayUnion({ content: mycontent, time: currentTime })
@@ -416,9 +415,9 @@ export async function initiateChat(uid) {
     const { user, allUser } = store.getState();
     const time = Date.now()
 
-    let newChatRef = firestore.collection("chats").doc();
-    let myRef = firestore.collection("users").doc(user.uid);
-    let userRef = firestore.collection("users").doc(uid);
+    let newChatRef = getChatColl().doc();
+    let myRef = getUserRef(user.uid)
+    let userRef = getUserRef(uid)
     let chatId = newChatRef.id;
 
     let batch = firestore.batch();
@@ -446,7 +445,8 @@ export async function initiateChat(uid) {
 export async function addMessage(chatId, data, state) {
     let { user } = store.getState()
     let time = Date.now();
-    await firestore.collection('chats').doc(chatId).update({
+    let chatRef = getChatRef(chatId)
+    await chatRef.update({
         [user.uid + '.' + time]: {
             ...data
         }
@@ -464,7 +464,8 @@ export async function addComment(uid, pid, comment, state) {
         uid: user.uid,
         content: comment
     }
-    await firestore.collection('users').doc(uid).collection('posts').doc(pid).update({
+    let postRef = getPostRef(uid, pid)
+    await postRef.update({
         comments: FieldValue.arrayUnion(data)
     }).then(() => {
         console.log("Comment uploaded");
@@ -478,21 +479,22 @@ export function updateProfile(data) {
     const { user } = store.getState();
     const uid = user.uid;
 
-    let userRef = firestore.collection('users').doc(uid);
-    let publicUser = firestore.collection('public').doc('users');
+    let userRef = getUserRef(uid)
+    let pubUserRef = getPubUserRef()
 
     let time = Date.now();
 
     let batch = firestore.batch();
     batch.update(userRef, {
-        ...data,
+        name: data.name || user.name,
+        about: data.about || user.about,
+        vis: data.vis || user.vis,
         activity: FieldValue.arrayUnion({ content: "Update Profile", time: time })
     });
-    batch.update(publicUser, {
-        [uid]: {
-            name: data.name,
-            vis: data.visibility,
-        }
+    batch.update(pubUserRef, {
+        [uid + '.name']: data.name || user.name,
+        [uid + '.vis']: data.vis || user.vis,
+
     })
     batch.commit().then(() => {
         console.log("Profile Updated")
@@ -512,9 +514,9 @@ export async function updateDp(img) {
 
     let time = Date.now()
 
-    let storageRef = storage.ref().child('users/' + uid + '/' + uid);
-    let userRef = firestore.collection('users').doc(uid)
-    let publicUser = firestore.collection('public').doc('users');
+    let storageRef = storage.ref().child(getStorageDpPath());
+    let userRef = getUserRef(uid)
+    let publicUser = getPubUserRef()
 
     storageRef.put(blob).then((snapshot) => {
         console.log("Dp Uploaded");

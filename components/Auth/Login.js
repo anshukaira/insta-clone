@@ -1,69 +1,67 @@
-import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
   View,
   TextInput,
-  Dimensions,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
+
 import { Feather } from '@expo/vector-icons';
 
 import { signIn } from '../../firebase/functions'
 
-// import { TouchableOpacity } from 'react-native-gesture-handler'
 
 function Login({ navigation }) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [error, setError] = useState(null);
   const [confirm_secureTextEntry, setConfirmEntry] = useState(true);
 
 
   return (
-    <View style={styles.mainContainer}>
+    <View style={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={styles.mainContainer}>
         <View style={styles.container}>
-          <StatusBar style="auto" />
           <Text style={styles.h1}>MIRAI C</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Email"
-              onChangeText={(email) => setEmail(email)}
-              underlineColorAndroid="transparent"
-            />
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            onChangeText={(email) => setEmail(email)}
+            underlineColorAndroid="transparent"
+          />
           <View style={styles.input}>
             <TextInput
               placeholder="Password"
-              secureTextEntry={confirm_secureTextEntry ? true : false}
+              secureTextEntry={confirm_secureTextEntry}
               onChangeText={(password) => setPassword(password)}
               underlineColorAndroid="transparent"
+              style={{ color: '#8e8e8e', fontSize: 12, border: 'none' }}
             />
             <TouchableOpacity
               onPress={() => setConfirmEntry(!confirm_secureTextEntry)}
             >
               {password ?
-                <View>
-                  {confirm_secureTextEntry ?
-                    <Feather
-                      name="eye-off"
-                      color='#8e8e8e'
-                      size={15}
-                    />
-                    :
-                    <Feather
-                      name="eye"
-                      color='#8e8e8e'
-                      size={15}
-                    />
-                  }
-                </View>
-                : <View></View>
+                confirm_secureTextEntry ?
+                  <Feather
+                    name="eye-off"
+                    color='#8e8e8e'
+                    size={15}
+                  />
+                  :
+                  <Feather
+                    name="eye"
+                    color='#8e8e8e'
+                    size={15}
+                  />
+                : null
               }
             </TouchableOpacity>
           </View>
 
           <TouchableOpacity style={styles.loginBtn}
-            onPress={() => signIn(email, password)}
+            onPress={() => signIn(email, password, setError)}
           >
             <Text style={styles.loginText}>LOGIN</Text>
           </TouchableOpacity>
@@ -76,13 +74,18 @@ function Login({ navigation }) {
             <Text style={styles.SignIn}>Sign up</Text>
           </TouchableOpacity>
         </View>
-   </View>
+        {error ?
+          <View style={styles.error}>
+            <Text>{error}</Text>
+          </View>
+          : null
+        }
+      </ScrollView>
+    </View>
   )
 }
 
 export default Login
-
-const { width: WIDTH } = Dimensions.get('window');
 
 const styles = StyleSheet.create(
   {
@@ -122,11 +125,11 @@ const styles = StyleSheet.create(
     },
 
     h1: {
-        margin: 10,
-        fontFamily: 'montserrat',
-        fontWeight: 'bold',
-        fontSize: 35,
-      },
+      margin: 10,
+      fontFamily: 'montserrat',
+      fontWeight: 'bold',
+      fontSize: 35,
+    },
 
     input: {
       color: '#8e8e8e',
@@ -140,6 +143,7 @@ const styles = StyleSheet.create(
       backgroundColor: "#fafafa",
       flexDirection: 'row',
       alignItems: 'center',
+      justifyContent: 'space-between'
     },
 
 
@@ -156,5 +160,15 @@ const styles = StyleSheet.create(
       marginTop: 30,
       width: 258,
     },
+    error: {
+      width: 348,
+      margin: 10,
+      padding: 10,
+      borderWidth: 1,
+      borderColor: 'red',
+      backgroundColor: '#fff',
+      alignItems: 'center',
+      borderRadius: 1,
+    }
   }
 );

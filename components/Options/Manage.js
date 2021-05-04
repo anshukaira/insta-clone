@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { View, Text, ScrollView, Image, StyleSheet, Dimensions, TouchableOpacity, Modal, TextInput, Platform } from 'react-native'
 import { useSelector } from 'react-redux'
-import { deletePost, editPost, updateCachedPosts } from '../../firebase/functions';
+import { deletePost, editPost, setPostData, updateCachedPosts } from '../../firebase/functions';
 import { selectAllPosts } from '../../redux/slices/allPostsSlice';
-import { selectCachedPosts } from '../../redux/slices/cachedPosts';
 import { selectUser } from '../../redux/slices/userSlice'
 import { BlurView } from 'expo-blur'
 
@@ -40,18 +39,11 @@ export default function Manage() {
 }
 
 function Item({ post }) {
-    const cachedPosts = useSelector(selectCachedPosts);
     const [currentPost, setCurrentPost] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
     useEffect(() => {
-        updateCachedPosts(post.pid)
-        console.log(Date.now() + "updated cache post here")
-    }, [post])
-
-    useEffect(() => {
-        setCurrentPost({ pid: post.pid, ...cachedPosts[post.pid] });
-        setModalVisible(false)
-    }, [cachedPosts[post.pid]])
+        setPostData(post.uid,post.pid,setCurrentPost)
+    }, [])
 
     if (currentPost === null || !currentPost.uid) {
         return (
@@ -92,8 +84,8 @@ function EditModal({ item, visible, setVisible }) {
     }
 
     const updatePost = () => {
-        console.log("updated")
         editPost(item.pid, { caption: caption })
+        setVisible(false)
     }
 
     return (

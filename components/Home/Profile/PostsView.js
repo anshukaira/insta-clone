@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Platform, FlatList, StyleSheet, StatusBar, Dimensions, Text, Image, TouchableOpacity, ScrollView } from 'react-native'
+import { View, StyleSheet, Dimensions, Text, TouchableOpacity, ScrollView } from 'react-native'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import Post from '../Post/PostMini'
 import { useNavigation, useRoute } from '@react-navigation/core'
@@ -9,6 +9,7 @@ import { selectUser } from '../../../redux/slices/userSlice'
 import { theme } from '../../Style/Constants'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { PROFIILE_VISIBILITY } from '../../CONSTANTS'
+import Loading from '../../Helper/Loading'
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -16,6 +17,12 @@ const Tab = createMaterialTopTabNavigator();
 export default function PostsView({ user }) {
 
     const me = useSelector(selectUser);
+
+    if (!me || !user || !me.uid || !user.uid || !user.vis) {
+        return (
+            <Loading />
+        )
+    }
 
     if (me.uid !== user.uid && (user.vis == PROFIILE_VISIBILITY.PROTECTED || user.vis == PROFIILE_VISIBILITY.PRIVATE) && !user.followers.includes(me.uid)) {
         return (
@@ -55,12 +62,14 @@ function Normal() {
     const [currentPostList, setCurrentPostList] = useState([]);
     const route = useRoute();
     useEffect(() => {
-        const data = extractPostsList(allPosts, route.params.uid)
-        setCurrentPostList(data)
+        if(allPosts && allPosts.loaded){
+            const data = extractPostsList(allPosts, route.params.uid)
+            setCurrentPostList(data)
+        }
     }, [allPosts])
 
     return (
-        <View style={{flexDirection: 'column', backgroundColor: theme.lightbg}}>
+        <View style={{ flexDirection: 'column', backgroundColor: theme.lightbg }}>
             <View style={styles.container}>
                 {currentPostList.length ? 
                 currentPostList.map((item) => {
@@ -72,10 +81,11 @@ function Normal() {
             </View>
             <CompleteProfile uid={route.params.uid}/>
         </View>
-        
+
     )
 }
 
+<<<<<<< HEAD
 function NoPost({ uid }){
     const me = useSelector(selectUser);
 
@@ -106,13 +116,33 @@ function CompleteProfile({ uid }){
     const navigation = useNavigation();
 
     if((user.name && user.dp && user.about) || user.uid != uid)
+=======
+function NoPost() {
+    return (
+        <View style={styles.noPostContainer}>
+            <Text style={{ fontSize: 28 }}>Profile</Text>
+            <Text style={{ fontSize: 12, textAlign: 'center' }}>When you share photos, they'll appear on your profile</Text>
+            <TouchableOpacity>
+                <Text style={{ color: theme.lightButton }}>Share your first photo</Text>
+            </TouchableOpacity>
+        </View>
+
+    )
+}
+
+function CompleteProfile() {
+    const user = useSelector(selectUser);
+    const navigation = useNavigation();
+
+    if (user.name && user.dp && user.about)
+>>>>>>> bad845b... New firebase Management
         return null
 
-    const iconBox = ({name, head, desc}) => {
-        return(
-            <View style={[styles.box, {paddingTop: 20}]}>
+    const iconBox = ({ name, head, desc }) => {
+        return (
+            <View style={[styles.box, { paddingTop: 20 }]}>
                 <View style={styles.imgC}>
-                    <Icon name={name} style={[styles.icon, {color : `${name == 'checkmark-circle' ? '#009e00' : 'black'}`}]}/>
+                    <Icon name={name} style={[styles.icon, { color: `${name == 'checkmark-circle' ? '#009e00' : 'black'}` }]} />
                 </View>
                 <Text style={styles.head}>{head}</Text>
                 <Text style={styles.description}>{desc}</Text>
@@ -121,34 +151,41 @@ function CompleteProfile({ uid }){
     }
 
     const goToEdit = () => {
-        navigation.navigate('Edit')
+        navigation.navigate('Edit', {screen:'PostView'})
     }
+<<<<<<< HEAD
     
     return(
         <View style={styles.completeProfile}>
+=======
+
+    return (
+        <View style={[styles.completeProfile, { flex: 1 }]}>
+>>>>>>> bad845b... New firebase Management
             <Text style={[styles.head]}>Complete Your Profile</Text>
             <ScrollView horizontal={true} style={{ paddingBottom : 5 }}>
                 {iconBox({
-                    name : `${user.name.length == 0 ? 'person-outline' : 'checkmark-circle'}`, 
-                    head : 'Add Your Name', 
+                    name: `${user.name.length == 0 ? 'person-outline' : 'checkmark-circle'}`,
+                    head: 'Add Your Name',
                     desc: 'Add your full name so your friends know it\'s you.',
-                    })}
+                })}
                 {iconBox({
                     name: `${user.dp.length == 0 ? 'image-outline' : 'checkmark-circle'}`,
                     head: 'Add Profile Pic',
-                    desc: 'Add a profile pic to let people identify you better.' 
-                    })}
+                    desc: 'Add a profile pic to let people identify you better.'
+                })}
                 {iconBox({
                     name: `${user.about.length == 0 ? 'chatbubble-outline' : 'checkmark-circle'}`,
                     head: 'Add Bio',
                     desc: 'Tell your followers a little bit about yourself.',
-                    })}
+                })}
             </ScrollView>
             <TouchableOpacity>
                 <Text style={styles.button} onPress={goToEdit}>Edit Profile</Text>
             </TouchableOpacity>
-        </View>    
-)}
+        </View>
+    )
+}
 
 function extractPostsList(allPosts, uid) {
     let userPosts = [];
@@ -218,7 +255,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignContent: 'center',
     },
-    button : {
+    button: {
         backgroundColor: theme.lightButton,
         color: theme.darkfont,
         fontWeight: 'bold',
@@ -237,7 +274,7 @@ const styles = StyleSheet.create({
         borderRadius: 50,
     },
     icon: {
-        fontSize: 30,      
+        fontSize: 30,
     },
     head: {
         textAlign: 'center',

@@ -10,11 +10,7 @@ export const userSlice = createSlice({
     initialState,
     reducers: {
         set: (state, action) => {
-            let data = {
-                loaded: true,
-                ...action.payload
-            }
-            return data
+            return action.payload
         },
         unset: () => initialState,
     }

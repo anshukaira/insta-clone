@@ -1,4 +1,3 @@
-import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import {
   StyleSheet,
@@ -7,6 +6,7 @@ import {
   TextInput,
   Dimensions,
   TouchableOpacity,
+  ScrollView
 } from "react-native";
 import { Feather } from '@expo/vector-icons';
 import { signUp } from '../../firebase/functions'
@@ -15,17 +15,18 @@ import { signUp } from '../../firebase/functions'
 function Register({ navigation }) {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
+  const [error,setError] = useState(null);
   const [password, setPassword] = useState("")
   const [confirm_secureTextEntry, setConfirmEntry] = useState(true);
 
   return (
-    <View style={styles.mainContainer}>
+    <View style={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={styles.mainContainer}>
         <View style={styles.container}>
-          <StatusBar style="auto" />
             <Text style={styles.h1}>MIRAI C</Text>
             <TextInput
               style={styles.input}
-              placeholder="Username"
+              placeholder="Name"
               onChangeText={(name) => setName(name)}
               underlineColorAndroid="transparent"
             />
@@ -38,16 +39,16 @@ function Register({ navigation }) {
           <View style={styles.input}>
             <TextInput
               placeholder="Password"
-              secureTextEntry={confirm_secureTextEntry ? true : false}
+              secureTextEntry={confirm_secureTextEntry}
               onChangeText={(password) => setPassword(password)}
               underlineColorAndroid="transparent"
+              style={{color:'#8e8e8e',fontSize:12,border:'none'}}
             />
             <TouchableOpacity
               onPress={() => setConfirmEntry(!confirm_secureTextEntry)}
             >
               {password ?
-                <View>
-                  {confirm_secureTextEntry ?
+                  confirm_secureTextEntry ?
                     <Feather
                       name="eye-off"
                       color='#8e8e8e'
@@ -59,15 +60,13 @@ function Register({ navigation }) {
                       color='#8e8e8e'
                       size={15}
                     />
-                  }
-                </View>
-                : <View></View>
+                : null
               }
             </TouchableOpacity>
           </View>
 
           <TouchableOpacity style={styles.loginBtn}
-            onPress={() => signUp(name, email, password)}
+            onPress={() => signUp(name, email, password,setError)}
           >
             <Text>Sign up</Text>
           </TouchableOpacity>
@@ -94,13 +93,19 @@ function Register({ navigation }) {
             <Text style={styles.signup}>Log in</Text>
           </TouchableOpacity>
         </View>
+        {error ?
+        <View style={styles.error}>
+          <Text>{error}</Text>
+        </View>
+        : null
+      }
+      </ScrollView>
       </View>
   )
 }
 
 export default Register
 
-const { width: WIDTH } = Dimensions.get('window');
 
 const styles = StyleSheet.create(
   {
@@ -170,6 +175,7 @@ const styles = StyleSheet.create(
       backgroundColor: "#fafafa",
       flexDirection: 'row',
       alignItems: 'center',
+      justifyContent:'space-between'
     },
 
     signup: {
@@ -185,6 +191,16 @@ const styles = StyleSheet.create(
       marginTop: 20,
       width: 258,
     },
+    error:{
+      width: 348,
+      margin:10,
+      padding:10,
+      borderWidth: 1,
+      borderColor: 'red',
+      backgroundColor: '#fff',
+      alignItems: 'center',
+      borderRadius: 1,
+    }
   }
 );
 

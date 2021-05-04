@@ -9,6 +9,8 @@ import { selectUser } from '../../redux/slices/userSlice';
 import { Avatar } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons'
 import { descriptiveText } from '../Style/Common';
+import { selectAllUser } from '../../redux/slices/allUserSlice';
+import { DUMMY_DATA } from '../CONSTANTS';
 
 export default function Comments() {
     const route = useRoute()
@@ -61,9 +63,9 @@ export default function Comments() {
                     numberOfLines={1}
                 />
                 <TouchableOpacity onPress={sendComment}
-                            disabled = {comment.length === 0} 
-                            style={{ alignSelf: 'flex-end', marginBottom: 16}}>
-                                <Text style={[styles.icon, {color: iconColor}]}>Post</Text>
+                    disabled={comment.length === 0}
+                    style={{ alignSelf: 'flex-end', marginBottom: 16 }}>
+                    <Text style={[styles.icon, { color: iconColor }]}>Post</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -71,23 +73,28 @@ export default function Comments() {
 }
 
 const CommentItem = ({ data }) => {
-
+    const allUsers = useSelector(selectAllUser)
     const date = new Date(data.time);
+    
+    if (!allUsers || !allUsers[data.uid]) {
+        return null
+    }
+
     return (
         <View style={styles.container}>
             <View style={{ flexDirection: 'row' }}>
-                <Avatar.Image source={require("../../assets/dummy.jpeg")} size={46} />
+                <Avatar.Image source={{ uri: allUsers[data.uid].dp ? allUsers[data.uid].dp : DUMMY_DATA.dp }} size={46} />
                 <View style={styles.commentStyle}>
                     <View style={styles.commentLine}>
-                        <Text style={styles.username}>@user </Text>
+                        <Text style={styles.username}>@{allUsers[data.uid].username} </Text>
                         <Text>{data.content}</Text>
                     </View>
                     <Text style={styles.smallText}>{date.toLocaleString()}</Text>
                 </View>
             </View>
-            
+
             <View style={{ justifyContent: 'center', alignItems: 'center', }}>
-                <Icon name="heart-outline" style={{color : 'black', fontSize: 18}}/>
+                <Icon name="heart-outline" style={{ color: 'black', fontSize: 18 }} />
             </View>
         </View>
     )
@@ -115,7 +122,7 @@ const styles = StyleSheet.create({
         paddingLeft: 8,
         fontWeight: "bold"
     },
-    container:{
+    container: {
         flexDirection: 'row',
         padding: 10,
         backgroundColor: theme.lightbg,
@@ -138,9 +145,9 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-start'
     },
     smallText: {
-        color : 'silver',
+        color: 'silver',
         fontSize: 12,
         alignSelf: 'flex-start',
         paddingTop: 4
-    }    
+    }
 });

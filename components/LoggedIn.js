@@ -5,10 +5,8 @@ import { useDispatch } from 'react-redux';
 import { unset as unsetUser } from '../redux/slices/userSlice'
 import { unset as unsetAllUser } from '../redux/slices/allUserSlice'
 import { unset as unsetAllPosts } from '../redux/slices/allPostsSlice'
-import { unset as unsetProtPosts } from '../redux/slices/protPostsSlice'
-import { unset as unsetPubPosts } from '../redux/slices/pubPostsSlice'
 
-import { subAllUser, subProtPosts, subPublicPosts, subUser } from '../firebase/subscriptions';
+import { subAllPosts, subAllUser, subUser } from '../firebase/subscriptions';
 
 import HomeScreen from './Home/Home';
 import CommentsScreen from './Comments/Comments'
@@ -26,14 +24,12 @@ function LoggedIn({ uid }) {
     useEffect(() => {
         const unsubUser = subUser(uid);
         const unsubAllUser = subAllUser();
-        const unsubPubPosts = subPublicPosts();
-        const unsubProtPosts = subProtPosts();
+        const unsubAllPosts = subAllPosts();
         return () => {
             console.log("Unsub from All subscribers")
             unsubUser();
             unsubAllUser();
-            unsubPubPosts();
-            unsubProtPosts();
+            unsubAllPosts();
             resetReduxStates(dispatch);
         };
     }, [])
@@ -52,8 +48,6 @@ function LoggedIn({ uid }) {
 function resetReduxStates(dispatch) {
     dispatch(unsetUser)
     dispatch(unsetAllUser)
-    dispatch(unsetProtPosts)
-    dispatch(unsetPubPosts)
     dispatch(unsetAllPosts)
 }
 

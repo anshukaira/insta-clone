@@ -7,7 +7,7 @@ const Stack = createStackNavigator();
 
 function LoggedOut() {
     return (
-        <Stack.Navigator initialRouteName="Register"
+        <Stack.Navigator initialRouteName="Login"
             screenOptions={{
                 headerShown: false
             }}

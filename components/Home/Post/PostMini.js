@@ -1,11 +1,10 @@
 import { useNavigation } from '@react-navigation/core'
 import React, { useEffect, useState } from 'react'
-import { Text, View, StyleSheet, Dimensions, Platform, TouchableOpacity, Image, ActivityIndicator } from 'react-native'
+import { StyleSheet, Dimensions, Platform, TouchableOpacity, Image } from 'react-native'
 import { useSelector } from 'react-redux';
-import { selectAllUser } from '../../../redux/slices/allUserSlice';
-import { selectCachedPosts } from '../../../redux/slices/cachedPosts';
-import { updateCachedPosts } from '../../../firebase/functions'
+import { setPostData } from '../../../firebase/functions'
 import { selectAllPosts } from '../../../redux/slices/allPostsSlice';
+import Loading from '../../Helper/Loading';
 
 
 const window = Dimensions.get("window");
@@ -20,24 +19,14 @@ export default function PostMini({ pid, style, navigateTo }) {
     const [width, setWidth] = useState(initialWidth);
 
     const allPosts = useSelector(selectAllPosts);
-    const cachedPosts = useSelector(selectCachedPosts);
 
     const [currentPost, setCurrentPost] = useState(null);
 
     useEffect(() => {
-        updateCachedPosts(pid);
-    }, [])
-
-    useEffect(() => {
-        setCurrentPost(cachedPosts[pid]);
-    }, [cachedPosts[pid]])
-
-    const onChange = ({ window }) => {
-        if (Platform.OS == 'web')
-            setWidth(window.width / divideBig);
-        else
-            setWidth(window.width / divideSmall);
-    };
+        if (allPosts && allPosts[pid]) {
+            setPostData(allPosts[pid].uid, pid, setCurrentPost)
+        }
+    }, [allPosts])
 
     useEffect(() => {
         Dimensions.addEventListener("change", onChange);
@@ -46,16 +35,22 @@ export default function PostMini({ pid, style, navigateTo }) {
         };
     });
 
+    const onChange = ({ window }) => {
+        if (Platform.OS == 'web')
+            setWidth(window.width / divideBig);
+        else
+            setWidth(window.width / divideSmall);
+    };
+
+
     const openRelatedPosts = () => {
         const data = createSimilarPostList(pid, currentPost.uid, allPosts);
         navigation.navigate(navigateTo || "Explore", { pid: pid, uid: currentPost.uid, screen: 'PostMini', data: data })
     }
 
-    if (!currentPost || !currentPost.loaded) {
+    if (!currentPost || !currentPost.uid) {
         return (
-            <View style={[{ justifyContent: 'center', alignItems: 'center' }, { height: width - SPACE, width: width - SPACE }]}>
-                <ActivityIndicator size="large" color="green" />
-            </View>
+            <Loading />
         )
     }
     return (

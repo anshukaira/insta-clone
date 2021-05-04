@@ -10,12 +10,17 @@ export default function Header() {
     const gotoChat = () => {
         navigation.navigate('Chat', { default: 'ChatHome' })
     }
+    const gotoAdd = () => {
+        navigation.navigate('Add', { screen: 'Feed' })
+    }
     return (
         <View style={styles.container}>
             <Icon
                 name="add-circle-sharp"
-                style={styles.iconleft} />
-            <Text style={styles.text}>MIRAI~C</Text>
+                style={styles.iconleft}
+                onPress={gotoAdd}
+            />
+            <Text style={styles.text}>MIRAI C</Text>
             <Icon
                 name="md-chatbubble-ellipses-sharp"
                 style={styles.iconright}
