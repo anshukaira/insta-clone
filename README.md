@@ -1,13 +1,16 @@
 ## MIRAI C ![Mirai Logo](https://github.com/anshukaira/insta-clone/blob/dev-frontend/assets/favicon.png)
+#### A social networking App & Website that lets you connect with your friends and share your moments with them! 💙
 Reference : Instagram
 
-#### A social networking App & Website that lets you connect with your friends and share your moments with them! 💙
-The project includes a web application and a mobile application written using React Native.
+
+The project includes a mobile application and a web application written using React Native.
+
+Tech & Tools Used: React, React Native, Firebase, Git, npm, Expo.
 
 ## Features
  - Connect with your friends
- - Share yor pictures
- - Chat with people
+ - Share yor pictures and thoughts
+ - Private Chat with people
  - Get involved with everyone or anyone on the platform
  - Follow your favourite accounts
  - Like and Comment on posts
@@ -16,7 +19,7 @@ The project includes a web application and a mobile application written using Re
 ## Installation
  - Ask for APK file.
  - For running in EXPO, download EXPO-go app from playstore and copy this link (https://expo.io/@slayeransh/projects/mirai-c). As you open the app, click on the clipboard available project.
- - Try on web: (https://) 
+ - Try on web: https://mirai-c.web.app/
  
  
 ## How to Contribute?
@@ -31,6 +34,8 @@ $ cd insta-clone
 
 # Install the dependencies
 $ npm i
+
+# Ask for .env file for accessing our database. You can also create your own project on firebase.
 
 # Run the app
 $ npm run
