@@ -174,7 +174,7 @@ const ChatNormal = ({ data, keyId, toccidSetter, setItemPos }) => {
 
     const alignDirection = data.uid == user.uid ? 'flex-end' : 'flex-start';
     const viewStyle = data.uid == user.uid ? null : styles.vStyle
-    const backgroundColor = data.uid == user.uid ? { backgroundColor: '#623FD7' } : { backgroundColor: 'lightgray' }
+    const backgroundColor = data.uid == user.uid ? { backgroundColor: '#623FD7CF' } : { backgroundColor: 'lightgray' }
     const colorText = data.uid == user.uid ? null : { color: theme.lightfont }
 
     if (!data) {
@@ -211,7 +211,7 @@ const ChatReply = ({ data, keyId, toccidSetter, setItemPos, scrollTo, replyTo })
 
     const alignDirection = data.uid == user.uid ? 'flex-end' : 'flex-start';
     const viewStyle = data.uid == user.uid ? null : styles.vStyle
-    const backgroundColor = data.uid == user.uid ? { backgroundColor: '#623FD7' } : { backgroundColor: 'lightgray' }
+    const backgroundColor = data.uid == user.uid ? { backgroundColor: '#623FD7CF' } : { backgroundColor: 'lightgray' }
     const colorText = data.uid == user.uid ? null : { color: theme.lightfont }
 
     const replyColor = data.toccid.uid == user.uid ? '#184d47' : '#810034'
@@ -244,7 +244,7 @@ const ChatReply = ({ data, keyId, toccidSetter, setItemPos, scrollTo, replyTo })
                 <Pressable style={[styles.chatItem, { alignSelf: alignDirection }, backgroundColor]} onLongPress={() => toccidSetter(data.ccid)}>
                     <Pressable onPress={() => scrollTo(data.toccid.uid + '_' + data.toccid.time)} style={[styles.reply, {alignSelf: 'flex-start', borderLeftColor: replyColor}]}>
                         <Text style={[styles.replyOwner, {color: replyColor}]}>{data.toccid.uid == user.uid ? 'You' : allUser[data.toccid.uid].name}</Text>
-                        <Text style={[styles.chatText, colorText]}>{replyTo.content}</Text>
+                        <Text style={{ color: theme.lightfont, fontWeight: 'bold'}}>{replyTo.content}</Text>
                     </Pressable>
                     <Text style={[styles.chatText, colorText]}>{data.content}</Text>
                     <Text style={[styles.chatTextSmall, colorText]}>{time.toLocaleString()}</Text>
@@ -272,7 +272,7 @@ const ChatPost = ({ data, keyId, toccidSetter, setItemPos }) => {
 
     const alignDirection = data.uid == user.uid ? 'flex-end' : 'flex-start';
     const viewStyle = data.uid == user.uid ? null : styles.vStyle
-    const backgroundColor = data.uid == user.uid ? { backgroundColor: '#623FD7' } : { backgroundColor: 'lightgray' }
+    const backgroundColor = data.uid == user.uid ? { backgroundColor: '#623FD7CF' } : { backgroundColor: 'lightgray' }
     const colorText = data.uid == user.uid ? null : { color: theme.lightfont }
 
     if (!data) {
@@ -339,7 +339,7 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
         justifyContent: 'center',
         padding: 12,
-        paddingLeft: 18,
+        paddingLeft: 12,
         paddingRight: 18,
         paddingBottom: 10,
         width: Dimensions.get('window').width / 1.5,
@@ -383,7 +383,7 @@ const styles = StyleSheet.create({
         paddingTop: 5,
         paddingBottom: 8,
         marginBottom: 5, 
-        backgroundColor: 'rgba(255, 255, 255, 0.6)',
+        backgroundColor: 'rgba(255, 255, 255, 0.7)',
         width:  (Dimensions.get('window').width - 80)/ 1.5,
         borderLeftWidth: 5,
         borderRadius: 5,

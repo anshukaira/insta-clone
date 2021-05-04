@@ -9,7 +9,6 @@ import { selectUser } from '../../../redux/slices/userSlice'
 import { theme } from '../../Style/Constants'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { PROFIILE_VISIBILITY } from '../../CONSTANTS'
-import noPostImage from '../../../assets/noPost.png'
 
 const Tab = createMaterialTopTabNavigator();
 
