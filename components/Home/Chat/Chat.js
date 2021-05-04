@@ -105,21 +105,21 @@ export default function Chat() {
                 })}
             </ScrollView>
 
-            <View>
-                {toccid ? <ReplyBox data={data[toccid.uid][toccid.time]} uid={toccid.uid} time={toccid.time} toccidSetter={setToccid} scrollTo={scrollTo} /> : null}
-                <View style={styles.sendMessageContainer}>
+            <View style={styles.sendMessageContainer}>
+                <View>
+                    {toccid ? <ReplyBox data={data[toccid.uid][toccid.time]} uid={toccid.uid} time={toccid.time} toccidSetter={setToccid} scrollTo={scrollTo} /> : null}
                     <TextInput style={styles.sendInput} multiline={true} placeholder="Type Your Message Here"
                         value={message}
                         onChangeText={(mess) => setMessage(mess)}
                         maxLength={30}
                         numberOfLines={1}
                     />
-                    <TouchableOpacity onPress={sendMessage}
-                        disabled={message.length === 0}
-                        style={{ alignSelf: 'flex-end', borderRadius: 50, borderWidth: 2, marginBottom: 10, borderColor: iconColor }}>
-                        <Icon name="send" style={[styles.icon, { color: iconColor }]} />
-                    </TouchableOpacity>
                 </View>
+                <TouchableOpacity onPress={sendMessage}
+                    disabled={message.length === 0}
+                    style={{ alignSelf: 'flex-end', borderRadius: 50, borderWidth: 2, marginBottom: 10, borderColor: iconColor }}>
+                    <Icon name="send" style={[styles.icon, { color: iconColor }]} />
+                </TouchableOpacity>
             </View>
 
         </View>
@@ -127,6 +127,10 @@ export default function Chat() {
 }
 
 const ReplyBox = ({ data, toccidSetter, uid, time, scrollTo }) => {
+    const allUser = useSelector(selectAllUser);
+    const user = useSelector(selectUser);
+
+    const replyColor = uid == user.uid ? '#184d47' : '#810034';
 
     const handlePress = () => {
         scrollTo(uid + '_' + time)
@@ -135,10 +139,9 @@ const ReplyBox = ({ data, toccidSetter, uid, time, scrollTo }) => {
         toccidSetter(null)
     }
     return (
-        <Pressable onPress={handlePress} onLongPress={handleLongPress} style={{ backgroundColor: '#bfbfbf', padding: 10 }}>
-            <Text>
-                {data.content}
-            </Text>
+        <Pressable onPress={handlePress} onLongPress={handleLongPress} style={[styles.reply, styles.replyTextBox, {borderLeftColor: replyColor}]}>
+             <Text style={[styles.replyOwner, {color: replyColor}]}>{uid == user.uid ? 'You' : allUser[uid].name}</Text>
+            <Text>{data.content}</Text>
         </Pressable>
     )
 }
@@ -170,14 +173,13 @@ const ChatNormal = ({ data, keyId, toccidSetter, setItemPos }) => {
     }
 
     const alignDirection = data.uid == user.uid ? 'flex-end' : 'flex-start';
-    const borderBottomRadius = data.uid == user.uid ? { borderBottomEndRadius: 5 } : { borderBottomLeftRadius: 35 };
     const viewStyle = data.uid == user.uid ? null : styles.vStyle
     const backgroundColor = data.uid == user.uid ? { backgroundColor: '#623FD7' } : { backgroundColor: 'lightgray' }
     const colorText = data.uid == user.uid ? null : { color: theme.lightfont }
 
     if (!data) {
         return (
-            <View style={[styles.chatItem, { alignSelf: alignDirection }, borderBottomRadius, backgroundColor]}>
+            <View style={[styles.chatItem, { alignSelf: alignDirection }, backgroundColor]}>
                 <Text style={[styles.chatText, colorText]}>Error in Chat</Text>
             </View>
         )
@@ -186,7 +188,7 @@ const ChatNormal = ({ data, keyId, toccidSetter, setItemPos }) => {
     return (
         <Pressable style={viewStyle} onLongPress={() => toccidSetter(data.ccid)} onLayout={handleLayout}>
             {userAvatar()}
-            <View style={[styles.chatItem, { alignSelf: alignDirection }, borderBottomRadius, backgroundColor]}>
+            <View style={[styles.chatItem, { alignSelf: alignDirection }, backgroundColor]}>
                 <Text style={[styles.chatText, colorText]}>{data.content}</Text>
                 <Text style={[styles.chatTextSmall, colorText]}>{time.toLocaleString()}</Text>
             </View>
@@ -205,18 +207,18 @@ const ChatReply = ({ data, keyId, toccidSetter, setItemPos, scrollTo, replyTo })
             return null
         let img = allUser[data.uid].dp.length > 0 ? allUser[data.uid].dp : DUMMY_DATA.dp;
         return (<Avatar.Image source={{ uri: img }} size={42} style={{ marginTop: 10 }} key={keyId} />)
-
     }
 
     const alignDirection = data.uid == user.uid ? 'flex-end' : 'flex-start';
-    const borderBottomRadius = data.uid == user.uid ? { borderBottomEndRadius: 5 } : { borderBottomLeftRadius: 35 };
     const viewStyle = data.uid == user.uid ? null : styles.vStyle
     const backgroundColor = data.uid == user.uid ? { backgroundColor: '#623FD7' } : { backgroundColor: 'lightgray' }
     const colorText = data.uid == user.uid ? null : { color: theme.lightfont }
 
+    const replyColor = data.toccid.uid == user.uid ? '#184d47' : '#810034'
+
     if (!data) {
         return (
-            <View style={[styles.chatItem, { alignSelf: alignDirection }, borderBottomRadius, backgroundColor]}>
+            <View style={[styles.chatItem, { alignSelf: alignDirection }, backgroundColor]}>
                 <Text style={[styles.chatText, colorText]}>Error in Chat</Text>
             </View>
         )
@@ -238,13 +240,18 @@ const ChatReply = ({ data, keyId, toccidSetter, setItemPos, scrollTo, replyTo })
     return (
         <View style={viewStyle} onLayout={handleLayout}>
             {userAvatar()}
-            <Pressable onPress={() => scrollTo(data.toccid.uid + '_' + data.toccid.time)} style={{ alignSelf: alignDirection, padding: 10, backgroundColor: '#bfbfbf' }}>
-                <Text>{replyTo.content}</Text>
-            </Pressable>
-            <Pressable style={[styles.chatItem, { alignSelf: alignDirection }, borderBottomRadius, backgroundColor]} onLongPress={() => toccidSetter(data.ccid)}>
-                <Text style={[styles.chatText, colorText]}>{data.content}</Text>
-                <Text style={[styles.chatTextSmall, colorText]}>{time.toLocaleString()}</Text>
-            </Pressable>
+            <View>
+                <Pressable style={[styles.chatItem, { alignSelf: alignDirection }, backgroundColor]} onLongPress={() => toccidSetter(data.ccid)}>
+                    <Pressable onPress={() => scrollTo(data.toccid.uid + '_' + data.toccid.time)} style={[styles.reply, {alignSelf: 'flex-start', borderLeftColor: replyColor}]}>
+                        <Text style={[styles.replyOwner, {color: replyColor}]}>{data.toccid.uid == user.uid ? 'You' : allUser[data.toccid.uid].name}</Text>
+                        <Text style={[styles.chatText, colorText]}>{replyTo.content}</Text>
+                    </Pressable>
+                    <Text style={[styles.chatText, colorText]}>{data.content}</Text>
+                    <Text style={[styles.chatTextSmall, colorText]}>{time.toLocaleString()}</Text>
+                </Pressable>
+            </View>
+            
+            
         </View>
 
     )
@@ -264,14 +271,13 @@ const ChatPost = ({ data, keyId, toccidSetter, setItemPos }) => {
     }
 
     const alignDirection = data.uid == user.uid ? 'flex-end' : 'flex-start';
-    const borderBottomRadius = data.uid == user.uid ? { borderBottomEndRadius: 5 } : { borderBottomLeftRadius: 35 };
     const viewStyle = data.uid == user.uid ? null : styles.vStyle
     const backgroundColor = data.uid == user.uid ? { backgroundColor: '#623FD7' } : { backgroundColor: 'lightgray' }
     const colorText = data.uid == user.uid ? null : { color: theme.lightfont }
 
     if (!data) {
         return (
-            <View style={[styles.chatItem, { alignSelf: alignDirection }, borderBottomRadius, backgroundColor]}>
+            <View style={[styles.chatItem, { alignSelf: alignDirection }, backgroundColor]}>
                 <Text style={[styles.chatText, colorText]}>Error in Chat</Text>
             </View>
         )
@@ -293,7 +299,7 @@ const ChatPost = ({ data, keyId, toccidSetter, setItemPos }) => {
     return (
         <Pressable style={viewStyle} onLongPress={() => toccidSetter(data.ccid)} onLayout={handleLayout}>
             {userAvatar()}
-            <View style={[styles.chatItem, { alignSelf: alignDirection }, borderBottomRadius, backgroundColor]}>
+            <View style={[styles.chatItem, { alignSelf: alignDirection }, backgroundColor]}>
                 <Text style={[styles.chatText, colorText]}>{data.content}</Text>
                 {/* <Text style={styles.chatTextSmall}>Sender: {data.uid == user.uid ? "ME" : allUser[data.uid].name} at  */}
                 <Text style={[styles.chatTextSmall, colorText]}>{time.toLocaleString()}</Text>
@@ -338,7 +344,7 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
         width: Dimensions.get('window').width / 1.5,
         margin: 5,
-        borderRadius: 35,
+        borderRadius: 10,
     },
     vStyle: {
         flexDirection: 'row',
@@ -356,6 +362,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         alignItems: 'flex-start',
         justifyContent: 'flex-start',
+        backgroundColor: 'rgba(255, 255, 255, 0.7)',
         borderRadius: 10,
         borderColor: theme.lightGrayBorder,
         padding: 10,
@@ -370,5 +377,26 @@ const styles = StyleSheet.create({
     },
     sendMessageContainer: {
         flexDirection: 'row',
+    },
+    reply: { 
+        padding: 10,
+        paddingTop: 5,
+        paddingBottom: 8,
+        marginBottom: 5, 
+        backgroundColor: 'rgba(255, 255, 255, 0.6)',
+        width:  (Dimensions.get('window').width - 80)/ 1.5,
+        borderLeftWidth: 5,
+        borderRadius: 5,
+    },
+    replyOwner: {
+        color: '#184d47',
+        fontSize: 12,
+        fontWeight: 'bold',
+    },
+    replyTextBox: {
+       margin: 10, 
+       backgroundColor: 'rgba(255, 255, 255, 0.6)',
+       width: Dimensions.get('window').width - 80,
+       marginBottom: 2,
     }
 })

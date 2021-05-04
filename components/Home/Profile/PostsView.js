@@ -9,7 +9,7 @@ import { selectUser } from '../../../redux/slices/userSlice'
 import { theme } from '../../Style/Constants'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { PROFIILE_VISIBILITY } from '../../CONSTANTS'
-
+import noPostImage from '../../../assets/noPost.png'
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -69,24 +69,27 @@ function Normal() {
                         <Post key={item.pid} pid={item.pid} navigateTo="Posts" style={styles.item} />
                     )
                 })
-                : <NoPost />}
+                : <NoPost uid={route.params.uid}/>}
             </View>
-            <CompleteProfile />
+            <CompleteProfile uid={route.params.uid}/>
         </View>
         
     )
 }
 
-function NoPost(){
-    // const me = useSelector(selectUser);
+function NoPost({ uid }){
+    const me = useSelector(selectUser);
 
-    //  if(me.uid != user.uid){
-    //     return(
-    //         <View style={styles.noPostC}>
-    //                 <Image source={require('../../../assets/noPost.png')} />
-    //         </View>
-    //     )
-    // }
+     if(me.uid != uid){
+        return(
+            <View style={styles.noPostContainer}>
+                <View style={[styles.imgC, {borderWidth: 2, height: 70, width: 70}]}>
+                    <Icon name='camera-outline' style={{ fontSize: 42}} />
+                </View>
+                <Text style={{fontSize: 28, marginTop: 10}}>No Posts Yet</Text>
+            </View>
+        )
+    }
         return(
             <View style={styles.noPostContainer}>
                 <Text style={{ fontSize: 28}}>Profile</Text>
@@ -99,11 +102,11 @@ function NoPost(){
         )    
 }
 
-function CompleteProfile(){
+function CompleteProfile({ uid }){
     const user = useSelector(selectUser);
     const navigation = useNavigation();
 
-    if(user.name && user.dp && user.about)
+    if((user.name && user.dp && user.about) || user.uid != uid)
         return null
 
     const iconBox = ({name, head, desc}) => {
@@ -123,9 +126,9 @@ function CompleteProfile(){
     }
     
     return(
-        <View style={[styles.completeProfile, {flex: 1}]}>
+        <View style={styles.completeProfile}>
             <Text style={[styles.head]}>Complete Your Profile</Text>
-            <ScrollView horizontal={true}>
+            <ScrollView horizontal={true} style={{ paddingBottom : 5 }}>
                 {iconBox({
                     name : `${user.name.length == 0 ? 'person-outline' : 'checkmark-circle'}`, 
                     head : 'Add Your Name', 
@@ -197,6 +200,7 @@ const styles = StyleSheet.create({
     completeProfile: {
         justifyContent: 'center',
         alignItems: 'center',
+        marginTop: 50,
         margin: 5,
         padding: 10,
         width: '100%',
@@ -220,7 +224,7 @@ const styles = StyleSheet.create({
         color: theme.darkfont,
         fontWeight: 'bold',
         padding: 8,
-        margin: 10,
+        margin: 5,
         alignSelf: 'center',
         borderRadius: 5,
     },
