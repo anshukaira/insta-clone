@@ -48,8 +48,8 @@ const ExistingList = () => {
     }
 
     return (
-        <View style={{ flex: 1, borderBottomWidth: 1, paddingBottom: 10 }}>
-            <Text style={{ padding: 10, fontSize: 16 }}>Your Chats</Text>
+        <View style={{ flex: 1, marginBottom: 10 }}>
+            <Text style={{ padding: 10, fontSize: 20, color: 'black', alignSelf: 'center' }}>Your Chats</Text>
             {existing.map((item) => {
                 console.log(item);
                 return (
@@ -76,8 +76,8 @@ const PossibleList = () => {
     }
 
     return (
-        <View style={{ flex: 1, borderBottomWidth: 1, paddingBottom: 10 }}>
-            <Text style={{ padding: 10, fontSize: 16 }}>Your Chats</Text>
+        <View style={{ flex: 1, marginBottom: 10 }}>
+            <Text style={{ padding: 10, fontSize: 16, color: 'black', fontSize: 20, alignSelf: 'center' }}>Start a New Chat</Text>
             {possible.map((item) => {
                 return (
                     <PossibleListItem uid={item.uid} key={item.uid} />
@@ -93,7 +93,7 @@ const ExistingListItem = ({ uid, chatId }) => {
     const navigation = useNavigation();
     const handlePress = () => {
         setLoading(true);
-        navigation.navigate('Chat', { uid: uid, chatId: chatId })
+        navigation.navigate('Chat', { uid: uid, header: allUser[uid].username, chatId: chatId, default: 'Chat' })
         setLoading(false);
     }
 
@@ -129,10 +129,10 @@ const PossibleListItem = ({ uid }) => {
     const handlePress = async () => {
         setLoading(true);
         let chatId = await initiateChat(uid);
-        if (chatId !== null) {
-            navigation.navigate('Chat', { uid: uid, chatId: chatId, header: allUser[uid].username })
-        }
         setLoading(false);
+        if (chatId !== null) {
+            navigation.navigate('Chat', { uid: uid, chatId: chatId, header: allUser[uid].username, default: 'Chat' })
+        }
     }
     if (loading) {
         return (
@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
     },
     name: {
         fontSize: 18,
-        fontWeight: '600',
+        color: 'black'
     },
     smallText: {
         fontSize: 10,

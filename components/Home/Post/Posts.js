@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         justifyContent: 'center',
         alignContent: 'center',
-        height:20,
-        width:20
+        height:50,
+        width:50
     }
 })

@@ -21,16 +21,6 @@ allUser
 (public/users)
 uid:{name:string, vis: 'VIS_ENUM', delete, dp: url,username}
 
-pubPosts
-(redux & global)
-(public/pubPosts)
-pid:{numLikes: integer, time: time, uid: string}
-
-protPosts
-(redux & global)
-(public/protPosts)
-pid:{numLikes: integer, time: time, uid: string}
-
 allPosts
 (redux & global)
 (local combine pub and prot)
@@ -48,14 +38,4 @@ url: url
 chat
 (state & component)
 (chats/{chatId})
-uid:{time:{content:string, toccid:{uid,time},type:'NORMAL'|'POST'|'REPLY'}} // Updated
-
-cachedPosts
-(redux & global)
-(local)
-caption: string
-comments: [{content:string, time:time, uid:string}]
-likes:[uid]
-time: time,
-url: url
-uid: uid
+uid:{time:{content:string, toccid:{uid,time},type:'NORMAL'|'POST'|'REPLY'}}

@@ -18,15 +18,16 @@ export function OwnBox({ user }) {
             <TouchableOpacity onPress={gotoEdit} style={[styles.box, { flex: 6 }]}>
                 <Text>Edit Profile</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.box, { flex: 6 }]}>
+            {/* <TouchableOpacity style={[styles.box, { flex: 6 }]}>
                 <Text>Saved</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
         </View>
     )
 }
 
 export function OtherBox({ user }) {
     const me = useSelector(selectUser);
+    const navigation = useNavigation();
     if (user.uid == me.uid) {
         return null
     }
@@ -60,18 +61,18 @@ export function OtherBox({ user }) {
         }
     }
 
-    const messagePress = () => {
-
-    }
+    // const messagePress = () => {
+    //     navigation.navigate('Chat',{default:'Chat',header: allUser[uid].username,uid:user.uid,chatId:})
+    // }
 
     return (
         <View style={styles.container}>
             <TouchableOpacity style={[styles.box, { flex: 6, backgroundColor: following.bgColor }, ]} onPress={followPress}>
                 <Text style={{ color: following.color}}>{following.text}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.box, { flex: 6 }]} onPress={messagePress}>
+            {/* <TouchableOpacity style={[styles.box, { flex: 6 }]} onPress={messagePress}>
                 <Text>Message</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
         </View>
     )
 }

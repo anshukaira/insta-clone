@@ -93,9 +93,9 @@ const CommentItem = ({ data }) => {
                 </View>
             </View>
 
-            <View style={{ justifyContent: 'center', alignItems: 'center', }}>
+            {/* <View style={{ justifyContent: 'center', alignItems: 'center', }}>
                 <Icon name="heart-outline" style={{ color: 'black', fontSize: 18 }} />
-            </View>
+            </View> */}
         </View>
     )
 }

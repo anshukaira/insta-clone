@@ -27,6 +27,11 @@ export default function Chat() {
     const scrollViewRef = useRef(null);
     const [itemPos, setItemPos] = useState({});
 
+    useEffect(() => {
+        if(scrollViewRef && scrollViewRef.current){
+            scrollViewRef.current.scrollToEnd({animated:true})
+        }
+    }, [scrollViewRef])
 
     useEffect(() => {
         const unsubscribe = subChat(route.params.chatId, setData)
@@ -60,8 +65,9 @@ export default function Chat() {
             toccid: toccid,
             type: toccid ? CHAT_MESSAGE_TYPE.REPLY : CHAT_MESSAGE_TYPE.NORMAL
         }
+        setToccid(null)
         await addMessage(route.params.chatId, data, setSending)
-        setMessage("")
+        setMessage("") 
     }
 
     const iconColor = message.length > 0 ? theme.lightButton : 'gray';
@@ -108,11 +114,11 @@ export default function Chat() {
             <View style={styles.sendMessageContainer}>
                 <View>
                     {toccid ? <ReplyBox data={data[toccid.uid][toccid.time]} uid={toccid.uid} time={toccid.time} toccidSetter={setToccid} scrollTo={scrollTo} /> : null}
-                    <TextInput style={styles.sendInput} multiline={true} placeholder="Type Your Message Here"
+                    <TextInput style={styles.sendInput} onSubmitEditing={sendMessage} placeholder="Type Your Message Here"
                         value={message}
                         onChangeText={(mess) => setMessage(mess)}
-                        maxLength={30}
-                        numberOfLines={1}
+                        maxLength={100}
+                        blurOnSubmit={false}
                     />
                 </View>
                 <TouchableOpacity onPress={sendMessage}
@@ -244,7 +250,7 @@ const ChatReply = ({ data, keyId, toccidSetter, setItemPos, scrollTo, replyTo })
                 <Pressable style={[styles.chatItem, { alignSelf: alignDirection }, backgroundColor]} onLongPress={() => toccidSetter(data.ccid)}>
                     <Pressable onPress={() => scrollTo(data.toccid.uid + '_' + data.toccid.time)} style={[styles.reply, {alignSelf: 'flex-start', borderLeftColor: replyColor}]}>
                         <Text style={[styles.replyOwner, {color: replyColor}]}>{data.toccid.uid == user.uid ? 'You' : allUser[data.toccid.uid].name}</Text>
-                        <Text style={{ color: theme.lightfont, fontWeight: 'bold'}}>{replyTo.content}</Text>
+                        <Text style={{ color: theme.lightfont}}>{replyTo.content}</Text>
                     </Pressable>
                     <Text style={[styles.chatText, colorText]}>{data.content}</Text>
                     <Text style={[styles.chatTextSmall, colorText]}>{time.toLocaleString()}</Text>
@@ -351,7 +357,7 @@ const styles = StyleSheet.create({
     },
     chatText: {
         color: theme.darkfont,
-        fontWeight: 'bold'
+        // fontWeight: 'bold'
     },
     chatTextSmall: {
         marginTop: 2,

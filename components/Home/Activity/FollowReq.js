@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux'
 import { acceptFollowReq, rejectFollowReq } from '../../../firebase/functions'
 import { selectAllUser } from '../../../redux/slices/allUserSlice'
 import { selectUser } from '../../../redux/slices/userSlice'
+import { DUMMY_DATA } from '../../CONSTANTS'
 import { theme } from '../../Style/Constants'
 
 export default function FollowReq() {
@@ -14,7 +15,7 @@ export default function FollowReq() {
     if (user.followReq.length == 0) {
         return (
             <View style={styles.caughtUp}>
-                <Avatar.Image source={require("../../../assets/caughtUp.png")} size={46}/>
+                <Avatar.Image source={require("../../../assets/caughtUp.png")} size={46} />
                 <Text style={{ margin: 10 }}>You are all caught up!</Text>
             </View>
         )
@@ -23,7 +24,7 @@ export default function FollowReq() {
         <View>
             {user.followReq.map((item) => {
                 return (
-                    <Item uid={item} key={item} name={allUser[item].name} 
+                    <Item uid={item} key={item} name={allUser[item].name}
                     //url={allUser[item].dp}
                     />
                 )
@@ -32,8 +33,9 @@ export default function FollowReq() {
     )
 }
 
-function Item({ uid, name, url }) {
+function Item({ uid, name }) {
     const navigation = useNavigation();
+    const allUsers = useSelector(selectAllUser)
     const acceptPress = () => {
         acceptFollowReq(uid)
     }
@@ -47,10 +49,10 @@ function Item({ uid, name, url }) {
         <View style={styles.itemContainer}>
 
             <TouchableOpacity style={styles.userbox} onPress={navigateProfile}>
-                <Avatar.Image source={require("../../../assets/dummy.jpeg")} size={46}/>
+                <Avatar.Image source={{ uri: allUsers[uid].dp ? allUsers[uid].dp : DUMMY_DATA.dp }} size={46} />
                 <View style={styles.textContainer}>
                     <Text style={styles.name}>{name}</Text>
-                    <Text style={styles.smallText}>@username</Text>
+                    <Text style={styles.smallText}>@{allUsers[uid].username}</Text>
                 </View>
             </TouchableOpacity>
 
@@ -59,10 +61,10 @@ function Item({ uid, name, url }) {
                     <Text style={styles.text}>Confirm</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={[styles.button, styles.no]} onPress={rejectPress}>
-                    <Text style={[styles.text, { color : theme.lightfont }]}>Delete</Text>
+                    <Text style={[styles.text, { color: theme.lightfont }]}>Delete</Text>
                 </TouchableOpacity>
             </View>
-            
+
         </View>
     )
 }
@@ -102,7 +104,7 @@ const styles = StyleSheet.create({
         padding: 8,
         flexDirection: 'row',
     },
-    button:{
+    button: {
         borderWidth: 0.5,
         borderRadius: 8,
         width: 75,
@@ -118,7 +120,7 @@ const styles = StyleSheet.create({
     no: {
         backgroundColor: 'white',
     },
-    text : {
+    text: {
         color: theme.darkfont,
         fontWeight: "700",
     },

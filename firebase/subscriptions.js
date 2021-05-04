@@ -3,6 +3,7 @@ import store from '../redux/store/app'
 import { set as setUser } from '../redux/slices/userSlice';
 import { set as setAllUser } from '../redux/slices/allUserSlice';
 import { set as setAllPosts } from '../redux/slices/allPostsSlice'
+import { signOut } from './functions';
 
 
 export function subUser(uid) {
@@ -19,6 +20,7 @@ export function subUser(uid) {
             store.dispatch(setUser(data));
         } else {
             console.log("Opps! User doc down't exist")
+            signOut()
         }
     })
     return unsubscribe;

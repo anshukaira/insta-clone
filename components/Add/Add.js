@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, Platform, Button, Image, TouchableOpacity, StyleSheet, ToastAndroid, TextInput } from 'react-native'
+import { View, Text, Platform, Image, TouchableOpacity, StyleSheet, TextInput } from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 import { addPost, addPostNative } from '../../firebase/functions';
 import { useSelector } from 'react-redux';
@@ -16,6 +16,7 @@ export default function Add() {
     const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
 
     const [uploaded, setUploaded] = useState(false)
+    const [clicked,setClicked] = useState(false)
 
     const [image, setImage] = useState(null)
     const [visibility, setVisibility] = useState(user.vis)
@@ -48,6 +49,7 @@ export default function Add() {
     useEffect(()=>{
         if(uploaded){
             navigation.goBack()
+            setClicked(false);
         }
     },[uploaded])
 
@@ -97,7 +99,11 @@ export default function Add() {
     };
 
     const upload = () => {
+        if(clicked){
+            return;
+        }
         setUploaded(false)
+        setClicked(true);
         addPost(image, caption, visibility, user.uid, setUploaded)
     }
 

@@ -30,12 +30,14 @@ export function signUp(name, email, pass, setError) {
 export function signIn(email, pass, setError) {
     auth.signInWithEmailAndPassword(email, pass)
         .then(result => {
-            firestore.collection("users").doc(result.user.uid).get().then((doc) => {
+            let userRef = getUserRef(result.user.uid)
+            let username = result.user.email.substr(0,result.user.email.indexOf('@'))
+            userRef.get().then((doc) => {
                 if (doc.exists) {
                     console.log("Welcome Back!!");
                 } else {
                     console.log("Opps! No data. Creating data...");
-                    createUserInDatabase(result.user.uid, result.user.displayName || "NO NAME", result.user.email, pass);
+                    createUserInDatabase(result.user.uid, result.user.displayName || username || "Name Here", result.user.email, pass);
                 }
             })
             setError(null)
@@ -371,7 +373,7 @@ export function acceptFollowReq(uid) {
     let myDocRef = getUserRef(user.uid)
     let userDocRef = getUserRef(uid)
     let currentTime = Date.now();
-    let mycontent = "Accepted Follow Req of " + allUser[uid];
+    let mycontent = "Accepted Follow Req of " + allUser[uid].username;
     let usercontent = allUser[user.uid].username + " accepted your follow req";
     batch.update(myDocRef, {
         followReq: FieldValue.arrayRemove(uid),
@@ -474,10 +476,14 @@ export async function addComment(uid, pid, comment, state) {
 }
 
 // Update Profile of User
-export function updateProfile(data) {
+export async function updateProfile(data) {
 
     const { user } = store.getState();
     const uid = user.uid;
+
+    if(data && data.dp){
+        await updateDp(data.dp)
+    }
 
     let userRef = getUserRef(uid)
     let pubUserRef = getPubUserRef()
@@ -486,9 +492,9 @@ export function updateProfile(data) {
 
     let batch = firestore.batch();
     batch.update(userRef, {
-        name: data.name || user.name,
-        about: data.about || user.about,
-        vis: data.vis || user.vis,
+        name: data.name,
+        about: data.about,
+        vis: data.vis,
         activity: FieldValue.arrayUnion({ content: "Update Profile", time: time })
     });
     batch.update(pubUserRef, {
@@ -514,7 +520,7 @@ export async function updateDp(img) {
 
     let time = Date.now()
 
-    let storageRef = storage.ref().child(getStorageDpPath());
+    let storageRef = storage.ref().child(getStorageDpPath(uid));
     let userRef = getUserRef(uid)
     let publicUser = getPubUserRef()
 

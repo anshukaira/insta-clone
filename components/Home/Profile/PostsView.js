@@ -85,7 +85,6 @@ function Normal() {
     )
 }
 
-<<<<<<< HEAD
 function NoPost({ uid }){
     const me = useSelector(selectUser);
 
@@ -116,26 +115,6 @@ function CompleteProfile({ uid }){
     const navigation = useNavigation();
 
     if((user.name && user.dp && user.about) || user.uid != uid)
-=======
-function NoPost() {
-    return (
-        <View style={styles.noPostContainer}>
-            <Text style={{ fontSize: 28 }}>Profile</Text>
-            <Text style={{ fontSize: 12, textAlign: 'center' }}>When you share photos, they'll appear on your profile</Text>
-            <TouchableOpacity>
-                <Text style={{ color: theme.lightButton }}>Share your first photo</Text>
-            </TouchableOpacity>
-        </View>
-
-    )
-}
-
-function CompleteProfile() {
-    const user = useSelector(selectUser);
-    const navigation = useNavigation();
-
-    if (user.name && user.dp && user.about)
->>>>>>> bad845b... New firebase Management
         return null
 
     const iconBox = ({ name, head, desc }) => {
@@ -153,15 +132,9 @@ function CompleteProfile() {
     const goToEdit = () => {
         navigation.navigate('Edit', {screen:'PostView'})
     }
-<<<<<<< HEAD
     
     return(
         <View style={styles.completeProfile}>
-=======
-
-    return (
-        <View style={[styles.completeProfile, { flex: 1 }]}>
->>>>>>> bad845b... New firebase Management
             <Text style={[styles.head]}>Complete Your Profile</Text>
             <ScrollView horizontal={true} style={{ paddingBottom : 5 }}>
                 {iconBox({

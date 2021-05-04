@@ -108,19 +108,19 @@ export default function Post({ pid }) {
                     />
                 </TouchableOpacity>
 
-                <TouchableOpacity title="comment">
+                <TouchableOpacity title="comment" onPress={gotoComments}>
                     <IonIcons
                         name="chatbubble-outline"
                         style={styles.icon}
                     />
                 </TouchableOpacity>
 
-                <TouchableOpacity title="send">
+                {/* <TouchableOpacity title="send">
                     <Icon
                         name="send-o"
                         style={styles.icon}
                     />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
             </View>
 
             <View style={styles.footer}>

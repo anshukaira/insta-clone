@@ -18,29 +18,19 @@ export default function Edit() {
 
     const [name, setName] = useState(user.name);
     const [about, setAbout] = useState(user.about);
-<<<<<<< HEAD
-    const [vis, setVis] = useState(user.vis);
-    const [checked, setChecked] = useState(vis == PROFIILE_VISIBILITY.PROTECTED);
-    const [displayPic, setDisplayPic] = useState(require('../../assets/dummy.jpeg'))
-    
-    const editUserInfo = () => {
-
-        updateDp(displayPic);
-        console.log('data is', vis);
-        setVis(checked ? PROFIILE_VISIBILITY.PROTECTED : PROFIILE_VISIBILITY.PUBLIC);
-=======
     const [checked, setChecked] = useState(user.vis == PROFIILE_VISIBILITY.PROTECTED);
+    const [displayPic,setDisplayPic] = useState(null)
 
     const editUserInfo = () => {
         let visibility = checked ? PROFIILE_VISIBILITY.PROTECTED : PROFIILE_VISIBILITY.PUBLIC;
         let data = {
             name: name,
             about: about,
-            vis: visibility
+            vis: visibility,
+            dp:displayPic
         }
         updateProfile(data);
         navigation.goBack()
->>>>>>> bad845b... New firebase Management
     }
 
     const changeDP = async () => {
@@ -53,17 +43,18 @@ export default function Edit() {
         });
 
         if(!result.cancelled) {
-            setDisplayPic(displayPic);
-        }       
+            setDisplayPic(result.uri);
+        }else{
+            setDisplayPic(null)
+        }   
     };
 
     return (
         <View style={styles.mainContainer}>
             <View style={styles.container}>
                 <View>
-<<<<<<< HEAD
                 <View style={styles.row}>
-                <Avatar.Image source={displayPic} />
+                <Avatar.Image source={{uri:displayPic || DUMMY_DATA.dp}} />
                 <View style={styles.nameContainer}>
                     <Text style={styles.name}>{name}</Text>
                     <Text onPress={changeDP} style={styles.changedp}>Change Profile Photo</Text>
@@ -82,28 +73,6 @@ export default function Edit() {
                     <Text style={styles.description}>Help people discover your account by using the name you're known by.</Text>
                 </View>
             </View>
-=======
-                    <View style={styles.row}>
-                        <Avatar.Image source={{ uri: user.dp ? user.dp : DUMMY_DATA.dp }} />
-                        <View style={styles.nameContainer}>
-                            <Text style={styles.name}>{name}</Text>
-                            <Text onPress={changeDP} style={styles.changedp}>Change Profile Photo</Text>
-                        </View>
-                    </View>
-
-                    <View style={styles.row}>
-                        <Text style={[styles.label, { paddingBottom: 25 }]}>Name</Text>
-                        <View style={[styles.nameContainer, { width: 300 }]}>
-                            <TextInput
-                                placeholder='Name'
-                                value={name}
-                                onChangeText={(data) => setName(data)}
-                                style={styles.textBox}
-                            />
-                            <Text style={styles.description}>Help people discover your account bu using the name you're known by.</Text>
-                        </View>
-                    </View>
->>>>>>> bad845b... New firebase Management
 
                     <View style={styles.row}>
                         <Text style={[styles.label, { paddingLeft: 16 }]}>Bio</Text>

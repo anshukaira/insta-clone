@@ -32,6 +32,7 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "description": "College project. Topic: Social Networking App"
+    "description": "College project. Topic: Social Networking App",
+    "githubUrl": "https://github.com/anshukaira/insta-clone"
   }
 }

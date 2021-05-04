@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 
 import { Image, View } from 'react-native'
 
-import { auth, firestore } from '../firebase/firebase'
+import { auth} from '../firebase/firebase'
 import { LOGO } from './CONSTANTS'
 import Loading from './Helper/Loading'
 
@@ -25,8 +25,6 @@ function Main() {
             }
             setLoading(false);
         })
-
-        firestore.enablePersistence().catch((err) => console.log(err.message))
         
         return () => {
             console.log("Unsubscribing auth listner")

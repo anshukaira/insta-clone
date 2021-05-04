@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux'
 import { unsendFollowReq } from '../../../firebase/functions'
 import { selectAllUser } from '../../../redux/slices/allUserSlice'
 import { selectUser } from '../../../redux/slices/userSlice'
+import { DUMMY_DATA } from '../../CONSTANTS'
 import { theme } from '../../Style/Constants'
 
 export default function PendingReq() {
@@ -37,6 +38,7 @@ export default function PendingReq() {
 
 function Item({ uid, name }) {
     const navigation = useNavigation()
+    const allUsers = useSelector(selectAllUser)
 
     const rejectPress = () => {
         unsendFollowReq(uid)
@@ -48,10 +50,10 @@ function Item({ uid, name }) {
         <View style={styles.itemContainer}>
             
             <TouchableOpacity style={styles.userbox} onPress={navigateProfile}>
-                <Avatar.Image source={require("../../../assets/dummy.jpeg")} size={46}/>
+                <Avatar.Image source={{ uri: allUsers[uid].dp ? allUsers[uid].dp : DUMMY_DATA.dp }} size={46}/>
                 <View style={styles.textContainer}>
                     <Text style={styles.name}>{name}</Text>
-                    <Text style={styles.smallText}>@username</Text>
+                    <Text style={styles.smallText}>@{allUsers[uid].username}</Text>
                 </View>
             </TouchableOpacity>
 

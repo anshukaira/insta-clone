@@ -62,6 +62,10 @@ export default function Discover() {
         setVisible(newVisible);
     }
 
+    const updateList = ()=>{
+        
+    }
+
 
     return (
         <View style={{ flex: 1, paddingTop: StatusBar.currentHeight }}>
@@ -148,8 +152,8 @@ const styles = StyleSheet.create({
         width: WIDTH / 3,
     },
     container: {
-        flexDirection: 'column',
+        flexDirection: 'row',
         flexWrap:'wrap',
-        justifyContent:'space-around'
+        justifyContent:'flex-start'
     }
 })
