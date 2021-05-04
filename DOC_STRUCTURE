@@ -1,13 +1,16 @@
 .
 ├── assets
 │   ├── adaptive-icon.png
+│   ├── caughtUp.png
+│   ├── dummy.jpeg
 │   ├── favicon.png
 │   ├── icon.png
 │   └── splash.png
 ├── components
+│   ├── Add
+│   │   └── Add.js
 │   ├── Archive
 │   ├── Auth
-│   │   ├── Landing.js
 │   │   ├── Login.js
 │   │   └── Register.js
 │   ├── CloseFriends
@@ -18,6 +21,8 @@
 │   │   └── DiscoverPeople.js
 │   ├── Edit
 │   │   └── Edit.js
+│   ├── Helper
+│   │   └── Loading.js
 │   ├── Home
 │   │   ├── Activity
 │   │   │   ├── Activity.js
@@ -25,12 +30,11 @@
 │   │   │   ├── FollowReq.js
 │   │   │   ├── Log.js
 │   │   │   └── PendingReq.js
-│   │   ├── Add
-│   │   │   └── Add.js
 │   │   ├── Chat
 │   │   │   ├── ChatHome.js
 │   │   │   ├── Chat.js
-│   │   │   └── ChatStack.js
+│   │   │   ├── ChatStack.js
+│   │   │   └── Header.js
 │   │   ├── Discover
 │   │   │   ├── Discover.js
 │   │   │   └── DiscoverStack.js
@@ -44,6 +48,7 @@
 │   │   │   ├── PostMini.js
 │   │   │   └── Posts.js
 │   │   ├── Profile
+│   │   │   ├── FollowFollowing.js
 │   │   │   ├── Header.js
 │   │   │   ├── OpBox.js
 │   │   │   ├── PostsView.js
@@ -61,7 +66,9 @@
 │   ├── QRCode
 │   │   └── QRCode.js
 │   ├── Style
+│   │   ├── Common.js
 │   │   └── Constants.js
+│   ├── CONSTANTS.js
 │   ├── LoggedIn.js
 │   ├── LoggedOut.js
 │   ├── Main.js
@@ -77,22 +84,76 @@
 │   ├── slices
 │   │   ├── allPostsSlice.js
 │   │   ├── allUserSlice.js
-│   │   ├── cachedPosts.js
-│   │   ├── protPostsSlice.js
-│   │   ├── pubPostsSlice.js
 │   │   └── userSlice.js
 │   └── store
 │       └── app.js
+├── web-build
+│   ├── fonts
+│   │   ├── AntDesign.ttf
+│   │   ├── Entypo.ttf
+│   │   ├── Feather.ttf
+│   │   ├── FontAwesome5_Brands.ttf
+│   │   ├── FontAwesome5_Solid.ttf
+│   │   ├── FontAwesome.ttf
+│   │   ├── Fontisto.ttf
+│   │   ├── Foundation.ttf
+│   │   ├── Ionicons.ttf
+│   │   ├── MaterialCommunityIcons.ttf
+│   │   ├── MaterialIcons.ttf
+│   │   └── SimpleLineIcons.ttf
+│   ├── pwa
+│   │   ├── apple-touch-icon
+│   │   │   └── apple-touch-icon-180.png
+│   │   ├── apple-touch-startup-image
+│   │   │   ├── apple-touch-startup-image-1125x2436.png
+│   │   │   ├── apple-touch-startup-image-1242x2208.png
+│   │   │   ├── apple-touch-startup-image-1242x2688.png
+│   │   │   ├── apple-touch-startup-image-1536x2048.png
+│   │   │   ├── apple-touch-startup-image-1668x2224.png
+│   │   │   ├── apple-touch-startup-image-1668x2388.png
+│   │   │   ├── apple-touch-startup-image-2048x2732.png
+│   │   │   ├── apple-touch-startup-image-640x1136.png
+│   │   │   ├── apple-touch-startup-image-750x1334.png
+│   │   │   └── apple-touch-startup-image-828x1792.png
+│   │   └── chrome-icon
+│   │       ├── chrome-icon-144.png
+│   │       ├── chrome-icon-192.png
+│   │       └── chrome-icon-512.png
+│   ├── static
+│   │   ├── js
+│   │   │   ├── 2.23caa155.chunk.js
+│   │   │   ├── 2.23caa155.chunk.js.LICENSE.txt
+│   │   │   ├── 2.23caa155.chunk.js.map
+│   │   │   ├── app.953e6103.chunk.js
+│   │   │   ├── app.953e6103.chunk.js.map
+│   │   │   ├── runtime~app.2e9f1821.js
+│   │   │   └── runtime~app.2e9f1821.js.map
+│   │   └── media
+│   │       ├── caughtUp.8d0e691b.png
+│   │       ├── dummy.606e48a3.jpeg
+│   │       └── icon.a27b8161.png
+│   ├── asset-manifest.json
+│   ├── favicon-16.png
+│   ├── favicon-32.png
+│   ├── favicon.ico
+│   ├── index.html
+│   ├── manifest.json
+│   └── serve.json
 ├── App.js
 ├── app.json
 ├── ARCHITECTURE.md
 ├── babel.config.js
 ├── CONFLICTS.md
+├── DATABASE_STRUCTURE.md
 ├── DOC_STRUCTURE
+├── firebase.json
+├── firestore.indexes.json
+├── firestore.rules
 ├── package.json
 ├── package-lock.json
 ├── README.md
+├── storage.rules
 ├── TODO.md
 └── WORKFLOW.md
 
-25 directories, 70 files
+35 directories, 121 files

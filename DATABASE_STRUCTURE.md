@@ -23,7 +23,7 @@ uid:{name:string, vis: 'VIS_ENUM', delete, dp: url,username}
 
 allPosts
 (redux & global)
-(local combine pub and prot)
+(public/posts)
 pid:{numLikes: integer, time: time, uid: string, visibility: 'PUBLIC' | 'PROTECTED' }
 
 post
