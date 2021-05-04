@@ -13,6 +13,12 @@ The project includes a web application and a mobile application written using Re
  - Like and Comment on posts
  - Have fun!
 
+[](https://github.com/anshukaira/insta-clone/blob/dev/project%20samples/feed.jpeg)
+[](https://github.com/anshukaira/insta-clone/blob/dev/project%20samples/chat.jpeg)
+[](https://github.com/anshukaira/insta-clone/blob/dev/project%20samples/good%20profile.jpeg)
+[](https://github.com/anshukaira/insta-clone/blob/dev/project%20samples/profile.jpeg)
+[](https://github.com/anshukaira/insta-clone/blob/dev/project%20samples/1.jpeg)
+
 ## Installation
  - Ask for APK file.
  - For running in EXPO, download EXPO-go app from playstore and copy this link (https://expo.io/@slayeransh/projects/mirai-c). As you open the app, click on the clipboard available project.
