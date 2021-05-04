@@ -530,7 +530,7 @@ export async function updateDp(img) {
             let batch = firestore.batch();
             batch.update(userRef, {
                 ['dp']: downloadURL,
-                ['activity']: { content: 'DP Updated', time: time }
+                ['activity']: FieldValue.arrayUnion({ content: 'DP Updated', time: time })
             })
             batch.update(publicUser, {
                 [uid + '.dp']: downloadURL
