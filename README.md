@@ -2,10 +2,11 @@
 #### A social networking App & Website that lets you connect with your friends and share your moments with them! 💙
 Reference : Instagram
 
+![](https://github.com/anshukaira/insta-clone/blob/dev/assets/D2.png)
 
 The project includes a mobile application and a web application written using React Native.
 
-Tech & Tools Used: React, React Native, Firebase, Git, npm, Expo.
+`Tech & Tools Used: React, React Native, Firebase, Git, npm, Expo.`
 
 ## Features
  - Connect with your friends
