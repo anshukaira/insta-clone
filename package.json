@@ -8,7 +8,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "eject": "expo eject",
-    "struct": "tree -o DOC_STRUCTURE --dirsfirst -n -I node_modules"
+    "struct": "tree -o ./docs/DOC_STRUCTURE --dirsfirst -n -I node_modules"
   },
   "dependencies": {
     "@react-native-community/masked-view": "0.1.10",

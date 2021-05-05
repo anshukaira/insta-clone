@@ -2,6 +2,8 @@
 ├── assets
 │   ├── adaptive-icon.png
 │   ├── caughtUp.png
+│   ├── D2.png
+│   ├── Design.png
 │   ├── dummy.jpeg
 │   ├── favicon.png
 │   ├── icon.png
@@ -73,6 +75,12 @@
 │   ├── LoggedOut.js
 │   ├── Main.js
 │   └── RootNavigator.js
+├── docs
+│   ├── CONFLICTS.md
+│   ├── DATABASE_STRUCTURE.json
+│   ├── DOC_STRUCTURE
+│   ├── TODO.md
+│   └── WORKFLOW.md
 ├── encryption
 │   ├── data.js
 │   └── pass.js
@@ -80,6 +88,13 @@
 │   ├── firebase.js
 │   ├── functions.js
 │   └── subscriptions.js
+├── project samples
+│   ├── 1.jpeg
+│   ├── chat.jpeg
+│   ├── feed.jpeg
+│   ├── good profile.jpeg
+│   ├── logo.jpeg
+│   └── profile.jpeg
 ├── redux
 │   ├── slices
 │   │   ├── allPostsSlice.js
@@ -124,8 +139,8 @@
 │   │   │   ├── 2.23caa155.chunk.js
 │   │   │   ├── 2.23caa155.chunk.js.LICENSE.txt
 │   │   │   ├── 2.23caa155.chunk.js.map
-│   │   │   ├── app.953e6103.chunk.js
-│   │   │   ├── app.953e6103.chunk.js.map
+│   │   │   ├── app.5587bca4.chunk.js
+│   │   │   ├── app.5587bca4.chunk.js.map
 │   │   │   ├── runtime~app.2e9f1821.js
 │   │   │   └── runtime~app.2e9f1821.js.map
 │   │   └── media
@@ -141,19 +156,13 @@
 │   └── serve.json
 ├── App.js
 ├── app.json
-├── ARCHITECTURE.md
 ├── babel.config.js
-├── CONFLICTS.md
-├── DATABASE_STRUCTURE.md
-├── DOC_STRUCTURE
 ├── firebase.json
 ├── firestore.indexes.json
 ├── firestore.rules
 ├── package.json
 ├── package-lock.json
 ├── README.md
-├── storage.rules
-├── TODO.md
-└── WORKFLOW.md
+└── storage.rules
 
-35 directories, 121 files
+37 directories, 128 files
