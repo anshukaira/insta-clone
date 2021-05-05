@@ -48,7 +48,7 @@ Yayy!! 🎉 You can now make your changes and send us a pull request!!
 We have a [database structure](https://github.com/anshukaira/insta-clone/blob/dev/docs/DATABASE_STRUCTURE.json) as well as [repository structure](https://github.com/anshukaira/insta-clone/blob/dev/docs/DIR_STRUCTURE) available in project for guidance.
 
  
-AWESOME CONTRIBUTORS : 
-       🎧 [@slayeransh](https://github.com/SlayerAnsh)  
+AWESOME CONTRIBUTORS :                
+       🎧 [@slayeransh](https://github.com/SlayerAnsh)   
        💜 [@anshukaira](https://github.com/anshukaira)  
        🐏 [@anahika](https://github.com/anahika)
