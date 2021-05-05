@@ -1,0 +1,99 @@
+{
+    "users":{
+        "user1":{
+            "name":"string",
+            "email":"string@gmail.com",
+            "password": "string",
+            "about":"string",
+            "dp": "url",
+            "vis":"VISIBILITY ENUM",
+            "delete":"bool",
+            "chats":{
+                "user2":"chatId1",
+                "user3":"chatId2"
+            },
+            "followReq": [
+                "user2",
+                "user3"
+            ],
+            "followers":[
+                "user2",
+                "user3"
+            ],
+            "pendingReq":[
+                "user1",
+                "user2"
+            ],
+            "saved":[
+                "pid1",
+                "pid2"
+            ],
+            "activity":[
+                {
+                    "content": "Account Created",
+                    "time": "time"
+                },
+                {
+                    "content": "Account Created",
+                    "time": "time"
+                }
+            ],
+            "posts":{
+                "pid1":{
+                    "caption":"string",
+                    "time":"time",
+                    "likes":[
+                        "user1",
+                        "user2"
+                    ],
+                    "comments":[
+                        {
+                            "content":"string",
+                            "time": "time",
+                            "uid":"user2"
+                        }
+                    ],
+                    "url":"url"
+                }
+            }
+        },
+        "user2":{
+
+        }
+    },
+    "public":{
+        "posts":{
+            "pid1":{
+                "numLikes":"integer",
+                "uid":"user1",
+                "time":"time",
+                "visibility": "VISIBILITY ENUM"
+            }
+        },
+        "users":{
+            "name":"string",
+            "visibility":"VISIBILITY ENUM",
+            "dp":"url",
+            "username":"username",
+            "delete":"bool"
+        }
+    },
+    "chats":{
+        "chatId1":{
+            "subscribed":[
+                "user1",
+                "user2"
+            ],
+            "user1":{
+                "time":{
+                    "content":"string",
+                    "toccid":{
+                        "uid":"user2",
+                        "time":"time"
+                    },
+                    "type":"TYPE ENUM"
+                }
+            }
+        }
+    }
+}
