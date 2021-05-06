@@ -1,4 +1,15 @@
 ## MIRAI C
+
+ ``` 
+ Semester End Project - 2021      
+ Project Members  :  Anshu Singh (185035),  
+                     Anshudhar Kumar Singh (185032),   
+                     Anshika (185041)   
+ Course           :  CSD-327 Software Engineering LAB      
+ Date             :  May 6th, 2021
+ Submitted to     :  Dr. Dharmendra Prasad Mahto 
+ ```
+   
 #### A social networking App & Website that lets you connect with your friends and share your moments with them! 💙
 Reference : Instagram
 
