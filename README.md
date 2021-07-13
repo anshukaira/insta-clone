@@ -61,5 +61,5 @@ We have a [database structure](https://github.com/anshukaira/insta-clone/blob/de
  
 AWESOME CONTRIBUTORS :                
        🎧 [@slayeransh](https://github.com/SlayerAnsh)   
-       💜 [@anshukaira](https://github.com/anshukaira)  
+       🐩 [@anshukaira](https://github.com/anshukaira)  
        🕉️ [@anahika](https://github.com/anahika)
