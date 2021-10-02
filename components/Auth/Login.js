@@ -16,6 +16,7 @@ import { signIn } from '../../firebase/functions'
 function Login({ navigation }) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [isFocused, setisFocused] = useState(false)
   const [error, setError] = useState(null);
   const [confirm_secureTextEntry, setConfirmEntry] = useState(true);
 
@@ -31,16 +32,19 @@ function Login({ navigation }) {
             onChangeText={(email) => setEmail(email)}
             underlineColorAndroid="transparent"
           />
-          <View style={styles.input}>
+          <View style={(isFocused) ? styles.passwordFocused : styles.password}>
             <TextInput
               placeholder="Password"
               secureTextEntry={confirm_secureTextEntry}
               onChangeText={(password) => setPassword(password)}
               underlineColorAndroid="transparent"
-              style={{ color: '#8e8e8e', fontSize: 12, border: 'none' }}
+              style={{ color: '#8e8e8e', fontSize: 12, border: 'none', outline: 'none', width: '100%' }}
+              onFocus={() => setisFocused(true)}
+              onBlur={() => setisFocused(false)}
             />
             <TouchableOpacity
               onPress={() => setConfirmEntry(!confirm_secureTextEntry)}
+              style={{ alignSelf: 'center' }}
             >
               {password ?
                 confirm_secureTextEntry ?
@@ -143,7 +147,41 @@ const styles = StyleSheet.create(
       backgroundColor: "#fafafa",
       flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'space-between'
+      justifyContent: 'space-between',
+    },
+
+    password: {
+      color: '#8e8e8e',
+      borderColor: '#dbdbdb',
+      borderRadius: 5,
+      width: 258,
+      fontSize: 12,
+      marginTop: 10,
+      paddingEnd: 15,
+      paddingStart: 15,
+      borderWidth: 0.5,
+      backgroundColor: "#fafafa",
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      flex: 0.45,
+      alignItems: 'stretch',
+    },
+
+    passwordFocused: {
+      color: '#8e8e8e',
+      borderColor: '#dbdbdb',
+      borderRadius: 5,
+      width: 258,
+      fontSize: 12,
+      marginTop: 10,
+      padding: 15,
+      borderWidth: 0.5,
+      backgroundColor: "#fafafa",
+      flexDirection: 'row',
+      alignItems: 'stretch',
+      justifyContent: 'space-between',
+      borderWidth: 2,
+      borderColor: "#000",
     },
 
 
